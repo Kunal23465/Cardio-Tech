@@ -18,14 +18,6 @@ class _NavbarState extends State<Navbar> {
   late int _currentIndex;
   static const double navBarHeight = 90;
 
-  final List<Widget> _pages = const [
-    NewOrder(),
-    AllPatient(),
-    HomePage(),
-    Trackorder(),
-    Setting(),
-  ];
-
   @override
   void initState() {
     super.initState();
@@ -36,35 +28,47 @@ class _NavbarState extends State<Navbar> {
     setState(() => _currentIndex = index);
   }
 
+  ///  Lazy load pages instead of building all at once
+  Widget _getPage(int index) {
+    switch (index) {
+      case 0:
+        return const NewOrder();
+      case 1:
+        return const AllPatient();
+      case 2:
+        return const HomePage();
+      case 3:
+        return const Trackorder();
+      case 4:
+        return const Setting();
+      default:
+        return const HomePage();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // final bool keyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
-
-
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
       extendBody: true,
 
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _pages.map((w) {
-          return SafeArea(
-            top: false,
-            bottom: false,
-            child: LayoutBuilder(
-              builder: (context, constraints) => SingleChildScrollView(
-                physics: const ClampingScrollPhysics(),
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                  child: IntrinsicHeight(child: w),
-                ),
-              ),
+      ///  Only build currently selected page
+      body: SafeArea(
+        top: false,
+        bottom: false,
+        child: LayoutBuilder(
+          builder: (context, constraints) => SingleChildScrollView(
+            physics: const ClampingScrollPhysics(),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: IntrinsicHeight(child: _getPage(_currentIndex)),
             ),
-          );
-        }).toList(),
+          ),
+        ),
       ),
 
+      // Floating Action Button (Home)
       floatingActionButton: SizedBox(
         width: 70,
         height: 70,
@@ -138,7 +142,7 @@ class _NavbarState extends State<Navbar> {
                         1,
                       ),
                     ),
-                    const SizedBox(width: 80), 
+                    const SizedBox(width: 80), // space for FAB
                     Expanded(
                       child: _navButton(
                         _currentIndex == 3
