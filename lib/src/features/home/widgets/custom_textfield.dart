@@ -170,9 +170,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
         fieldChild = TextFormField(
           readOnly: true,
           controller: widget.controller,
-          decoration: _inputDecoration(suffix: suffixIcon).copyWith(
-            hintText: widget.hint ?? "Download File",
-          ),
+          decoration: _inputDecoration(
+            suffix: suffixIcon,
+          ).copyWith(hintText: widget.hint ?? "Download File"),
         );
         break;
 

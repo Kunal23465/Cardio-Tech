@@ -1,35 +1,56 @@
+import 'package:cardio_tech/src/data/models/loginAuth/auth_service.dart';
 import 'package:cardio_tech/src/features/home/widgets/custom_textfield.dart';
-import 'package:cardio_tech/src/features/auth/screens/loginScreens/setNewPasswordScreen.dart';
 import 'package:cardio_tech/src/features/home/widgets/gradient_button.dart';
+import 'package:cardio_tech/src/routes/AllRoutes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
-  const OtpVerificationScreen({super.key});
+  final String emailOrMobile;
+  const OtpVerificationScreen({super.key, required this.emailOrMobile});
 
   @override
   State<OtpVerificationScreen> createState() => _OtpVerificationScreenState();
 }
 
 class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
-  final FocusNode optVerificationFocusNode = FocusNode();
-  final TextEditingController optVerificationController =
-      TextEditingController();
+  final TextEditingController otpController = TextEditingController();
+  final AuthService _authService = AuthService();
+  bool isLoading = false;
 
-  @override
-  void initState() {
-    super.initState();
-    // for auto enable
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   optVerificationFocusNode.requestFocus();
-    // });
-  }
+  void _verifyOtp() async {
+    final otp = otpController.text.trim();
+    if (otp.isEmpty) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Enter OTP")));
+      return;
+    }
 
-  @override
-  void dispose() {
-    optVerificationFocusNode.dispose();
-    optVerificationController.dispose();
-    super.dispose();
+    setState(() => isLoading = true);
+
+    try {
+      final response = await _authService.verifyOtp(widget.emailOrMobile, otp);
+      final message = response.data is String
+          ? response.data
+          : response.data['message'] ?? "OTP Verified";
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(message)));
+
+      if (!mounted) return;
+
+      // Navigate to Set New Password screen
+      Navigator.pushNamed(
+        context,
+        AppRoutes.setNewPassword,
+        arguments: widget.emailOrMobile,
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Error: $e")));
+    } finally {
+      if (mounted) setState(() => isLoading = false);
+    }
   }
 
   @override
@@ -43,8 +64,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
               fit: BoxFit.cover,
             ),
           ),
-
-          //logo
           Align(
             alignment: Alignment.topCenter,
             child: Padding(
@@ -58,99 +77,52 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
               ),
             ),
           ),
-
-          // Bottom form container
           Align(
             alignment: Alignment.bottomCenter,
             child: LayoutBuilder(
-              builder: (context, constraints) {
-                return Container(
-                  width: double.infinity,
-                  height: constraints.maxHeight * 0.65,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(40),
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(30),
-                    child: SafeArea(
-                      child: SingleChildScrollView(
-                        physics: const BouncingScrollPhysics(),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "OTP Verification",
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              "Enter the 6-digit code that we have sent via the phone number +708113484",
-                              style: TextStyle(color: Colors.grey[700]),
-                            ),
-                            const SizedBox(height: 30),
-
-                            CustomTextField(
-                              label: "OTP",
-                              hint: "Enter OTP",
-                              focusNode: optVerificationFocusNode,
-                              controller: optVerificationController,
-                            ),
-                            const SizedBox(height: 10),
-                            const Text(
-                              'OTP verification failed',
-                              style: TextStyle(color: Colors.red),
-                            ),
-                            const SizedBox(height: 20),
-                            // ElevatedButton(
-                            //   onPressed: () {},
-                            //   style: ElevatedButton.styleFrom(
-                            //     backgroundColor: Colors.white,
-                            //     minimumSize: const Size(double.infinity, 50),
-
-                            //     elevation: 0, // Flat look
-                            //   ),
-                            //   child: const Text(
-                            //     'Send OTP',
-                            //     style: TextStyle(
-                            //       fontSize: 16,
-                            //       fontWeight: FontWeight.w600,
-                            //     ),
-                            //   ),
-                            // ),
-                            GradientButton(
-                              text: 'Send Otp',
-                              isOutlined: true,
-
-                              onPressed: () {},
-                            ),
-
-                            const SizedBox(height: 10),
-
-                            GradientButton(
-                              text: "Verify",
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        SetNewPasswordScreen(),
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
+              builder: (context, constraints) => Container(
+                width: double.infinity,
+                height: constraints.maxHeight * 0.65,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius:
+                      BorderRadius.vertical(top: Radius.circular(40)),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(30),
+                  child: SafeArea(
+                    child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "OTP Verification",
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.w600),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            "Enter the 6-digit code sent to your email/mobile",
+                            style: TextStyle(color: Colors.grey[700]),
+                          ),
+                          const SizedBox(height: 30),
+                          CustomTextField(
+                            label: "OTP",
+                            hint: "Enter OTP",
+                            controller: otpController,
+                          ),
+                          const SizedBox(height: 20),
+                          GradientButton(
+                            text: isLoading ? "Verifying..." : "Verify",
+                            onPressed: isLoading ? null : _verifyOtp,
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                );
-              },
+                ),
+              ),
             ),
           ),
         ],

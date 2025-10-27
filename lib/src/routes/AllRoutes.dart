@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:cardio_tech/src/features/auth/screens/loginScreens/forgot_password_screen.dart';
-import 'package:cardio_tech/src/features/auth/screens/loginScreens/login_screen.dart';
-import 'package:cardio_tech/src/features/auth/screens/loginScreens/otp_verification_screen.dart';
-import 'package:cardio_tech/src/features/auth/screens/loginScreens/setNewPasswordScreen.dart';
-import 'package:cardio_tech/src/features/home/widgets/navbar.dart';
-import 'package:cardio_tech/src/features/home/navbar/newOrder.dart';
-import 'package:cardio_tech/src/features/home/navbar/orderDetails.dart';
-import 'package:cardio_tech/src/features/home/settingScreens/aboutUs.dart';
-import 'package:cardio_tech/src/features/home/settingScreens/changePassword.dart';
-import 'package:cardio_tech/src/features/home/settingScreens/editProfile.dart';
-import 'package:cardio_tech/src/features/home/settingScreens/helpCenter.dart';
-import 'package:cardio_tech/src/features/home/settingScreens/privacyPolicy.dart';
-import 'package:cardio_tech/src/features/home/settingScreens/term&Conditions.dart';
-import 'package:cardio_tech/src/features/home/settingScreens/viewProfile.dart';
-import 'package:cardio_tech/src/features/home/notifications/notification.dart';
+import '../features/auth/screens/loginScreens/forgot_password_screen.dart';
+import '../features/auth/screens/loginScreens/login_screen.dart';
+import '../features/auth/screens/loginScreens/otp_verification_screen.dart';
+import '../features/auth/screens/loginScreens/setNewPasswordScreen.dart';
+import '../features/home/widgets/navbar.dart';
+import '../features/home/navbar/newOrder.dart';
+import '../features/home/navbar/orderDetails.dart';
+import '../features/home/settingScreens/aboutUs.dart';
+import '../features/home/settingScreens/changePassword.dart';
+import '../features/home/settingScreens/editProfile.dart';
+import '../features/home/settingScreens/helpCenter.dart';
+import '../features/home/settingScreens/privacyPolicy.dart';
+import '../features/home/settingScreens/term&Conditions.dart';
+import '../features/home/settingScreens/viewProfile.dart';
+import '../features/home/notifications/notification.dart';
 
 class AppRoutes {
   static const String login = '/login';
@@ -32,11 +32,16 @@ class AppRoutes {
   static const String newOrder = '/new-order';
   static const String orderDetails = '/order-details';
 
+  // ======= static routes map =======
   static Map<String, WidgetBuilder> routes = {
     login: (context) => const LoginScreen(),
     forgotPassword: (context) => const ForgotPasswordScreen(),
-    otpVerification: (context) => const OtpVerificationScreen(),
-    setNewPassword: (context) => const SetNewPasswordScreen(),
+    otpVerification: (context) => const OtpVerificationScreen(
+          emailOrMobile: '',
+        ), // default empty, will override with arguments
+    setNewPassword: (context) => const SetNewPasswordScreen(
+          emailOrMobile: '',
+        ), // default empty, will override with arguments
     navbar: (context) => const Navbar(),
     newOrder: (context) => const NewOrder(),
     orderDetails: (context) => const Orderdetails(),
@@ -49,4 +54,29 @@ class AppRoutes {
     helpCenter: (context) => const HelpCenter(),
     notification: (context) => const NotificationScreeen(),
   };
+
+  // ======= helper for named routes with arguments =======
+  static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
+    final args = settings.arguments;
+    switch (settings.name) {
+      case otpVerification:
+        if (args is String) {
+          return MaterialPageRoute(
+              builder: (_) => OtpVerificationScreen(emailOrMobile: args));
+        }
+        return null;
+      case setNewPassword:
+        if (args is String) {
+          return MaterialPageRoute(
+              builder: (_) => SetNewPasswordScreen(emailOrMobile: args));
+        }
+        return null;
+      default:
+        final builder = routes[settings.name];
+        if (builder != null) {
+          return MaterialPageRoute(builder: builder);
+        }
+        return null;
+    }
+  }
 }

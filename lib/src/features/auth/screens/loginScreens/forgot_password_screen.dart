@@ -1,8 +1,10 @@
+import 'package:cardio_tech/src/data/models/loginAuth/auth_service.dart';
 import 'package:cardio_tech/src/features/home/widgets/custom_textfield.dart';
-import 'package:cardio_tech/src/features/auth/screens/loginScreens/otp_verification_screen.dart';
 import 'package:cardio_tech/src/features/home/widgets/gradient_button.dart';
+import 'package:cardio_tech/src/features/auth/screens/loginScreens/otp_verification_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:dio/dio.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -12,24 +14,42 @@ class ForgotPasswordScreen extends StatefulWidget {
 }
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
-  final FocusNode forgotPassEmailFocusNode = FocusNode();
-  final TextEditingController forgotPassEmailController =
-      TextEditingController();
+  final TextEditingController forgotPassEmailController = TextEditingController();
+  final AuthService _authService = AuthService();
+  bool isLoading = false;
 
-  @override
-  void initState() {
-    super.initState();
-    // for auto enable field
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   forgotPassEmailFocusNode.requestFocus();
-    // });
-  }
+  void _sendOtp() async {
+    final input = forgotPassEmailController.text.trim();
+    if (input.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Enter email or mobile")),
+      );
+      return;
+    }
 
-  @override
-  void dispose() {
-    forgotPassEmailFocusNode.dispose();
-    forgotPassEmailController.dispose();
-    super.dispose();
+    setState(() => isLoading = true);
+
+    try {
+      final Response response = await _authService.forgotPassword(input);
+      final message = response.data is String
+          ? response.data
+          : response.data['message'] ?? "OTP sent successfully";
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+
+      if (!mounted) return;
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => OtpVerificationScreen(emailOrMobile: input),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: $e")));
+    } finally {
+      if (mounted) setState(() => isLoading = false);
+    }
   }
 
   @override
@@ -38,13 +58,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       body: Stack(
         children: [
           Positioned.fill(
-            child: Image.asset(
-              "assets/images/login/login_bg.png",
-              fit: BoxFit.cover,
-            ),
+            child: Image.asset("assets/images/login/login_bg.png", fit: BoxFit.cover),
           ),
-
-          // Logo
           Align(
             alignment: Alignment.topCenter,
             child: Padding(
@@ -58,66 +73,45 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               ),
             ),
           ),
-
-          // Bottom form container
           Align(
             alignment: Alignment.bottomCenter,
             child: LayoutBuilder(
-              builder: (context, constraints) {
-                return Container(
-                  width: double.infinity,
-                  height: constraints.maxHeight * 0.65,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(40),
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(30),
-                    child: SafeArea(
-                      child: SingleChildScrollView(
-                        physics: const BouncingScrollPhysics(),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Forgot Password",
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-
-                            CustomTextField(
-                              label: "Mobile or Email",
-                              hint: "Enter Email Or Mobile No.",
-                              focusNode: forgotPassEmailFocusNode,
-                              controller: forgotPassEmailController,
-                            ),
-
-                            const SizedBox(height: 20),
-
-                            GradientButton(
-                              text: "Send OTP",
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const OtpVerificationScreen(),
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
+              builder: (context, constraints) => Container(
+                width: double.infinity,
+                height: constraints.maxHeight * 0.65,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(40)),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(30),
+                  child: SafeArea(
+                    child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Forgot Password",
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                          ),
+                          const SizedBox(height: 20),
+                          CustomTextField(
+                            label: "Mobile or Email",
+                            hint: "Enter Email Or Mobile No.",
+                            controller: forgotPassEmailController,
+                          ),
+                          const SizedBox(height: 20),
+                          GradientButton(
+                            text: isLoading ? "Sending..." : "Send OTP",
+                            onPressed: isLoading ? null : _sendOtp,
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                );
-              },
+                ),
+              ),
             ),
           ),
         ],

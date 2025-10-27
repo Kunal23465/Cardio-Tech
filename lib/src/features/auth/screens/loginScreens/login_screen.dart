@@ -1,3 +1,4 @@
+import 'package:cardio_tech/src/data/models/loginAuth/auth_repository.dart';
 import 'package:cardio_tech/src/features/home/widgets/custom_textfield.dart';
 import 'package:cardio_tech/src/features/auth/screens/loginScreens/forgot_password_screen.dart';
 import 'package:cardio_tech/src/features/home/widgets/gradient_button.dart';
@@ -16,24 +17,14 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final FocusNode emailFocusNode = FocusNode();
   bool rememberMe = false;
-
   bool passwordVisible = false;
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  static const String correctEmail = "test@gmail.com";
-  static const String correctPassword = "123456";
-
   @override
   void initState() {
     super.initState();
-
-    //  Auto focus email input
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   emailFocusNode.requestFocus();
-    // });
-
     _loadRememberMe();
   }
 
@@ -41,7 +32,6 @@ class _LoginScreenState extends State<LoginScreen> {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       rememberMe = prefs.getBool('rememberMe') ?? false;
-
       if (rememberMe) {
         emailController.text = prefs.getString('email') ?? '';
         passwordController.text = prefs.getString('password') ?? '';
@@ -51,7 +41,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _saveLogin() async {
     final prefs = await SharedPreferences.getInstance();
-
     if (rememberMe) {
       await prefs.setBool('rememberMe', true);
       await prefs.setString('email', emailController.text);
@@ -61,25 +50,42 @@ class _LoginScreenState extends State<LoginScreen> {
       await prefs.remove('email');
       await prefs.remove('password');
     }
-
     await prefs.setBool('isLoggedIn', true);
   }
 
   void _handleLogin() async {
-    if (emailController.text == correctEmail &&
-        passwordController.text == correctPassword) {
-      await _saveLogin();
+    final repo = AuthRepository();
 
-      if (!mounted) return;
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const Navbar()),
-      );
-    } else {
+    if (emailController.text.isEmpty || passwordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Invalid email or password")),
+        const SnackBar(content: Text("Please enter email and password")),
       );
+      return;
+    }
+
+    try {
+      bool success = await repo.login(
+        emailController.text,
+        passwordController.text,
+      );
+      print("Login success: $success");
+
+      if (success) {
+        await _saveLogin();
+        if (!mounted) return;
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const Navbar()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Invalid credentials or server error")),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Login failed: $e")));
     }
   }
 
@@ -102,7 +108,6 @@ class _LoginScreenState extends State<LoginScreen> {
               fit: BoxFit.cover,
             ),
           ),
-
           Align(
             alignment: Alignment.topCenter,
             child: Padding(
@@ -116,7 +121,6 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
           ),
-
           Align(
             alignment: Alignment.bottomCenter,
             child: LayoutBuilder(
@@ -146,7 +150,6 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ),
                             const SizedBox(height: 20),
-
                             CustomTextField(
                               label: "Email",
                               hint: "Enter Email",
@@ -154,7 +157,6 @@ class _LoginScreenState extends State<LoginScreen> {
                               focusNode: emailFocusNode,
                             ),
                             const SizedBox(height: 16),
-
                             CustomTextField(
                               label: "Password",
                               hint: "********",
@@ -168,7 +170,6 @@ class _LoginScreenState extends State<LoginScreen> {
                               },
                             ),
                             const SizedBox(height: 10),
-
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -207,7 +208,6 @@ class _LoginScreenState extends State<LoginScreen> {
                               ],
                             ),
                             const SizedBox(height: 20),
-
                             GradientButton(
                               text: "Log In",
                               onPressed: _handleLogin,

@@ -1,9 +1,9 @@
+import 'package:cardio_tech/src/data/models/loginAuth/auth_repository.dart';
 import 'package:cardio_tech/src/features/home/widgets/gradient_button.dart';
 import 'package:cardio_tech/src/routes/AllRoutes.dart';
 import 'package:flutter/material.dart';
 import 'package:cardio_tech/src/features/home/widgets/theme.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Setting extends StatefulWidget {
   const Setting({super.key});
@@ -70,7 +70,6 @@ class _SettingState extends State<Setting> {
           style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
         ),
         onTap: () async {
-          // Confirm logout with dialog
           final shouldLogout = await showDialog<bool>(
             context: context,
             builder: (context) => AlertDialog(
@@ -93,15 +92,19 @@ class _SettingState extends State<Setting> {
           );
 
           if (shouldLogout == true) {
-            final prefs = await SharedPreferences.getInstance();
-            await prefs.setBool('isLoggedIn', false);
-
-            if (!mounted) return;
-            Navigator.pushNamedAndRemoveUntil(
-              context,
-              AppRoutes.login,
-              (route) => false,
-            );
+            final repo = AuthRepository();
+            bool success = await repo.logout();
+            if (success && mounted) {
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                AppRoutes.login,
+                (route) => false,
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Logout failed, try again.")),
+              );
+            }
           }
         },
       ),
