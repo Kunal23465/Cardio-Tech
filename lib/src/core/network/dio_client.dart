@@ -31,7 +31,7 @@ class DioClient {
   void clearAuthToken() {
     _authToken = null;
     dio.options.headers.remove("Authorization");
-    print("🚪 Auth token cleared globally");
+    print(" Auth token cleared globally");
   }
 
   String? getAuthToken() => _authToken;

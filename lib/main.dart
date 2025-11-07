@@ -1,48 +1,59 @@
-import 'package:cardio_tech/src/core/network/dio_client.dart'; // ✅ Add this import
+import 'package:cardio_tech/src/utils/storage_helper.dart';
+import 'package:cardio_tech/src/core/network/dio_client.dart';
+import 'package:cardio_tech/src/features/cardiologistScreens/home/widgets/CardiologistNavbar.dart';
+import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/navbar.dart';
 import 'package:cardio_tech/src/provider/main_providers/providers_setup.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'src/features/auth/screens/loginScreens/login_screen.dart';
+import 'src/features/generalPhysicianScreens/home/widgets/theme.dart';
 import 'src/routes/AllRoutes.dart';
-import 'src/features/home/widgets/theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final prefs = await SharedPreferences.getInstance();
+  final accessToken = await StorageHelper.getAccessToken();
+  final isLoggedIn = await StorageHelper.isLoggedIn();
+  final staffType = await StorageHelper.getStaffType();
 
-  //  Restore access token if it exists (so user stays logged in)
-  final accessToken = prefs.getString('accessToken');
   if (accessToken != null && accessToken.isNotEmpty) {
     DioClient().setAuthToken(accessToken);
-    print(" Token restored on app startup: $accessToken");
+    print(" Token restored: $accessToken");
   }
 
-  //  Check login state
-  final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
-
-  runApp(MyApp(isLoggedIn: isLoggedIn));
+  runApp(MyApp(isLoggedIn: isLoggedIn, staffType: staffType));
 }
 
 class MyApp extends StatelessWidget {
   final bool isLoggedIn;
+  final String? staffType;
 
-  const MyApp({super.key, required this.isLoggedIn});
+  const MyApp({super.key, required this.isLoggedIn, required this.staffType});
 
   @override
   Widget build(BuildContext context) {
+    Widget initialScreen;
+
+    if (isLoggedIn) {
+      if (staffType == "CARDIO_TECH_SUPPORT") {
+        initialScreen = const Cardiologistnavbar();
+      } else if (staffType == "GENERAL_PHYSICIAN") {
+        initialScreen = const Navbar();
+      } else {
+        initialScreen = const LoginScreen();
+      }
+    } else {
+      initialScreen = const LoginScreen();
+    }
+
     return MultiProvider(
       providers: appProviders,
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Cardio Tech',
         theme: appTheme(),
-        // Automatically route user based on login state
-        initialRoute: isLoggedIn ? AppRoutes.navbar : AppRoutes.login,
+        home: initialScreen,
         onGenerateRoute: AppRoutes.onGenerateRoute,
-        onUnknownRoute: (settings) =>
-            MaterialPageRoute(builder: (_) => const LoginScreen()),
       ),
     );
   }

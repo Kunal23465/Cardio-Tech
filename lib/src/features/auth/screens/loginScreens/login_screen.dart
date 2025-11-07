@@ -1,8 +1,12 @@
-import 'package:cardio_tech/src/data/models/loginAuth/auth_repository.dart';
-import 'package:cardio_tech/src/features/home/widgets/custom_textfield.dart';
+import 'package:cardio_tech/src/data/loginAuth/auth_repository.dart';
+import 'package:cardio_tech/src/features/cardiologistScreens/home/widgets/CardiologistNavbar.dart';
+import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/custom_textfield.dart';
 import 'package:cardio_tech/src/features/auth/screens/loginScreens/forgot_password_screen.dart';
-import 'package:cardio_tech/src/features/home/widgets/gradient_button.dart';
-import 'package:cardio_tech/src/features/home/widgets/navbar.dart';
+import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/gradient_button.dart';
+import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/navbar.dart';
+import 'package:cardio_tech/src/utils/storage_helper.dart';
+import 'package:cardio_tech/src/utils/snackbar_helper.dart';
+import 'package:cardio_tech/src/core/network/exceptions.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -18,6 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final FocusNode emailFocusNode = FocusNode();
   bool rememberMe = false;
   bool passwordVisible = false;
+  bool isLoading = false;
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -28,6 +33,7 @@ class _LoginScreenState extends State<LoginScreen> {
     _loadRememberMe();
   }
 
+  /// Load saved credentials if Remember Me is checked
   Future<void> _loadRememberMe() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -39,53 +45,96 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
-  Future<void> _saveLogin() async {
+  /// Save or clear Remember Me preferences
+  Future<void> _saveLoginPrefs() async {
     final prefs = await SharedPreferences.getInstance();
     if (rememberMe) {
       await prefs.setBool('rememberMe', true);
       await prefs.setString('email', emailController.text);
       await prefs.setString('password', passwordController.text);
     } else {
-      await prefs.setBool('rememberMe', false);
+      await prefs.remove('rememberMe');
       await prefs.remove('email');
       await prefs.remove('password');
     }
-    await prefs.setBool('isLoggedIn', true);
   }
 
-  void _handleLogin() async {
+  /// Handle Login with proper error catching and SnackBars
+  Future<void> _handleLogin() async {
     final repo = AuthRepository();
 
     if (emailController.text.isEmpty || passwordController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please enter email and password")),
+      SnackBarHelper.show(
+        context,
+        message: "Please enter email and password",
+        type: SnackBarType.warning,
       );
       return;
     }
 
+    setState(() => isLoading = true);
+
     try {
-      bool success = await repo.login(
-        emailController.text,
-        passwordController.text,
+      final success = await repo.login(
+        emailController.text.trim(),
+        passwordController.text.trim(),
       );
-      print("Login success: $success");
 
       if (success) {
-        await _saveLogin();
+        await _saveLoginPrefs();
+
+        final staffType = await StorageHelper.getStaffType();
+        final userId = await StorageHelper.getUserId();
+
+        print(" Login success for UserID: $userId, Staff Type: $staffType");
+
         if (!mounted) return;
-        Navigator.pushReplacement(
+
+        SnackBarHelper.show(
           context,
-          MaterialPageRoute(builder: (_) => const Navbar()),
+          message: "Login successful!",
+          type: SnackBarType.success,
         );
+
+        // Navigate based on user role
+        if (staffType == "CARDIO_TECH_SUPPORT") {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => const Cardiologistnavbar()),
+          );
+        } else if (staffType == "GENERAL_PHYSICIAN") {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => const Navbar()),
+          );
+        } else {
+          SnackBarHelper.show(
+            context,
+            message: "Unknown role. Contact admin.",
+            type: SnackBarType.warning,
+          );
+        }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Invalid credentials or server error")),
+        SnackBarHelper.show(
+          context,
+          message: "Invalid credentials or server error",
+          type: SnackBarType.error,
         );
       }
-    } catch (e) {
-      ScaffoldMessenger.of(
+    } on ApiException catch (e) {
+      SnackBarHelper.show(
         context,
-      ).showSnackBar(SnackBar(content: Text("Login failed: $e")));
+        message: e.message,
+        type: SnackBarType.error,
+      );
+    } catch (e) {
+      SnackBarHelper.show(
+        context,
+        message: "Unexpected error: $e",
+        type: SnackBarType.error,
+      );
+    } finally {
+      if (mounted) setState(() => isLoading = false);
     }
   }
 
@@ -192,7 +241,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) =>
+                                          builder: (_) =>
                                               const ForgotPasswordScreen(),
                                         ),
                                       );
@@ -208,10 +257,14 @@ class _LoginScreenState extends State<LoginScreen> {
                               ],
                             ),
                             const SizedBox(height: 20),
-                            GradientButton(
-                              text: "Log In",
-                              onPressed: _handleLogin,
-                            ),
+                            isLoading
+                                ? const Center(
+                                    child: CircularProgressIndicator(),
+                                  )
+                                : GradientButton(
+                                    text: "Log In",
+                                    onPressed: _handleLogin,
+                                  ),
                           ],
                         ),
                       ),

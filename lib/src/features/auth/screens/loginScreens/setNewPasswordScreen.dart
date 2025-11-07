@@ -1,6 +1,6 @@
-import 'package:cardio_tech/src/data/models/loginAuth/auth_service.dart';
-import 'package:cardio_tech/src/features/home/widgets/custom_textfield.dart';
-import 'package:cardio_tech/src/features/home/widgets/gradient_button.dart';
+import 'package:cardio_tech/src/data/loginAuth/auth_service.dart';
+import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/custom_textfield.dart';
+import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/gradient_button.dart';
 import 'package:cardio_tech/src/routes/AllRoutes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';

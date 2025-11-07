@@ -1,19 +1,21 @@
+import 'package:cardio_tech/src/features/cardiologistScreens/home/otherScreens/reportOrder.dart';
+import 'package:cardio_tech/src/features/cardiologistScreens/home/widgets/assignCard.dart';
 import 'package:flutter/material.dart';
 import '../features/auth/screens/loginScreens/forgot_password_screen.dart';
 import '../features/auth/screens/loginScreens/login_screen.dart';
 import '../features/auth/screens/loginScreens/otp_verification_screen.dart';
 import '../features/auth/screens/loginScreens/setNewPasswordScreen.dart';
-import '../features/home/widgets/navbar.dart';
-import '../features/home/navbar/newOrder.dart';
-import '../features/home/navbar/orderDetails.dart';
-import '../features/home/settingScreens/aboutUs.dart';
-import '../features/home/settingScreens/changePassword.dart';
-import '../features/home/settingScreens/editProfile.dart';
-import '../features/home/settingScreens/helpCenter.dart';
-import '../features/home/settingScreens/privacyPolicy.dart';
-import '../features/home/settingScreens/term&Conditions.dart';
-import '../features/home/settingScreens/viewProfile.dart';
-import '../features/home/notifications/notification.dart';
+import '../features/generalPhysicianScreens/home/widgets/navbar.dart';
+import '../features/generalPhysicianScreens/home/navbar/newOrder.dart';
+import '../features/generalPhysicianScreens/home/navbar/orderDetails.dart';
+import '../features/generalPhysicianScreens/home/settingScreens/aboutUs.dart';
+import '../features/generalPhysicianScreens/home/settingScreens/changePassword.dart';
+import '../features/generalPhysicianScreens/home/settingScreens/editProfile.dart';
+import '../features/generalPhysicianScreens/home/settingScreens/helpCenter.dart';
+import '../features/generalPhysicianScreens/home/settingScreens/privacyPolicy.dart';
+import '../features/generalPhysicianScreens/home/settingScreens/term&Conditions.dart';
+import '../features/generalPhysicianScreens/home/settingScreens/viewProfile.dart';
+import '../features/generalPhysicianScreens/home/notifications/notification.dart';
 
 class AppRoutes {
   static const String login = '/login';
@@ -32,16 +34,20 @@ class AppRoutes {
   static const String newOrder = '/new-order';
   static const String orderDetails = '/order-details';
 
+  // for cardiologist
+  static const String reportOrder = '/report-order';
+  
+
   // ======= static routes map =======
   static Map<String, WidgetBuilder> routes = {
     login: (context) => const LoginScreen(),
     forgotPassword: (context) => const ForgotPasswordScreen(),
     otpVerification: (context) => const OtpVerificationScreen(
-          emailOrMobile: '',
-        ), // default empty, will override with arguments
+      emailOrMobile: '',
+    ), // default empty, will override with arguments
     setNewPassword: (context) => const SetNewPasswordScreen(
-          emailOrMobile: '',
-        ), // default empty, will override with arguments
+      emailOrMobile: '',
+    ), // default empty, will override with arguments
     navbar: (context) => const Navbar(),
     newOrder: (context) => const NewOrder(),
     orderDetails: (context) => const Orderdetails(),
@@ -53,6 +59,9 @@ class AppRoutes {
     termConditions: (context) => const TermConditions(),
     helpCenter: (context) => const HelpCenter(),
     notification: (context) => const NotificationScreeen(),
+
+    //for cardiologist
+    reportOrder: (context) => const ReportOrder(),
   };
 
   // ======= helper for named routes with arguments =======
@@ -62,19 +71,26 @@ class AppRoutes {
       case otpVerification:
         if (args is String) {
           return MaterialPageRoute(
-              builder: (_) => OtpVerificationScreen(emailOrMobile: args));
+            builder: (_) => OtpVerificationScreen(emailOrMobile: args),
+            settings: settings,
+          );
         }
         return null;
+
       case setNewPassword:
         if (args is String) {
           return MaterialPageRoute(
-              builder: (_) => SetNewPasswordScreen(emailOrMobile: args));
+            builder: (_) => SetNewPasswordScreen(emailOrMobile: args),
+            settings: settings,
+          );
         }
         return null;
+
       default:
         final builder = routes[settings.name];
         if (builder != null) {
-          return MaterialPageRoute(builder: builder);
+          
+          return MaterialPageRoute(builder: builder, settings: settings);
         }
         return null;
     }
