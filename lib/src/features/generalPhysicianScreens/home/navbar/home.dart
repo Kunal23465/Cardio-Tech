@@ -5,6 +5,9 @@ import 'package:cardio_tech/src/routes/AllRoutes.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+import 'package:cardio_tech/src/provider/user/loggedInUserDetailsProvider.dart';
+import 'package:cardio_tech/src/utils/storage_helper.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -56,167 +59,199 @@ class _HomePageState extends State<HomePage> {
   int _currentBanner = 0;
 
   @override
+  void initState() {
+    super.initState();
+    // ✅ Fetch logged-in user details using stored userId
+    Future.microtask(() async {
+      final userId = await StorageHelper.getUserId();
+      if (userId != null) {
+        context.read<LoggedInUserDetailsProvider>().fetchLoggedInUserDetails(
+          userId: userId,
+        );
+      } else {
+        debugPrint("⚠️ User ID not found in storage");
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final userProvider = context.watch<LoggedInUserDetailsProvider>();
+    final user = userProvider.userDetails;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    const CircleAvatar(
-                      radius: 28,
-                      backgroundImage: AssetImage(
-                        'assets/images/homePage/clinic.png',
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
-                        Text(
-                          "Dr. Kunal Multi Clinic",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                        ),
-                        SizedBox(height: 2),
-                        Text(
-                          "Alambagh, Lucknow Up",
-                          style: TextStyle(fontSize: 14, color: Colors.grey),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                InkWell(
-                  onTap: () {
-                    Navigator.pushNamed(context, AppRoutes.notification);
-                  },
-                  borderRadius: BorderRadius.circular(50),
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFEef7f5),
-                      shape: BoxShape.circle,
-                    ),
-                    child: SvgPicture.asset(
-                      'assets/images/homePage/notification.svg',
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-
-            Column(
-              children: [
-                FlutterCarousel(
-                  items: banners.map((banner) {
-                    return ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 4),
-                        child: Image.asset(
-                          banner,
-                          fit: BoxFit.cover,
-                          width: double.infinity,
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                  options: FlutterCarouselOptions(
-                    height: (MediaQuery.of(context).size.width * 0.35).clamp(
-                      150.0,
-                      double.infinity,
-                    ),
-                    autoPlay: true,
-                    viewportFraction: 1,
-                    showIndicator: false,
-                    onPageChanged: (index, reason) {
-                      setState(() {
-                        _currentBanner = index;
-                      });
-                    },
-                  ),
-                ),
-
-                const SizedBox(height: 8),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: banners.asMap().entries.map((entry) {
-                    return Container(
-                      width: 8,
-                      height: 8,
-                      margin: const EdgeInsets.symmetric(
-                        vertical: 4,
-                        horizontal: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: _currentBanner == entry.key
-                            ? AppColors.primary
-                            : Colors.grey[300],
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-
-            GradientButton(
-              text: "New Order",
-              onPressed: () {
-                Navigator.pushNamed(context, AppRoutes.newOrder);
-              },
-            ),
-            const SizedBox(height: 20),
-
-            Column(
-              children: [
-                for (var i = 0; i < _dashboardCards.length; i += 2)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: IntrinsicHeight(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: userProvider.isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : userProvider.errorMessage != null
+            ? Center(child: Text(userProvider.errorMessage!))
+            : ListView(
+                padding: const EdgeInsets.all(16),
+                children: [
+                  // ✅ Top Row - User Info + Notification
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
                         children: [
-                          Expanded(
-                            child: OrderCard(
-                              title: _dashboardCards[i]['title'] ?? '',
-                              subtitle: _dashboardCards[i]['subtitle'] ?? '',
-                              iconPath: _dashboardCards[i]['iconPath'] ?? '',
-                            ),
+                          CircleAvatar(
+                            radius: 28,
+                            backgroundImage: user?.profilePic != null
+                                ? NetworkImage(user!.profilePic!)
+                                : const AssetImage(
+                                        'assets/images/homePage/clinic.png',
+                                      )
+                                      as ImageProvider,
                           ),
-                          const SizedBox(width: 12),
-                          if (i + 1 < _dashboardCards.length)
-                            Expanded(
-                              child: OrderCard(
-                                title: _dashboardCards[i + 1]['title'] ?? '',
-                                subtitle:
-                                    _dashboardCards[i + 1]['subtitle'] ?? '',
-                                iconPath:
-                                    _dashboardCards[i + 1]['iconPath'] ?? '',
+                          const SizedBox(width: 10),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                user?.clinicName ?? "Clinic Name",
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
                               ),
-                            ),
+                              const SizedBox(height: 2),
+                              Text(
+                                user?.clinicAddress ?? "Clinic Address",
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
-                    ),
+                      InkWell(
+                        onTap: () {
+                          Navigator.pushNamed(context, AppRoutes.notification);
+                        },
+                        borderRadius: BorderRadius.circular(50),
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: const BoxDecoration(
+                            color: Color(0xFFEef7f5),
+                            shape: BoxShape.circle,
+                          ),
+                          child: SvgPicture.asset(
+                            'assets/images/homePage/notification.svg',
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-              ],
-            ),
-            const SizedBox(height: 20),
-          ],
-        ),
+                  const SizedBox(height: 20),
+
+                  // ✅ Banner Carousel
+                  Column(
+                    children: [
+                      FlutterCarousel(
+                        items: banners.map((banner) {
+                          return ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: Container(
+                              margin: const EdgeInsets.symmetric(horizontal: 4),
+                              child: Image.asset(
+                                banner,
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                        options: FlutterCarouselOptions(
+                          height: (MediaQuery.of(context).size.width * 0.35)
+                              .clamp(150.0, double.infinity),
+                          autoPlay: true,
+                          viewportFraction: 1,
+                          showIndicator: false,
+                          onPageChanged: (index, reason) {
+                            setState(() => _currentBanner = index);
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: banners.asMap().entries.map((entry) {
+                          return Container(
+                            width: 8,
+                            height: 8,
+                            margin: const EdgeInsets.symmetric(
+                              vertical: 4,
+                              horizontal: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: _currentBanner == entry.key
+                                  ? AppColors.primary
+                                  : Colors.grey[300],
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+
+                  // ✅ New Order Button
+                  GradientButton(
+                    text: "New Order",
+                    onPressed: () {
+                      Navigator.pushNamed(context, AppRoutes.newOrder);
+                    },
+                  ),
+                  const SizedBox(height: 20),
+
+                  // ✅ Dashboard Cards
+                  Column(
+                    children: [
+                      for (var i = 0; i < _dashboardCards.length; i += 2)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: IntrinsicHeight(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Expanded(
+                                  child: OrderCard(
+                                    title: _dashboardCards[i]['title'] ?? '',
+                                    subtitle:
+                                        _dashboardCards[i]['subtitle'] ?? '',
+                                    iconPath:
+                                        _dashboardCards[i]['iconPath'] ?? '',
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                if (i + 1 < _dashboardCards.length)
+                                  Expanded(
+                                    child: OrderCard(
+                                      title:
+                                          _dashboardCards[i + 1]['title'] ?? '',
+                                      subtitle:
+                                          _dashboardCards[i + 1]['subtitle'] ??
+                                          '',
+                                      iconPath:
+                                          _dashboardCards[i + 1]['iconPath'] ??
+                                          '',
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                ],
+              ),
       ),
     );
   }

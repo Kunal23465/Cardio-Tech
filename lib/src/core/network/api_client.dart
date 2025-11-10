@@ -18,11 +18,32 @@ class ApiClient {
     );
   }
 
+  Future<Response> put(String url, dynamic data) async {
+    return await _dio.put(
+      url,
+      data: data,
+      options: Options(
+        headers: {
+          'Content-Type': data is FormData
+              ? 'multipart/form-data'
+              : 'application/json',
+        },
+      ),
+    );
+  }
+
   Future<Response> get(String url) async {
     return await _dio.get(url);
   }
 
-  //  Helper for token setup
+  /// 🧾 New method for file downloads (binary)
+  Future<Response> downloadFile(String url) async {
+    return await _dio.get(
+      url,
+      options: Options(responseType: ResponseType.bytes),
+    );
+  }
+
   void setAuthToken(String token) {
     DioClient().setAuthToken(token);
   }

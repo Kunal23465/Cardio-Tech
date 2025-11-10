@@ -343,18 +343,27 @@ class GradientBorderCard extends StatelessWidget {
                 ),
 
                 if (order.orderStatus == "SUBMITTED" ||
-                    order.orderStatus == "IN_PROGRESS")
+                    order.orderStatus == "IN_PROGRESS" ||
+                    order.orderStatus == "FINALIZED" ||
+                    order.orderStatus == "IN_REVIEW")
                   SizedBox(
                     width: 110,
                     child: GradientButton(
                       height: 30,
                       width: 110,
-                      text: order.orderStatus == "SUBMITTED"
+                      text:
+                          order.orderStatus == "SUBMITTED" ||
+                              order.orderStatus == "FINALIZED"
                           ? "Track Order"
                           : "Create Order",
                       onPressed: () async {
-                        if (order.orderStatus == "SUBMITTED") {
-                          Navigator.pushNamed(context, AppRoutes.orderDetails);
+                        if (order.orderStatus == "SUBMITTED" ||
+                            order.orderStatus == "FINALIZED") {
+                          Navigator.pushNamed(
+                            context,
+                            AppRoutes.orderDetails,
+                            arguments: order,
+                          );
                         } else if (order.orderStatus == "IN_PROGRESS") {
                           Navigator.push(
                             context,
