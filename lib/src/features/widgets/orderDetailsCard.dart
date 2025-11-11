@@ -1,3 +1,4 @@
+import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/gradient_button.dart';
@@ -10,6 +11,9 @@ class OrderDetailsCard extends StatelessWidget {
   final String referredBy;
   final String submittedOn;
   final String? orderStatus;
+  final String? age;
+  final String? gender;
+  final String? priorityName;
   final VoidCallback? onAssign;
   final VoidCallback? onReport;
   final VoidCallback? onUnderProgress;
@@ -24,10 +28,13 @@ class OrderDetailsCard extends StatelessWidget {
     required this.referredBy,
     required this.submittedOn,
     this.orderStatus,
+    this.age,
+    this.gender,
     this.onAssign,
     this.onReport,
     this.onUnderProgress,
     this.onFinalized,
+    this.priorityName,
   });
 
   @override
@@ -88,6 +95,7 @@ class OrderDetailsCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          /// Top Row — Avatar + Name + Red Circle (if High Priority)
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -97,22 +105,57 @@ class OrderDetailsCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      name,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
+                    /// Name + red circle right corner
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Row(
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  name,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ),
+                              if (age != null && age!.isNotEmpty)
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 4,
+                                  ),
+                                  child: Text(
+                                    '| ${age}yr',
+                                    style: const TextStyle(fontSize: 13),
+                                  ),
+                                ),
+                              if (gender != null && gender!.isNotEmpty)
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 4,
+                                  ),
+                                  child: Text(
+                                    '| $gender',
+                                    style: const TextStyle(fontSize: 13),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                        if (priorityName == 'High Priority')
+                          const Icon(Icons.circle, color: Colors.red, size: 10),
+                      ],
                     ),
+
                     const SizedBox(height: 5),
                     Row(
                       children: [
                         SvgPicture.asset('assets/icon/user.svg'),
                         const SizedBox(width: 4),
-                        Text(
-                          "Order Id : $orderId",
-                          style: TextStyle(color: Colors.grey.shade700),
-                        ),
+                        Text("Order Id : $orderId"),
                       ],
                     ),
                     const SizedBox(height: 5),
@@ -120,10 +163,7 @@ class OrderDetailsCard extends StatelessWidget {
                       children: [
                         SvgPicture.asset('assets/icon/stethoscope.svg'),
                         const SizedBox(width: 4),
-                        Text(
-                          "Referred By $referredBy",
-                          style: TextStyle(color: Colors.grey.shade700),
-                        ),
+                        Text("Referred By $referredBy"),
                       ],
                     ),
                     const SizedBox(height: 5),
@@ -131,30 +171,26 @@ class OrderDetailsCard extends StatelessWidget {
                       children: [
                         SvgPicture.asset('assets/icon/hospital.svg'),
                         const SizedBox(width: 4),
-                        Text(
-                          hospital,
-                          style: TextStyle(color: Colors.grey.shade700),
-                        ),
+                        Text(hospital),
                       ],
                     ),
-                    // const SizedBox(height: 5),
-
-                    // Row(
-                    //   children: [
-                    //     SvgPicture.asset('assets/icon/hospital.svg'),
-                    //     const SizedBox(width: 4),
-                    //     Text(
-                    //       hospital,
-                    //       style: TextStyle(color: Colors.grey.shade700),
-                    //     ),
-                    //   ],
-                    // ),
+                    const SizedBox(height: 5),
+                    Row(
+                      children: [
+                        SvgPicture.asset('assets/icon/hospital.svg'),
+                        const SizedBox(width: 4),
+                        Text(orderStatus ?? ''),
+                      ],
+                    ),
                   ],
                 ),
               ),
             ],
           ),
+
           const SizedBox(height: 8),
+
+          /// Footer row (Submitted on + Buttons)
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

@@ -5,7 +5,7 @@ import 'package:cardio_tech/src/data/cardioLogists/model/myOrderModel.dart';
 class MyOrderService {
   final ApiClient _apiClient = ApiClient();
 
-  /// 🔹 Fetch all orders (POST)
+  ///  Fetch all orders (POST)
   Future<List<MyOrderModel>> fetchAllOrders() async {
     final response = await _apiClient.post(ApiConstants.getAllSearchOrder, {});
 

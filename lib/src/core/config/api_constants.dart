@@ -25,8 +25,8 @@ class ApiConstants {
   static const String getAllSearchOrder =
       "$baseUrl/cardio/cardiologists/orderAssignedToCardioByGp";
   static const String changeStatus = "$baseUrl/cardio/orders/in-review";
-  static const String getCardioAllStatus =
-      "$baseUrl/cardio/cardiologists/allCardioScreenStatus";
+  // static const String getCardioAllStatus =
+  //     "$baseUrl/cardio/cardiologists/allCardioScreenStatus";
 
   static const String submitReport = "$baseUrl/approval/cardioSubmitReport";
   static const String downloadEkgReport =
@@ -35,4 +35,19 @@ class ApiConstants {
   static const String submitOrderDetails = "$baseUrl/cardio/orders/closeOrder";
   static const String loggedInUserDetails =
       "$baseUrl/home/getLoggedUserDetails";
+
+
+  static const String forAssignAllClinic =
+      "$baseUrl/cardio/cardiologists/getAllListOfClinictByLoggedUser";
+  static const String forAssignAllCardio =
+      "$baseUrl/cardio/cardiologists/cardiologists/exclude";
+
+  static const String assignOrderToCardio =
+      "$baseUrl/order-assignment/orderAssignFromCardiologistIdToCardiologist";
+
+  //Common APIs
+  //   static const String getCardioAllStatus =
+  //       "$baseUrl/commonLookupValue/getByLookupTypeCode/ORDERSTATUSCARDIO";
+  static const String getCardioAllStatus =
+      "$baseUrl/commonLookupValue/getByLookupTypeCode";
 }

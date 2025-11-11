@@ -6,11 +6,16 @@ class MyOrderModel {
   final String? orderStatus;
   final String? priorityName;
   final String? assignedCardiologistName;
+  final String? assignedCardiologistId;
   final String? medicalRecordNumber;
   final String? clinicalNote;
   final String? ekgReport;
   final String? createdAt;
   final int? age;
+  final String? genderValue;
+  final String? clinicName;
+  final String? createdByGpName;
+
   final List<ApprovalLevel>? approvalLevels;
 
   MyOrderModel({
@@ -19,12 +24,16 @@ class MyOrderModel {
     this.orderStatus,
     this.priorityName,
     this.assignedCardiologistName,
+    this.assignedCardiologistId,
     this.medicalRecordNumber,
     this.clinicalNote,
     this.ekgReport,
     this.createdAt,
     this.age,
+    this.genderValue,
     this.approvalLevels,
+    this.clinicName,
+    this.createdByGpName,
   });
 
   factory MyOrderModel.fromJson(Map<String, dynamic> json) {
@@ -34,11 +43,16 @@ class MyOrderModel {
       orderStatus: json["orderStatus"],
       priorityName: json["priorityName"],
       assignedCardiologistName: json["assignedCardiologistName"],
+      assignedCardiologistId: json["assignedCardiologistId"]?.toString(),
       medicalRecordNumber: json["medicalRecordNumber"],
       clinicalNote: json["clinicalNote"],
       ekgReport: json["ekgReport"],
       createdAt: _formatApiDate(json['createdAt']),
       age: json["age"] != null ? int.tryParse(json["age"].toString()) : null,
+      genderValue: json["genderValue"],
+      clinicName: json["clinicName"],
+      createdByGpName: json["createdByGpName"],
+
       approvalLevels: (json["approvalLevels"] as List?)
           ?.map((e) => ApprovalLevel.fromJson(e))
           .toList(),
@@ -52,11 +66,17 @@ class MyOrderModel {
       "orderStatus": orderStatus,
       "priorityName": priorityName,
       "assignedCardiologistName": assignedCardiologistName,
+      "assignedCardiologistId": assignedCardiologistId,
+
       "medicalRecordNumber": medicalRecordNumber,
       "clinicalNote": clinicalNote,
       "ekgReport": ekgReport,
       "createdAt": createdAt,
       "age": age,
+      "genderValue": genderValue,
+      "clinicName": clinicName,
+      "createdByGpName": createdByGpName,
+
       "approvalLevels": approvalLevels?.map((e) => e.toJson()).toList(),
     };
   }
@@ -101,11 +121,15 @@ extension MyOrderModelCopy on MyOrderModel {
     String? orderStatus,
     String? priorityName,
     String? assignedCardiologistName,
+    String? assignedCardiologistId,
     String? medicalRecordNumber,
     String? clinicalNote,
     String? ekgReport,
     String? createdAt,
     int? age,
+    String? genderValue,
+    String? clinicName,
+    String? createdByGpName,
     List<ApprovalLevel>? approvalLevels,
   }) {
     return MyOrderModel(
@@ -115,11 +139,16 @@ extension MyOrderModelCopy on MyOrderModel {
       priorityName: priorityName ?? this.priorityName,
       assignedCardiologistName:
           assignedCardiologistName ?? this.assignedCardiologistName,
+      assignedCardiologistId:
+          assignedCardiologistId ?? this.assignedCardiologistId,
       medicalRecordNumber: medicalRecordNumber ?? this.medicalRecordNumber,
       clinicalNote: clinicalNote ?? this.clinicalNote,
       ekgReport: ekgReport ?? this.ekgReport,
       createdAt: createdAt ?? this.createdAt,
       age: age ?? this.age,
+      genderValue: genderValue ?? this.genderValue,
+      clinicName: clinicName ?? this.clinicName,
+      createdByGpName: createdByGpName ?? this.createdByGpName,
       approvalLevels: approvalLevels ?? this.approvalLevels,
     );
   }

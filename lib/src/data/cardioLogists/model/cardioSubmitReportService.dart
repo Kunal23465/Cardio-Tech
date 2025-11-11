@@ -12,9 +12,10 @@ class CardioSubmitReportService {
     required int approverPocId,
     required String action,
     required Uint8List attachmentBytes,
+    String? clinicNoteFromCardio, 
   }) async {
     try {
-      final formData = FormData.fromMap({
+      final Map<String, dynamic> formMap = {
         'orderId': orderId,
         'approvalLevel': approvalLevel,
         'approverPocId': approverPocId,
@@ -23,10 +24,16 @@ class CardioSubmitReportService {
           attachmentBytes,
           filename: "report_${orderId}.png",
         ),
-      });
+      };
 
-      final response =
-          await _apiClient.post(ApiConstants.submitReport, formData);
+      //  optional field only if it has a value
+      if (clinicNoteFromCardio != null && clinicNoteFromCardio.isNotEmpty) {
+        formMap['clinicNoteFromCardio'] = clinicNoteFromCardio;
+      }
+
+      final formData = FormData.fromMap(formMap);
+
+      final response = await _apiClient.post(ApiConstants.submitReport, formData);
 
       if (response.statusCode == 200) {
         final data = response.data;
