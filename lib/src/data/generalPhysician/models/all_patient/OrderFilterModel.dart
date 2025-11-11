@@ -14,6 +14,9 @@ class OrderFilterModel {
   final String? createdAt;
   final String? priorityName;
   final String? assignedCardiologistName;
+  final String? uploadInsuranceIDProof;
+  final String? ekgReportName;
+  
 
   OrderFilterModel({
     required this.orderDetailsId,
@@ -29,6 +32,8 @@ class OrderFilterModel {
     this.createdAt,
     this.priorityName,
     this.assignedCardiologistName,
+    this.uploadInsuranceIDProof,
+    this.ekgReportName,
   });
 
   factory OrderFilterModel.fromJson(Map<String, dynamic> json) {
@@ -46,6 +51,8 @@ class OrderFilterModel {
       createdAt: _formatApiDate(json['createdAt']),
       priorityName: json['priorityName'],
       assignedCardiologistName: json['assignedCardiologistName'],
+      uploadInsuranceIDProof: json['uploadInsuranceIDProof'],
+      ekgReportName: _extractFileName(json['uploadInsuranceIDProof']),
     );
   }
 
@@ -61,6 +68,17 @@ class OrderFilterModel {
       return formatted; // Convert → "04 MAY 2025"
     } catch (e) {
       return apiDate; // Return original string if parsing fails
+    }
+  }
+
+  static String? _extractFileName(String? fileUrl) {
+    if (fileUrl == null || fileUrl.isEmpty) return null;
+    try {
+      // Extract everything after the last "/"
+      return fileUrl.split('/').last;
+    } catch (e) {
+      // Return the original string if something goes wrong
+      return fileUrl;
     }
   }
 }

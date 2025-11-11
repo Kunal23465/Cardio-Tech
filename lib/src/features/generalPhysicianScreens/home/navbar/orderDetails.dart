@@ -1,5 +1,9 @@
+import 'package:cardio_tech/src/data/generalPhysician/models/all_patient/OrderFilterModel.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/custom_textfield.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/gradient_button.dart';
+import 'package:cardio_tech/src/provider/generalPhysicianProvider/allPatient/downloadEkgReportProvider.dart';
+import 'package:cardio_tech/src/provider/generalPhysicianProvider/allPatient/submitOrderDetailsProvider.dart';
+import 'package:cardio_tech/src/utils/snackbar_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/theme.dart';
@@ -12,8 +16,66 @@ class Orderdetails extends StatefulWidget {
 }
 
 class _OrderdetailsState extends State<Orderdetails> {
+  late SubmitOrderDetailsProvider submitProvider;
+  late DownloadEkgReportProvider downloadProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    submitProvider = SubmitOrderDetailsProvider();
+    downloadProvider = DownloadEkgReportProvider();
+
+    downloadProvider.addListener(() {
+      if (downloadProvider.isSuccess) {
+        SnackBarHelper.show(
+          context,
+          message: "EKG Report downloaded successfully!",
+          type: SnackBarType.success,
+        );
+        downloadProvider.reset();
+      }
+    });
+
+    downloadProvider.addListener(() {
+      if (downloadProvider.errorMessage != null) {
+        SnackBarHelper.show(
+          context,
+          message: "Failed to download EKG Report.",
+          type: SnackBarType.error,
+        );
+        downloadProvider.reset();
+      }
+    });
+
+    // Listen for success
+    submitProvider.addListener(() {
+      if (submitProvider.isSuccess) {
+        SnackBarHelper.show(
+          context,
+          message: "Order submitted successfully!",
+          type: SnackBarType.success,
+        );
+        submitProvider.reset(); // Reset after showing
+      }
+    });
+
+    submitProvider.addListener(() {
+      if (submitProvider.errorMessage != null) {
+        SnackBarHelper.show(
+          context,
+          message: "Failed to submit order: ${submitProvider.errorMessage}",
+          type: SnackBarType.error,
+        );
+        submitProvider.reset(); // Reset after showing
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final order =
+        ModalRoute.of(context)!.settings.arguments as OrderFilterModel;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -76,9 +138,9 @@ class _OrderdetailsState extends State<Orderdetails> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          "Mrs. Amanda",
-                          style: TextStyle(
+                        Text(
+                          order.patientName,
+                          style: const TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 16,
                           ),
@@ -88,9 +150,9 @@ class _OrderdetailsState extends State<Orderdetails> {
                           children: [
                             SvgPicture.asset('assets/icon/user.svg'),
                             const SizedBox(width: 6),
-                            const Text(
-                              "MRN : 789405",
-                              style: TextStyle(
+                            Text(
+                              "MRN : ${order.medicalRecordNumber}",
+                              style: const TextStyle(
                                 fontSize: 13,
                                 color: AppColors.primary,
                               ),
@@ -118,8 +180,8 @@ class _OrderdetailsState extends State<Orderdetails> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      child: const Text(
-                        "Finalized",
+                      child: Text(
+                        order.orderStatus ?? '',
                         style: TextStyle(
                           color: AppColors.primary,
                           fontSize: 13,
@@ -134,7 +196,7 @@ class _OrderdetailsState extends State<Orderdetails> {
 
             const SizedBox(height: 20),
 
-            //Appointment Info
+            // Appointment Info
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -159,8 +221,8 @@ class _OrderdetailsState extends State<Orderdetails> {
                         children: [
                           SvgPicture.asset('assets/icon/calendar1.svg'),
                           const SizedBox(width: 6),
-                          const Text(
-                            "31 Jul 2025",
+                          Text(
+                            order.createdAt ?? '',
                             style: TextStyle(
                               color: Colors.black87,
                               fontSize: 14,
@@ -181,8 +243,8 @@ class _OrderdetailsState extends State<Orderdetails> {
                         children: [
                           SvgPicture.asset('assets/icon/hospital.svg'),
                           const SizedBox(width: 6),
-                          const Text(
-                            "Seen By DR. GP",
+                          Text(
+                            order.assignedCardiologistName ?? '',
                             style: TextStyle(
                               color: Colors.black54,
                               fontSize: 14,
@@ -190,23 +252,23 @@ class _OrderdetailsState extends State<Orderdetails> {
                           ),
                         ],
                       ),
-                      Row(
-                        children: [
-                          SvgPicture.asset(
-                            'assets/icon/stethoscope.svg',
-                            height: 16,
-                            color: Colors.teal,
-                          ),
-                          const SizedBox(width: 6),
-                          const Text(
-                            "Seen By DR. GP",
-                            style: TextStyle(
-                              color: Colors.black54,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
+                      // Row(
+                      //   children: [
+                      //     SvgPicture.asset(
+                      //       'assets/icon/stethoscope.svg',
+                      //       height: 16,
+                      //       color: Colors.teal,
+                      //     ),
+                      //     const SizedBox(width: 6),
+                      //     const Text(
+                      //       "Seen By DR. GP",
+                      //       style: TextStyle(
+                      //         color: Colors.black54,
+                      //         fontSize: 14,
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
                     ],
                   ),
                 ],
@@ -216,14 +278,20 @@ class _OrderdetailsState extends State<Orderdetails> {
             CustomTextField(
               label: "EKG Report",
               fieldType: FieldType.download,
-              controller: TextEditingController(text: "ekg_report.pdf"),
-              // customIcon: 'assets/icon/arrow-up.svg',
-              onDownload: () {},
+              controller: TextEditingController(
+                text: order.ekgReportName ?? '',
+              ),
+              onDownload: () {
+                downloadProvider.downloadEkgReport(
+                  order.uploadInsuranceIDProof!,
+                );
+              },
             ),
             const SizedBox(height: 30),
             CustomTextField(
-              label: "Clinical Note ",
-              hint: " Clinical Note",
+              label: "Clinical Note",
+              hint: "Clinical Note",
+              controller: TextEditingController(text: order.clinicalNote ?? ''),
               fieldType: FieldType.note,
             ),
             const SizedBox(height: 30),
@@ -242,7 +310,14 @@ class _OrderdetailsState extends State<Orderdetails> {
                 ),
                 const SizedBox(width: 20),
                 Expanded(
-                  child: GradientButton(text: 'Submit Order', onPressed: () {}),
+                  child: GradientButton(
+                    text: 'Submit Order',
+                    onPressed: () {
+                      submitProvider.submitOrderDetails(
+                        orderDetailsId: order.orderDetailsId,
+                      );
+                    },
+                  ),
                 ),
               ],
             ),

@@ -4,21 +4,38 @@ import 'package:cardio_tech/src/features/cardiologistScreens/home/widgets/Cardio
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/navbar.dart';
 import 'package:cardio_tech/src/provider/main_providers/providers_setup.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'src/features/auth/screens/loginScreens/login_screen.dart';
 import 'src/features/generalPhysicianScreens/home/widgets/theme.dart';
 import 'src/routes/AllRoutes.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // ✅ Initialize downloader once for the entire app
+  await FlutterDownloader.initialize(
+    debug: true, // set to false in production
+    ignoreSsl: true,
+  );
+
+  // ✅ Ask for notification permission once globally (Android 13+)
+  final notificationStatus = await Permission.notification.request();
+  if (notificationStatus.isGranted) {
+    print("🔔 Notification permission granted");
+  } else {
+    print("⚠️ Notification permission denied");
+  }
+
+  // ✅ Restore session and token
   final accessToken = await StorageHelper.getAccessToken();
   final isLoggedIn = await StorageHelper.isLoggedIn();
   final staffType = await StorageHelper.getStaffType();
 
   if (accessToken != null && accessToken.isNotEmpty) {
     DioClient().setAuthToken(accessToken);
-    print(" Token restored: $accessToken");
+    print("🔑 Token restored: $accessToken");
   }
 
   runApp(MyApp(isLoggedIn: isLoggedIn, staffType: staffType));
