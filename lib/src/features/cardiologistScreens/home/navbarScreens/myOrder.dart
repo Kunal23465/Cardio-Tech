@@ -1,5 +1,5 @@
 import 'package:cardio_tech/src/data/cardioLogists/model/myOrderModel.dart';
-import 'package:cardio_tech/src/features/cardiologistScreens/home/otherScreens/reportOrder.dart';
+import 'package:cardio_tech/src/features/cardiologistScreens/home/widgets/assignCard.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/gradient_border_dropdown.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/theme.dart';
 import 'package:cardio_tech/src/features/widgets/orderDetailsCard.dart';
@@ -8,6 +8,7 @@ import 'package:cardio_tech/src/provider/cardioLogistsProvider/myOrderProvider.d
 import 'package:cardio_tech/src/provider/cardioLogistsProvider/orderStatusProvider.dart';
 import 'package:cardio_tech/src/provider/generalPhysicianProvider/new_order/order_priority_provider.dart';
 import 'package:cardio_tech/src/routes/AllRoutes.dart';
+import 'package:cardio_tech/src/utils/snackbar_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -44,7 +45,7 @@ class _MyOrderState extends State<MyOrder> {
     final orderStatusProvider = context.read<OrderStatusProvider>();
     final myOrderProvider = context.read<MyOrderProvider>();
 
-    //  call API if order is SUBMITTED
+    // Update status if order is SUBMITTED
     if (order.orderStatus?.toUpperCase() == 'SUBMITTED') {
       final success = await orderStatusProvider.updateStatusToInReview(
         orderDetailsId: order.orderDetailsId,
@@ -54,16 +55,20 @@ class _MyOrderState extends State<MyOrder> {
       if (success) {
         myOrderProvider.updateOrderStatus(order.orderDetailsId, 'IN_REVIEW');
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to update order status')),
+        SnackBarHelper.show(
+          context,
+          message: "Failed to update order status",
+          type: SnackBarType.warning,
         );
+
         return;
       }
     }
 
-    Navigator.pushNamed(
+    //  Navigate to ReportOrder and WAIT for the result
+    final result = await Navigator.pushNamed(
       context,
-      AppRoutes.reportOrder, 
+      AppRoutes.reportOrder,
       arguments: {
         'orderId': order.orderDetailsId,
         'patientName': order.patientName,
@@ -72,6 +77,10 @@ class _MyOrderState extends State<MyOrder> {
         'approvalLevels': order.approvalLevels?.map((e) => e.toJson()).toList(),
       },
     );
+
+    if (result == true) {
+      await myOrderProvider.fetchAllOrders(); // Refresh  order list
+    }
   }
 
   @override
@@ -153,9 +162,7 @@ class _MyOrderState extends State<MyOrder> {
 
                       final statusList = [
                         "All Status",
-                        ...statusProvider.statuses
-                            .map((s) => s.orderStatus)
-                            .toList(),
+                        ...statusProvider.statuses.map((s) => s.value).toList(),
                       ];
 
                       return GradientBorderDropdown(
@@ -230,12 +237,33 @@ class _MyOrderState extends State<MyOrder> {
                           child: OrderDetailsCard(
                             image: "assets/images/people/user.png",
                             name: order.patientName ?? "",
-                            orderId: order.orderDetailsId?.toString() ?? "",
-                            referredBy: order.assignedCardiologistName ?? "",
-                            hospital: order.orderStatus ?? "",
+                            age: order.age?.toString() ?? "",
+                            gender: order.genderValue,
+                            orderId: order.orderDetailsId.toString(),
+                            referredBy: order.createdByGpName ?? "N/A",
+                            hospital: order.clinicName ?? "N/A",
+                            priorityName: order.priorityName,
                             orderStatus: order.orderStatus,
                             submittedOn: order.createdAt ?? '',
-                            onAssign: () {},
+                            onAssign: () async {
+                              final result = await showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(24),
+                                  ),
+                                ),
+                                builder: (context) => AssignCard(order: order),
+                              );
+
+                              if (result == true) {
+                                await context
+                                    .read<MyOrderProvider>()
+                                    .fetchAllOrders();
+                              }
+                            },
+
                             onReport: () => _handleReport(context, order),
                             onUnderProgress: () =>
                                 _handleReport(context, order),

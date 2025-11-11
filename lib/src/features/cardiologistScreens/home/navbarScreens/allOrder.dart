@@ -288,19 +288,16 @@ class _TrackOrderCard extends StatelessWidget {
                 text: 'Assign',
                 isOutlined: true,
                 onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(24),
-                      ),
-                    ),
-                    builder: (context) => AssignCard(
-                      hospitalName:
-                          order["hospital"] ?? "Vedanta Multi Hospital",
-                    ),
-                  );
+                  // showModalBottomSheet(
+                  //   context: context,
+                  //   isScrollControlled: true,
+                  //   shape: const RoundedRectangleBorder(
+                  //     borderRadius: BorderRadius.vertical(
+                  //       top: Radius.circular(24),
+                  //     ),
+                  //   ),
+                  //   builder: (context) => AssignCard(),
+                  // );
                 },
               ),
               const SizedBox(width: 8),
@@ -309,7 +306,7 @@ class _TrackOrderCard extends StatelessWidget {
                 width: 90,
                 text: 'Report',
                 onPressed: () {
-                  Navigator.pushNamed(context, AppRoutes.reportOrder);
+                  // Navigator.pushNamed(context, AppRoutes.reportOrder);
                 },
               ),
             ],

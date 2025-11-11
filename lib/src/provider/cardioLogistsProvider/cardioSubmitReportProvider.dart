@@ -14,6 +14,7 @@ class CardioSumbitReportProvider extends ChangeNotifier {
     required int approverPocId,
     required String action,
     required Uint8List attachmentBytes,
+    String? clinicNoteFromCardio,
   }) async {
     _isLoading = true;
     notifyListeners();
@@ -24,6 +25,7 @@ class CardioSumbitReportProvider extends ChangeNotifier {
       approverPocId: approverPocId,
       action: action,
       attachmentBytes: attachmentBytes,
+      clinicNoteFromCardio: clinicNoteFromCardio,
     );
 
     _isLoading = false;

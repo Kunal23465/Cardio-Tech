@@ -88,7 +88,7 @@ class _HomePageState extends State<HomePage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: const [
                           Text(
-                            "Dr. Kunal Mishra ",
+                            "Dr. Noor Khatoon ",
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -298,19 +298,16 @@ class _TrackOrderCard extends StatelessWidget {
                 text: 'Assign',
                 isOutlined: true,
                 onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(24),
-                      ),
-                    ),
-                    builder: (context) => AssignCard(
-                      hospitalName:
-                          order["hospital"] ?? "Vedanta Multi Hospital",
-                    ),
-                  );
+                  // showModalBottomSheet(
+                  //   context: context,
+                  //   isScrollControlled: true,
+                  //   shape: const RoundedRectangleBorder(
+                  //     borderRadius: BorderRadius.vertical(
+                  //       top: Radius.circular(24),
+                  //     ),
+                  //   ),
+                  //   builder: (context) => AssignCard(),
+                  // );
                 },
               ),
 
@@ -320,7 +317,7 @@ class _TrackOrderCard extends StatelessWidget {
                 width: 90,
                 text: 'Report',
                 onPressed: () {
-                  Navigator.pushNamed(context, AppRoutes.reportOrder);
+                  // Navigator.pushNamed(context, AppRoutes.reportOrder);
                 },
               ),
             ],

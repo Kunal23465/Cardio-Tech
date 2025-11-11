@@ -22,6 +22,14 @@ class ApiClient {
     return await _dio.get(url);
   }
 
+  Future<Response> put(String url, dynamic data) async {
+    return await _dio.put(
+      url,
+      data: data,
+      options: Options(headers: {'Content-Type': 'application/json'}),
+    );
+  }
+
   //  Helper for token setup
   void setAuthToken(String token) {
     DioClient().setAuthToken(token);

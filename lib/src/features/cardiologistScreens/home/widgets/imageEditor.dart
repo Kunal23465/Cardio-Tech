@@ -3,6 +3,7 @@ import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/cu
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/gradient_button.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/theme.dart';
 import 'package:cardio_tech/src/provider/cardioLogistsProvider/cardioSubmitReportProvider.dart';
+import 'package:cardio_tech/src/provider/cardioLogistsProvider/myOrderProvider.dart';
 import 'package:cardio_tech/src/utils/snackbar_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -32,17 +33,21 @@ class ImageEditor extends StatefulWidget {
 class _ImageEditorState extends State<ImageEditor> {
   final GlobalKey<ImagePainterState> _painterKey = GlobalKey();
   late TextEditingController _commentController;
+  late TextEditingController _clinicNoteFromCardioController;
 
   @override
   void initState() {
     super.initState();
     _commentController = TextEditingController(text: widget.clinicalNote ?? "");
+    _clinicNoteFromCardioController = TextEditingController();
   }
 
   bool get isNetworkImage => widget.imagePath.startsWith("http");
 
   Future<void> _handleSubmit(BuildContext context) async {
     final provider = context.read<CardioSumbitReportProvider>();
+    final orderData = context.read<MyOrderProvider>();
+
     final image = await _painterKey.currentState?.exportImage();
 
     if (image == null) {
@@ -64,11 +69,11 @@ class _ImageEditorState extends State<ImageEditor> {
       approverPocId: approverPocId,
       action: "FINALIZED",
       attachmentBytes: image,
+      clinicNoteFromCardio: _clinicNoteFromCardioController.text.trim(),
     );
 
     if (!mounted) return;
 
-    // Handle success or failure using your helper
     if (result["success"] == true) {
       SnackBarHelper.show(
         context,
@@ -76,9 +81,11 @@ class _ImageEditorState extends State<ImageEditor> {
         type: SnackBarType.success,
       );
 
-      // Optional delay to let the user see the snackbar before navigating
+      // Refresh order list before going back
+      await orderData.fetchAllOrders();
+
       await Future.delayed(const Duration(seconds: 1));
-      Navigator.pop(context);
+      if (mounted) Navigator.pop(context);
     } else {
       SnackBarHelper.show(
         context,
@@ -119,33 +126,54 @@ class _ImageEditorState extends State<ImageEditor> {
             Column(
               children: [
                 Expanded(
-                  child: isNetworkImage
-                      ? ImagePainter.network(
-                          widget.imagePath,
-                          key: _painterKey,
-                          scalable: true,
-                          initialStrokeWidth: 2,
-                          initialColor: Colors.red,
-                          initialPaintMode: PaintMode.freeStyle,
-                        )
-                      : ImagePainter.asset(
-                          widget.imagePath,
-                          key: _painterKey,
-                          scalable: true,
-                          initialStrokeWidth: 2,
-                          initialColor: Colors.red,
-                          initialPaintMode: PaintMode.freeStyle,
-                        ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 0),
+                    child: isNetworkImage
+                        ? ImagePainter.network(
+                            widget.imagePath,
+                            key: _painterKey,
+                            scalable: true,
+                            initialStrokeWidth: 2,
+                            initialColor: Colors.red,
+                            initialPaintMode: PaintMode.freeStyle,
+                          )
+                        : ImagePainter.asset(
+                            widget.imagePath,
+                            key: _painterKey,
+                            scalable: true,
+                            initialStrokeWidth: 2,
+                            initialColor: Colors.red,
+                            initialPaintMode: PaintMode.freeStyle,
+                          ),
+                  ),
                 ),
+
                 Padding(
-                  padding: const EdgeInsets.all(12.0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   child: CustomTextField(
                     label: "Clinical Notes",
                     controller: _commentController,
-                    fieldType: FieldType.note,
+                    fieldType: FieldType.text,
                     enabled: false,
                   ),
                 ),
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
+                  child: CustomTextField(
+                    label: "Clinic Note From Cardio",
+                    controller: _clinicNoteFromCardioController,
+                    fieldType: FieldType.text,
+                    enabled: true,
+                  ),
+                ),
+
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Row(
