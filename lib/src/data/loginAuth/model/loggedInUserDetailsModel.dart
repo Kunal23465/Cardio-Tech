@@ -1,14 +1,14 @@
-import 'package:intl/intl.dart';
-
 class Loggedinuserdetailsmodel {
   final String email;
   final String mobile;
   final String? profilePic;
   final String clinicName;
   final String name;
-  final String clinicAddress;
+  final String userAddress;
   final String username;
   final int clinicDetailsId;
+  final int totalOrders;
+  final String cardioValue;
 
   Loggedinuserdetailsmodel({
     required this.email,
@@ -16,12 +16,14 @@ class Loggedinuserdetailsmodel {
     this.profilePic,
     required this.clinicName,
     required this.name,
-    required this.clinicAddress,
+    required this.userAddress,
     required this.username,
     required this.clinicDetailsId,
+    required this.totalOrders,
+    required this.cardioValue,
   });
 
-  // ✅ Optional: factory constructor for creating model from JSON
+  //  Optional: factory constructor for creating model from JSON
   factory Loggedinuserdetailsmodel.fromJson(Map<String, dynamic> json) {
     return Loggedinuserdetailsmodel(
       email: json['email'] ?? '',
@@ -29,13 +31,15 @@ class Loggedinuserdetailsmodel {
       profilePic: json['profilePic'],
       clinicName: json['clinicName'] ?? '',
       name: json['name'] ?? '',
-      clinicAddress: json['clinicAddress'] ?? '',
+      userAddress: json['userAddress'] ?? '',
       username: json['username'] ?? '',
       clinicDetailsId: json['clinicDetailsId'] ?? 0,
+      totalOrders: json['totalOrders'] ?? '',
+      cardioValue: json['cardioValue'] ?? '',
     );
   }
 
-  // ✅ Optional: method to convert object to JSON
+  //  Optional: method to convert object to JSON
   Map<String, dynamic> toJson() {
     return {
       'email': email,
@@ -43,9 +47,11 @@ class Loggedinuserdetailsmodel {
       'profilePic': profilePic,
       'clinicName': clinicName,
       'name': name,
-      'clinicAddress': clinicAddress,
+      'userAddress': userAddress,
       'username': username,
       'clinicDetailsId': clinicDetailsId,
+      'totalOrders': totalOrders,
+      'cardioValue': cardioValue,
     };
   }
 }

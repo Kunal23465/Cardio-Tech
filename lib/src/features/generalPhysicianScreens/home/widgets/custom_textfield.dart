@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/services.dart';
 
 enum FieldType { text, password, dropdown, file, note, dob, download }
 
@@ -21,6 +22,9 @@ class CustomTextField extends StatefulWidget {
   final VoidCallback? onDownload;
   final bool enabled;
 
+  final List<TextInputFormatter>? inputFormatters;
+  final int? maxLength;
+
   const CustomTextField({
     super.key,
     required this.label,
@@ -38,6 +42,8 @@ class CustomTextField extends StatefulWidget {
     this.onFilePicked,
     this.onDownload,
     this.enabled = true,
+    this.inputFormatters,
+    this.maxLength,
   });
 
   @override
@@ -115,7 +121,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
     switch (widget.fieldType) {
       case FieldType.dropdown:
         fieldChild = DropdownButtonFormField<String>(
-          value: (widget.selectedValue == null || widget.selectedValue!.isEmpty)
+          initialValue:
+              (widget.selectedValue == null || widget.selectedValue!.isEmpty)
               ? "Select"
               : widget.selectedValue,
           decoration: decoration.copyWith(
@@ -159,7 +166,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
       default:
         fieldChild = TextFormField(
-          enabled: true, // keep enabled to preserve style
+          enabled: true,
           readOnly: !widget.enabled,
           controller: widget.controller,
           focusNode: widget.focusNode,
@@ -167,7 +174,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
           style: TextStyle(color: Colors.black.withOpacity(0.9)),
           maxLines: widget.fieldType == FieldType.note ? null : 1,
           minLines: widget.fieldType == FieldType.note ? 3 : 1,
+          maxLength: widget.maxLength,
+          inputFormatters: widget.inputFormatters,
           decoration: decoration.copyWith(
+            counterText: "",
             hintStyle: TextStyle(color: Colors.grey.shade200),
           ),
           validator: (val) {

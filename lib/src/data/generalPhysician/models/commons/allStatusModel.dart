@@ -1,8 +1,15 @@
-class AllStatusModel {
-  final String orderStatus;
+class GetAllGPStatusModel {
+  final String value;
+  final String? code;
+  final String? description;
 
-  AllStatusModel({required this.orderStatus});
-  factory AllStatusModel.fromJson(Map<String, dynamic> json) {
-    return AllStatusModel(orderStatus: json['orderStatus'] ?? '');
+  GetAllGPStatusModel({required this.value, this.code, this.description});
+
+  factory GetAllGPStatusModel.fromJson(Map<String, dynamic> json) {
+    return GetAllGPStatusModel(
+      value: json['value'] ?? '',
+      code: json['code'],
+      description: json['description'],
+    );
   }
 }

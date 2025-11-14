@@ -9,7 +9,7 @@ class GetAllCardioStatusService {
   Future<List<GetAllCardioStatusModel>> getAllCardioStatus() async {
     try {
       final Response response = await _apiClient.get(
-        "${ApiConstants.getCardioAllStatus}/ORDERSTATUSCARDIO",
+        "${ApiConstants.getAllStatus}/ORDERSTATUSCARDIO",
       );
 
       if (response.statusCode == 200 &&

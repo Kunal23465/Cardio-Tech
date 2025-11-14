@@ -7,7 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 class TrackOrderCard extends StatelessWidget {
   final Map<String, String> order;
 
-  const TrackOrderCard({Key? key, required this.order}) : super(key: key);
+  const TrackOrderCard({super.key, required this.order});
 
   @override
   Widget build(BuildContext context) {

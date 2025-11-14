@@ -16,7 +16,6 @@ class OrderFilterModel {
   final String? assignedCardiologistName;
   final String? uploadInsuranceIDProof;
   final String? ekgReportName;
-  
 
   OrderFilterModel({
     required this.orderDetailsId,
@@ -52,7 +51,7 @@ class OrderFilterModel {
       priorityName: json['priorityName'],
       assignedCardiologistName: json['assignedCardiologistName'],
       uploadInsuranceIDProof: json['uploadInsuranceIDProof'],
-      ekgReportName: _extractFileName(json['uploadInsuranceIDProof']),
+      ekgReportName: _extractFileName(json['ekgReport']),
     );
   }
 

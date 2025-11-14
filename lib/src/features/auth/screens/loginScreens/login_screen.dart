@@ -97,12 +97,12 @@ class _LoginScreenState extends State<LoginScreen> {
         );
 
         // Navigate based on user role
-        if (staffType == "CARDIO_TECH_SUPPORT") {
+        if (staffType == "Cardio Tech Support") {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (_) => const Cardiologistnavbar()),
           );
-        } else if (staffType == "GENERAL_PHYSICIAN") {
+        } else if (staffType == "General Physician") {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (_) => const Navbar()),

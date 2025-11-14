@@ -162,7 +162,7 @@ class _MyOrderState extends State<MyOrder> {
 
                       final statusList = [
                         "All Status",
-                        ...statusProvider.statuses.map((s) => s.value).toList(),
+                        ...statusProvider.statuses.map((s) => s.value),
                       ];
 
                       return GradientBorderDropdown(
@@ -190,9 +190,9 @@ class _MyOrderState extends State<MyOrder> {
 
                       final priorities = [
                         "All Priority",
-                        ...priorityProvider.priorities
-                            .map((p) => p.priorityName)
-                            .toList(),
+                        ...priorityProvider.priorities.map(
+                          (p) => p.priorityName,
+                        ),
                       ];
 
                       return GradientBorderDropdown(

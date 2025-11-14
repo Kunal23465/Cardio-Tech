@@ -12,7 +12,7 @@ class CardioSubmitReportService {
     required int approverPocId,
     required String action,
     required Uint8List attachmentBytes,
-    String? clinicNoteFromCardio, 
+    String? clinicNoteFromCardio,
   }) async {
     try {
       final Map<String, dynamic> formMap = {
@@ -22,7 +22,7 @@ class CardioSubmitReportService {
         'action': action,
         'attachment': MultipartFile.fromBytes(
           attachmentBytes,
-          filename: "report_${orderId}.png",
+          filename: "report_$orderId.png",
         ),
       };
 
@@ -33,7 +33,10 @@ class CardioSubmitReportService {
 
       final formData = FormData.fromMap(formMap);
 
-      final response = await _apiClient.post(ApiConstants.submitReport, formData);
+      final response = await _apiClient.post(
+        ApiConstants.submitReport,
+        formData,
+      );
 
       if (response.statusCode == 200) {
         final data = response.data;

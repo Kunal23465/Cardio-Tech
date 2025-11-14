@@ -5,7 +5,6 @@ import 'package:cardio_tech/src/data/loginAuth/model/loggedInUserDetailsModel.da
 class LoggedInUserDetailsService {
   final ApiClient _apiClient = ApiClient();
 
-  /// ✅ Fetch logged-in user details using userId in path params
   Future<Loggedinuserdetailsmodel?> getLoggedInUserDetails({
     required int userId,
   }) async {

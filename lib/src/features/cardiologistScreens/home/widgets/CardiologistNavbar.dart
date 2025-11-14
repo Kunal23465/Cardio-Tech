@@ -174,7 +174,7 @@ class _CardiologistnavbarState extends State<Cardiologistnavbar> {
                                 width: 24,
                                 height: 24,
                               ),
-                        "Setting",
+                        "Settings",
                         4,
                       ),
                     ),

@@ -6,15 +6,17 @@ import 'package:dio/dio.dart';
 class AllStatusService {
   final ApiClient _apiClient = ApiClient();
 
-  Future<List<AllStatusModel>> getAllStatus() async {
+  Future<List<GetAllGPStatusModel>> getAllStatus() async {
     try {
-      final Response response = await _apiClient.get(ApiConstants.getAllStatus);
+      final Response response = await _apiClient.get(
+        "${ApiConstants.getAllStatus}/ORDERSTATUSGP",
+      );
 
       if (response.statusCode == 200 &&
           response.data != null &&
           response.data['statusCode'] == 200) {
         final List<dynamic> data = response.data['data'];
-        return data.map((e) => AllStatusModel.fromJson(e)).toList();
+        return data.map((e) => GetAllGPStatusModel.fromJson(e)).toList();
       } else {
         throw Exception("Invalid response structure: ${response.data}");
       }

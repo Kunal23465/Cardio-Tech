@@ -1,4 +1,3 @@
-import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/gradient_button.dart';
@@ -61,12 +60,32 @@ class OrderDetailsCard extends StatelessWidget {
             ],
           );
 
+        // case 'IN_REVIEW':
+        //   return GradientButton(
+        //     height: 30,
+        //     width: 120,
+        //     text: 'Under Progress',
+        //     onPressed: onUnderProgress,
+        //   );
+
         case 'IN_REVIEW':
-          return GradientButton(
-            height: 30,
-            width: 120,
-            text: 'Under Progress',
-            onPressed: onUnderProgress,
+          return Row(
+            children: [
+              GradientButton(
+                height: 30,
+                width: 90,
+                text: 'Assign',
+                isOutlined: true,
+                onPressed: onAssign,
+              ),
+              const SizedBox(width: 8),
+              GradientButton(
+                height: 30,
+                width: 90,
+                text: 'In Review',
+                onPressed: onReport,
+              ),
+            ],
           );
 
         case 'FINALIZED':
@@ -95,7 +114,6 @@ class OrderDetailsCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// Top Row — Avatar + Name + Red Circle (if High Priority)
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -177,7 +195,7 @@ class OrderDetailsCard extends StatelessWidget {
                     const SizedBox(height: 5),
                     Row(
                       children: [
-                        SvgPicture.asset('assets/icon/hospital.svg'),
+                        SvgPicture.asset('assets/icon/status.svg'),
                         const SizedBox(width: 4),
                         Text(orderStatus ?? ''),
                       ],

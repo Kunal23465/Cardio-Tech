@@ -2,7 +2,6 @@ import 'package:cardio_tech/src/features/generalPhysicianScreens/home/navbar/all
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/navbar/home.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/navbar/newOrder.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/navbar/setting.dart';
-import 'package:cardio_tech/src/features/generalPhysicianScreens/home/navbar/trackOrder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -37,8 +36,8 @@ class _NavbarState extends State<Navbar> {
         return const AllPatient();
       case 2:
         return const HomePage();
-      case 3:
-        return const Trackorder();
+      // case 3:
+      //   return const Trackorder();
       case 4:
         return const Setting();
       default:
@@ -147,12 +146,14 @@ class _NavbarState extends State<Navbar> {
                       child: _navButton(
                         _currentIndex == 3
                             ? SvgPicture.asset(
-                                "assets/images/navbar/order.svg",
+                                "assets/images/navbar/order-2.svg",
                                 width: 24,
                                 height: 24,
                               )
                             : SvgPicture.asset(
+                                // "assets/images/navbar/order-2.svg",
                                 "assets/images/navbar/order-2.svg",
+
                                 width: 24,
                                 height: 24,
                               ),
@@ -173,7 +174,7 @@ class _NavbarState extends State<Navbar> {
                                 width: 24,
                                 height: 24,
                               ),
-                        "Setting",
+                        "Settings",
                         4,
                       ),
                     ),

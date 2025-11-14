@@ -110,9 +110,7 @@ class _AllPatientState extends State<AllPatient> {
                       }
                       final statusList = [
                         "All Status",
-                        ...statusProvider.statuses
-                            .map((s) => s.orderStatus)
-                            .toList(),
+                        ...statusProvider.statuses.map((s) => s.value),
                       ];
 
                       return GradientBorderDropdown(
@@ -141,9 +139,9 @@ class _AllPatientState extends State<AllPatient> {
                       }
                       final priorities = [
                         "All Priority",
-                        ...priorityProvider.priorities
-                            .map((p) => p.priorityName)
-                            .toList(),
+                        ...priorityProvider.priorities.map(
+                          (p) => p.priorityName,
+                        ),
                       ];
 
                       return GradientBorderDropdown(
@@ -294,14 +292,32 @@ class GradientBorderCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        order.patientName,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              order.patientName,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          if (order.priorityName == "High Priority")
+                            Container(
+                              width: 8,
+                              height: 8,
+                              decoration: const BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                        ],
                       ),
                       const SizedBox(height: 5),
+
                       Row(
                         children: [
                           SvgPicture.asset('assets/icon/user.svg'),
@@ -316,8 +332,7 @@ class GradientBorderCard extends StatelessWidget {
 
                       Row(
                         children: [
-                          SvgPicture.asset('assets/icon/stethoscope.svg'),
-
+                          SvgPicture.asset('assets/icon/status.svg'),
                           const SizedBox(width: 4),
                           Text(
                             "Status: ${order.orderStatus ?? 'N/A'}",

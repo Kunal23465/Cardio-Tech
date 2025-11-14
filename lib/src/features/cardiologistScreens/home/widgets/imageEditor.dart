@@ -1,13 +1,13 @@
 import 'dart:typed_data';
+import 'package:flutter/material.dart';
+import 'package:image_painter/image_painter.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/custom_textfield.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/gradient_button.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/theme.dart';
 import 'package:cardio_tech/src/provider/cardioLogistsProvider/cardioSubmitReportProvider.dart';
 import 'package:cardio_tech/src/provider/cardioLogistsProvider/myOrderProvider.dart';
 import 'package:cardio_tech/src/utils/snackbar_helper.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:image_painter/image_painter.dart';
 import 'package:provider/provider.dart';
 
 class ImageEditor extends StatefulWidget {
@@ -31,13 +31,21 @@ class ImageEditor extends StatefulWidget {
 }
 
 class _ImageEditorState extends State<ImageEditor> {
-  final GlobalKey<ImagePainterState> _painterKey = GlobalKey();
+  late final ImagePainterController _controller;
   late TextEditingController _commentController;
   late TextEditingController _clinicNoteFromCardioController;
 
   @override
   void initState() {
     super.initState();
+
+    // initialize the controller with defaults
+    _controller = ImagePainterController(
+      strokeWidth: 2.0,
+      color: Colors.red,
+      mode: PaintMode.freeStyle,
+    );
+
     _commentController = TextEditingController(text: widget.clinicalNote ?? "");
     _clinicNoteFromCardioController = TextEditingController();
   }
@@ -48,7 +56,7 @@ class _ImageEditorState extends State<ImageEditor> {
     final provider = context.read<CardioSumbitReportProvider>();
     final orderData = context.read<MyOrderProvider>();
 
-    final image = await _painterKey.currentState?.exportImage();
+    final Uint8List? image = await _controller.exportImage();
 
     if (image == null) {
       SnackBarHelper.show(
@@ -59,7 +67,6 @@ class _ImageEditorState extends State<ImageEditor> {
       return;
     }
 
-    // Extract approval info safely
     final approvalLevel = widget.approvalLevels?.first['approvalLevel'] ?? 0;
     final approverPocId = widget.approvalLevels?.first['approverPocId'] ?? 0;
 
@@ -81,9 +88,7 @@ class _ImageEditorState extends State<ImageEditor> {
         type: SnackBarType.success,
       );
 
-      // Refresh order list before going back
       await orderData.fetchAllOrders();
-
       await Future.delayed(const Duration(seconds: 1));
       if (mounted) Navigator.pop(context);
     } else {
@@ -131,23 +136,16 @@ class _ImageEditorState extends State<ImageEditor> {
                     child: isNetworkImage
                         ? ImagePainter.network(
                             widget.imagePath,
-                            key: _painterKey,
+                            controller: _controller, // ✅ use controller
                             scalable: true,
-                            initialStrokeWidth: 2,
-                            initialColor: Colors.red,
-                            initialPaintMode: PaintMode.freeStyle,
                           )
                         : ImagePainter.asset(
                             widget.imagePath,
-                            key: _painterKey,
+                            controller: _controller,
                             scalable: true,
-                            initialStrokeWidth: 2,
-                            initialColor: Colors.red,
-                            initialPaintMode: PaintMode.freeStyle,
                           ),
                   ),
                 ),
-
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 12,
@@ -160,7 +158,6 @@ class _ImageEditorState extends State<ImageEditor> {
                     enabled: false,
                   ),
                 ),
-
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 12,
@@ -173,7 +170,6 @@ class _ImageEditorState extends State<ImageEditor> {
                     enabled: true,
                   ),
                 ),
-
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Row(

@@ -7,7 +7,7 @@ class Cardiologist {
   factory Cardiologist.fromJson(Map<String, dynamic> json) {
     return Cardiologist(
       id: json['pointsOfContactDetailsId'],
-      fullName: json['fullName'] ?? '',
+      fullName: json['fullNameWithBusiness'] ?? '',
     );
   }
 }

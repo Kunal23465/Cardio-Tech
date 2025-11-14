@@ -520,22 +520,26 @@ class _NewOrderState extends State<NewOrder> {
                   const SizedBox(height: 16),
 
                   CustomTextField(
-                    label: "Mobile Number ",
+                    label: "Mobile Number",
                     hint: "Enter Phone No.",
                     controller: mobileController,
-                    // validator: (v) =>
-                    //     v == null || v.isEmpty ? "Enter mobile number" : null,
+                    maxLength: 10,
+                    // inputFormatters: [
+                    //   FilteringTextInputFormatter.digitsOnly,
+                    //   LengthLimitingTextInputFormatter(10),
+                    // ]
+                    validator: (v) {
+                      if (v == null || v.isEmpty) {
+                        return "Enter mobile number";
+                      } else if (!RegExp(r'^[0-9]{10}$').hasMatch(v)) {
+                        return "Mobile number must be 10 digits";
+                      }
+                      return null;
+                    },
                   ),
+
                   const SizedBox(height: 16),
 
-                  // CustomTextField(
-                  //   label: "Email ",
-                  //   hint: "Enter Email Address",
-                  //   controller: emailController,
-                  //   validator: (v) =>
-                  //       v == null || v.isEmpty ? "Enter email" : null,
-                  // ),
-                  // const SizedBox(height: 16),
                   _enterIdManually
                       ? CustomTextField(
                           label: "Insurance ID",

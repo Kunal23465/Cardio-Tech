@@ -7,7 +7,7 @@ class AllStatusProvider extends ChangeNotifier {
 
   bool isLoading = false;
   String? errorMessage;
-  List<AllStatusModel> statuses = [];
+  List<GetAllGPStatusModel> statuses = [];
 
   Future<void> getAllStatus() async {
     isLoading = true;

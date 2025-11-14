@@ -14,28 +14,28 @@ import 'src/routes/AllRoutes.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // ✅ Initialize downloader once for the entire app
+  //  Initialize downloader once for the entire app
   await FlutterDownloader.initialize(
-    debug: true, // set to false in production
+    debug: false, // set to false in production
     ignoreSsl: true,
   );
 
-  // ✅ Ask for notification permission once globally (Android 13+)
+  //  Ask for notification permission once globally (Android 13+)
   final notificationStatus = await Permission.notification.request();
   if (notificationStatus.isGranted) {
-    print("🔔 Notification permission granted");
+    print(" Notification permission granted");
   } else {
-    print("⚠️ Notification permission denied");
+    print(" Notification permission denied");
   }
 
-  // ✅ Restore session and token
+  //  Restore session and token
   final accessToken = await StorageHelper.getAccessToken();
   final isLoggedIn = await StorageHelper.isLoggedIn();
   final staffType = await StorageHelper.getStaffType();
 
   if (accessToken != null && accessToken.isNotEmpty) {
     DioClient().setAuthToken(accessToken);
-    print("🔑 Token restored: $accessToken");
+    print(" Token restored: $accessToken");
   }
 
   runApp(MyApp(isLoggedIn: isLoggedIn, staffType: staffType));
@@ -52,9 +52,9 @@ class MyApp extends StatelessWidget {
     Widget initialScreen;
 
     if (isLoggedIn) {
-      if (staffType == "CARDIO_TECH_SUPPORT") {
+      if (staffType == "Cardio Tech Support") {
         initialScreen = const Cardiologistnavbar();
-      } else if (staffType == "GENERAL_PHYSICIAN") {
+      } else if (staffType == "General Physician") {
         initialScreen = const Navbar();
       } else {
         initialScreen = const LoginScreen();

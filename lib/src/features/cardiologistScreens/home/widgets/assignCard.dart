@@ -13,7 +13,7 @@ import 'package:cardio_tech/src/utils/snackbar_helper.dart';
 class AssignCard extends StatefulWidget {
   final MyOrderModel order;
 
-  const AssignCard({Key? key, required this.order}) : super(key: key);
+  const AssignCard({super.key, required this.order});
 
   @override
   State<AssignCard> createState() => _AssignCardState();
@@ -38,7 +38,6 @@ class _AssignCardState extends State<AssignCard> {
     super.dispose();
   }
 
-  //  Handle Submit Function
   Future<void> handleSubmit(BuildContext context) async {
     final cardiologistProvider = context.read<AssignCardiologistProvider>();
     final assignOrderProvider = context.read<AssignOrderProvider>();
@@ -104,8 +103,14 @@ class _AssignCardState extends State<AssignCard> {
     final orderDataProvider = context.watch<MyOrderProvider>();
 
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.only(
+        left: 16,
+        right: 16,
+        top: 16,
+        bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+      ),
       child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -131,7 +136,6 @@ class _AssignCardState extends State<AssignCard> {
             ),
             const SizedBox(height: 20),
 
-            // --- Clinic Dropdown ---
             CustomTextField(
               label: "Clinic",
               fieldType: FieldType.dropdown,
@@ -165,7 +169,6 @@ class _AssignCardState extends State<AssignCard> {
 
             const SizedBox(height: 16),
 
-            // --- Cardiologist Dropdown ---
             CustomTextField(
               label: "Cardiologist",
               fieldType: FieldType.dropdown,

@@ -1,9 +1,12 @@
 import 'package:cardio_tech/src/data/loginAuth/auth_repository.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/gradient_button.dart';
+import 'package:cardio_tech/src/provider/user/loggedInUserDetailsProvider.dart';
 import 'package:cardio_tech/src/routes/AllRoutes.dart';
+import 'package:cardio_tech/src/utils/storage_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/theme.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 class Setting extends StatefulWidget {
   const Setting({super.key});
@@ -112,7 +115,25 @@ class _SettingState extends State<Setting> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    //  Fetch logged-in user details using stored userId
+    Future.microtask(() async {
+      final userId = await StorageHelper.getUserId();
+      if (userId != null) {
+        context.read<LoggedInUserDetailsProvider>().fetchLoggedInUserDetails(
+          userId: userId,
+        );
+      } else {
+        debugPrint(" User ID not found in storage");
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final userProvider = context.watch<LoggedInUserDetailsProvider>();
+    final user = userProvider.userDetails;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -142,17 +163,25 @@ class _SettingState extends State<Setting> {
           children: [
             ListTile(
               contentPadding: const EdgeInsets.all(12),
-              leading: const CircleAvatar(
+              leading: CircleAvatar(
                 radius: 28,
-                backgroundImage: AssetImage("assets/images/people/image_1.png"),
+                backgroundImage: user?.profilePic != null
+                    ? NetworkImage(user!.profilePic!)
+                    : const AssetImage('assets/images/homePage/clinic.png')
+                          as ImageProvider,
               ),
-              title: const Text(
-                "Dr. Kunal Mishra",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              title: Text(
+                user?.username ?? "",
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
               ),
-              subtitle: const Text(
-                "Cardiologist, Lucknow UP.",
-                style: TextStyle(color: Colors.grey, fontSize: 14),
+              subtitle: Text(
+                "${user?.cardioValue ?? ''}, ${user?.userAddress ?? ''}",
+                style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
+                overflow: TextOverflow.ellipsis,
               ),
               trailing: GradientButton(
                 text: 'View',

@@ -61,7 +61,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    // ✅ Fetch logged-in user details using stored userId
+    //  Fetch logged-in user details using stored userId
     Future.microtask(() async {
       final userId = await StorageHelper.getUserId();
       if (userId != null) {
@@ -69,7 +69,7 @@ class _HomePageState extends State<HomePage> {
           userId: userId,
         );
       } else {
-        debugPrint("⚠️ User ID not found in storage");
+        debugPrint(" User ID not found in storage");
       }
     });
   }
@@ -89,7 +89,7 @@ class _HomePageState extends State<HomePage> {
             : ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
-                  // ✅ Top Row - User Info + Notification
+                  //  Top Row - User Info + Notification
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -108,21 +108,25 @@ class _HomePageState extends State<HomePage> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              // Name
                               Text(
-                                user?.clinicName ?? "Clinic Name",
+                                user?.username ?? "",
                                 style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.black,
                                 ),
                               ),
-                              const SizedBox(height: 2),
+                              const SizedBox(height: 4),
+
                               Text(
-                                user?.clinicAddress ?? "Clinic Address",
-                                style: const TextStyle(
+                                "${user?.clinicName ?? ''}, ${user?.userAddress ?? ''}",
+                                // "${user?.clinicName ?? ''}${(user?.clinicName != null && user!.clinicName!.isNotEmpty && user.userAddress != null && user.userAddress!.isNotEmpty) ? ', ' : ''}${user?.userAddress ?? ''}",
+                                style: TextStyle(
                                   fontSize: 14,
-                                  color: Colors.grey,
+                                  color: Colors.grey.shade700,
                                 ),
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ],
                           ),
@@ -149,7 +153,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   const SizedBox(height: 20),
 
-                  // ✅ Banner Carousel
+                  //  Banner Carousel
                   Column(
                     children: [
                       FlutterCarousel(
@@ -201,7 +205,6 @@ class _HomePageState extends State<HomePage> {
                   ),
                   const SizedBox(height: 20),
 
-                  // ✅ New Order Button
                   GradientButton(
                     text: "New Order",
                     onPressed: () {
@@ -210,7 +213,6 @@ class _HomePageState extends State<HomePage> {
                   ),
                   const SizedBox(height: 20),
 
-                  // ✅ Dashboard Cards
                   Column(
                     children: [
                       for (var i = 0; i < _dashboardCards.length; i += 2)

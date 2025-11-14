@@ -93,7 +93,6 @@ class SubmitOrderDetailsModel {
   }
 }
 
-
 class SubmitOrderDetailsRequestModel {
   final int orderDetailsId;
   final int closedById;

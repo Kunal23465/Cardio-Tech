@@ -1,5 +1,6 @@
 import 'package:cardio_tech/src/features/cardiologistScreens/home/otherScreens/reportOrder.dart';
 import 'package:cardio_tech/src/features/cardiologistScreens/home/widgets/assignCard.dart';
+import 'package:cardio_tech/src/features/generalPhysicianScreens/home/navbar/allPatient.dart';
 import 'package:flutter/material.dart';
 import '../features/auth/screens/loginScreens/forgot_password_screen.dart';
 import '../features/auth/screens/loginScreens/login_screen.dart';
@@ -33,10 +34,10 @@ class AppRoutes {
   static const String notification = '/notification';
   static const String newOrder = '/new-order';
   static const String orderDetails = '/order-details';
+  static const String allPatients = '/all-details';
 
   // for cardiologist
   static const String reportOrder = '/report-order';
-  
 
   // ======= static routes map =======
   static Map<String, WidgetBuilder> routes = {
@@ -59,9 +60,10 @@ class AppRoutes {
     termConditions: (context) => const TermConditions(),
     helpCenter: (context) => const HelpCenter(),
     notification: (context) => const NotificationScreeen(),
+    allPatients: (context) => const AllPatient(),
 
     //for cardiologist
-    reportOrder: (context) => const ReportOrder(),
+    reportOrder: (context) => ReportOrder(),
   };
 
   // ======= helper for named routes with arguments =======
@@ -89,7 +91,6 @@ class AppRoutes {
       default:
         final builder = routes[settings.name];
         if (builder != null) {
-          
           return MaterialPageRoute(builder: builder, settings: settings);
         }
         return null;

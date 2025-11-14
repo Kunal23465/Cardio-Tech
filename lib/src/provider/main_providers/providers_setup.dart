@@ -2,6 +2,7 @@ import 'package:cardio_tech/src/provider/cardioLogistsProvider/assignCardioProvi
 import 'package:cardio_tech/src/provider/cardioLogistsProvider/assignClinicProvider.dart';
 import 'package:cardio_tech/src/provider/cardioLogistsProvider/assignOrderProvider.dart';
 import 'package:cardio_tech/src/provider/cardioLogistsProvider/cardioSubmitReportProvider.dart';
+import 'package:cardio_tech/src/provider/cardioLogistsProvider/finalizedProvider/finalizedProvider.dart';
 import 'package:cardio_tech/src/provider/cardioLogistsProvider/getAllStatusProvider.dart';
 import 'package:cardio_tech/src/provider/cardioLogistsProvider/myOrderProvider.dart';
 import 'package:cardio_tech/src/provider/cardioLogistsProvider/orderStatusProvider.dart';
@@ -36,4 +37,5 @@ List<SingleChildWidget> appProviders = [
   ChangeNotifierProvider(create: (_) => AssignClinicProvider()),
   ChangeNotifierProvider(create: (_) => AssignCardiologistProvider()),
   ChangeNotifierProvider(create: (_) => AssignOrderProvider()),
+  ChangeNotifierProvider(create: (_) => FinalizedOrderProvider()),
 ];

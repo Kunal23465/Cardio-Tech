@@ -1,7 +1,5 @@
-import 'package:cardio_tech/src/features/cardiologistScreens/home/widgets/assignCard.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/gradient_button.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/theme.dart';
-import 'package:cardio_tech/src/routes/AllRoutes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 

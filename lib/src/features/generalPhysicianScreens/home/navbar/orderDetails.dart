@@ -52,10 +52,10 @@ class _OrderdetailsState extends State<Orderdetails> {
       if (submitProvider.isSuccess) {
         SnackBarHelper.show(
           context,
-          message: "Order submitted successfully!",
+          message: "Order closed successfully",
           type: SnackBarType.success,
         );
-        submitProvider.reset(); // Reset after showing
+        submitProvider.reset();
       }
     });
 
@@ -63,7 +63,7 @@ class _OrderdetailsState extends State<Orderdetails> {
       if (submitProvider.errorMessage != null) {
         SnackBarHelper.show(
           context,
-          message: "Failed to submit order: ${submitProvider.errorMessage}",
+          message: "Failed to close order: ${submitProvider.errorMessage}",
           type: SnackBarType.error,
         );
         submitProvider.reset(); // Reset after showing
@@ -144,17 +144,21 @@ class _OrderdetailsState extends State<Orderdetails> {
                             fontWeight: FontWeight.w600,
                             fontSize: 16,
                           ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 4),
                         Row(
                           children: [
                             SvgPicture.asset('assets/icon/user.svg'),
                             const SizedBox(width: 6),
-                            Text(
-                              "MRN : ${order.medicalRecordNumber}",
-                              style: const TextStyle(
-                                fontSize: 13,
-                                color: AppColors.primary,
+                            Flexible(
+                              child: Text(
+                                "MRN : ${order.medicalRecordNumber}",
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  color: AppColors.primary,
+                                ),
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ],
@@ -231,7 +235,8 @@ class _OrderdetailsState extends State<Orderdetails> {
                           ),
                         ],
                       ),
-                      const Icon(Icons.circle, color: Colors.red, size: 10),
+                      if (order.priorityName == "High Priority")
+                        const Icon(Icons.circle, color: Colors.red, size: 10),
                     ],
                   ),
                   const SizedBox(height: 12),
@@ -252,23 +257,6 @@ class _OrderdetailsState extends State<Orderdetails> {
                           ),
                         ],
                       ),
-                      // Row(
-                      //   children: [
-                      //     SvgPicture.asset(
-                      //       'assets/icon/stethoscope.svg',
-                      //       height: 16,
-                      //       color: Colors.teal,
-                      //     ),
-                      //     const SizedBox(width: 6),
-                      //     const Text(
-                      //       "Seen By DR. GP",
-                      //       style: TextStyle(
-                      //         color: Colors.black54,
-                      //         fontSize: 14,
-                      //       ),
-                      //     ),
-                      //   ],
-                      // ),
                     ],
                   ),
                 ],
@@ -293,6 +281,7 @@ class _OrderdetailsState extends State<Orderdetails> {
               hint: "Clinical Note",
               controller: TextEditingController(text: order.clinicalNote ?? ''),
               fieldType: FieldType.note,
+              enabled: false,
             ),
             const SizedBox(height: 30),
 
@@ -311,7 +300,7 @@ class _OrderdetailsState extends State<Orderdetails> {
                 const SizedBox(width: 20),
                 Expanded(
                   child: GradientButton(
-                    text: 'Submit Order',
+                    text: 'Close Order',
                     onPressed: () {
                       submitProvider.submitOrderDetails(
                         orderDetailsId: order.orderDetailsId,

@@ -1,8 +1,7 @@
 import 'package:cardio_tech/src/core/network/exceptions.dart';
 import 'package:cardio_tech/src/core/network/dio_client.dart';
 import 'package:cardio_tech/src/data/loginAuth/auth_service.dart';
-import 'package:cardio_tech/src/utils/storage_helper.dart'; 
-import 'package:dio/dio.dart';
+import 'package:cardio_tech/src/utils/storage_helper.dart';
 
 class AuthRepository {
   final AuthService _authService = AuthService();

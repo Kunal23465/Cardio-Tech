@@ -36,19 +36,11 @@ class ApiClient {
     return await _dio.get(url);
   }
 
-  /// 🧾 New method for file downloads (binary)
+  ///  New method for file downloads (binary)
   Future<Response> downloadFile(String url) async {
     return await _dio.get(
       url,
       options: Options(responseType: ResponseType.bytes),
-    );
-  }
-
-  Future<Response> put(String url, dynamic data) async {
-    return await _dio.put(
-      url,
-      data: data,
-      options: Options(headers: {'Content-Type': 'application/json'}),
     );
   }
 
