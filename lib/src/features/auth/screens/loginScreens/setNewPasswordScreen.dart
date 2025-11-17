@@ -2,6 +2,7 @@ import 'package:cardio_tech/src/data/loginAuth/auth_service.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/custom_textfield.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/gradient_button.dart';
 import 'package:cardio_tech/src/routes/AllRoutes.dart';
+import 'package:cardio_tech/src/utils/snackbar_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -70,15 +71,20 @@ class _SetNewPasswordScreenState extends State<SetNewPasswordScreen> {
     final confirmPass = confirmPasswordController.text.trim();
 
     if (newPass.isEmpty || confirmPass.isEmpty) {
-      ScaffoldMessenger.of(
+      SnackBarHelper.show(
         context,
-      ).showSnackBar(const SnackBar(content: Text("Enter all fields")));
+        message: "Enter all fields",
+        type: SnackBarType.warning,
+      );
       return;
     }
+
     if (newPass != confirmPass) {
-      ScaffoldMessenger.of(
+      SnackBarHelper.show(
         context,
-      ).showSnackBar(const SnackBar(content: Text("Passwords do not match")));
+        message: "Passwords do not match",
+        type: SnackBarType.error,
+      );
       return;
     }
 
@@ -87,21 +93,26 @@ class _SetNewPasswordScreenState extends State<SetNewPasswordScreen> {
         widget.emailOrMobile,
         newPass,
       );
+
       final message = response.data is String
           ? response.data
           : response.data['message'] ?? "Password reset successful";
 
-      ScaffoldMessenger.of(
+      SnackBarHelper.show(
         context,
-      ).showSnackBar(SnackBar(content: Text(message)));
+        message: message,
+        type: SnackBarType.success,
+      );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         _showSuccessModal();
       }
     } catch (e) {
-      ScaffoldMessenger.of(
+      SnackBarHelper.show(
         context,
-      ).showSnackBar(SnackBar(content: Text("Error: $e")));
+        message: "Error: $e",
+        type: SnackBarType.error,
+      );
     }
   }
 

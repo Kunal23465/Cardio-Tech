@@ -116,7 +116,7 @@ class _FinalizedState extends State<Finalized> {
                             age: order.age?.toString() ?? "",
                             gender: order.genderValue ?? "",
                             orderId: order.orderDetailsId.toString(),
-                            referredBy: order.clinicName,
+                            referredBy: order.referredByGpName ?? '',
                             hospital: order.clinicName,
                             priorityName: order.priorityName ?? '',
                             orderStatus: order.orderStatus ?? '',

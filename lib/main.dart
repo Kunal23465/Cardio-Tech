@@ -16,7 +16,7 @@ Future<void> main() async {
 
   //  Initialize downloader once for the entire app
   await FlutterDownloader.initialize(
-    debug: false, // set to false in production
+    debug: true, // set to false in production
     ignoreSsl: true,
   );
 

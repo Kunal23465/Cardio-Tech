@@ -154,7 +154,7 @@ class _SettingState extends State<Setting> {
                           as ImageProvider,
               ),
               title: Text(
-                user?.username ?? "",
+                user?.CardioName ?? "",
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,

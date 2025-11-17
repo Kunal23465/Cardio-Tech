@@ -1,3 +1,4 @@
+import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/gradient_button.dart';
@@ -17,6 +18,7 @@ class OrderDetailsCard extends StatelessWidget {
   final VoidCallback? onReport;
   final VoidCallback? onUnderProgress;
   final VoidCallback? onFinalized;
+  final VoidCallback? onFinalizedView;
 
   const OrderDetailsCard({
     super.key,
@@ -34,6 +36,7 @@ class OrderDetailsCard extends StatelessWidget {
     this.onUnderProgress,
     this.onFinalized,
     this.priorityName,
+    this.onFinalizedView,
   });
 
   @override
@@ -96,6 +99,16 @@ class OrderDetailsCard extends StatelessWidget {
             onPressed: onFinalized,
           );
 
+        case 'FINALIZED_VIEW':
+          return GradientButton(
+            height: 30,
+            width: 100,
+            // text: 'Finalized View',
+            text: 'Order Close',
+
+            onPressed: onFinalizedView,
+          );
+
         default:
           return const SizedBox();
       }
@@ -145,19 +158,53 @@ class OrderDetailsCard extends StatelessWidget {
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 4,
                                   ),
-                                  child: Text(
-                                    '| ${age}yr',
-                                    style: const TextStyle(fontSize: 13),
+                                  child: Text.rich(
+                                    TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: '|',
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            color: AppColors.primary,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: ' ${age}yr',
+                                          style: const TextStyle(
+                                            fontSize: 13,
+                                            color: Colors
+                                                .black, // rest of the text color
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
+
                               if (gender != null && gender!.isNotEmpty)
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 4,
                                   ),
-                                  child: Text(
-                                    '| $gender',
-                                    style: const TextStyle(fontSize: 13),
+                                  child: Text.rich(
+                                    TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: '|',
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            color: AppColors.primary,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: ' $gender',
+                                          style: const TextStyle(
+                                            fontSize: 13,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                             ],

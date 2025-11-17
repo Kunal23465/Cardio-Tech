@@ -67,8 +67,10 @@ class _ImageEditorState extends State<ImageEditor> {
       return;
     }
 
-    final approvalLevel = widget.approvalLevels?.first['approvalLevel'] ?? 0;
-    final approverPocId = widget.approvalLevels?.first['approverPocId'] ?? 0;
+    // Take the latest approval level
+    final lastApproval = widget.approvalLevels?.last;
+    final approvalLevel = lastApproval?['approvalLevel'] ?? 0;
+    final approverPocId = lastApproval?['approverPocId'] ?? 0;
 
     final result = await provider.submitReport(
       orderId: widget.orderId,

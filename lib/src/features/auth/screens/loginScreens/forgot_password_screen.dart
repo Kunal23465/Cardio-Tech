@@ -2,6 +2,7 @@ import 'package:cardio_tech/src/data/loginAuth/auth_service.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/custom_textfield.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/gradient_button.dart';
 import 'package:cardio_tech/src/features/auth/screens/loginScreens/otp_verification_screen.dart';
+import 'package:cardio_tech/src/utils/snackbar_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dio/dio.dart';
@@ -14,15 +15,19 @@ class ForgotPasswordScreen extends StatefulWidget {
 }
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
-  final TextEditingController forgotPassEmailController = TextEditingController();
+  final TextEditingController forgotPassEmailController =
+      TextEditingController();
   final AuthService _authService = AuthService();
   bool isLoading = false;
 
   void _sendOtp() async {
     final input = forgotPassEmailController.text.trim();
+
     if (input.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Enter email or mobile")),
+      SnackBarHelper.show(
+        context,
+        message: "Enter email or mobile",
+        type: SnackBarType.warning,
       );
       return;
     }
@@ -31,11 +36,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
     try {
       final Response response = await _authService.forgotPassword(input);
+
       final message = response.data is String
           ? response.data
           : response.data['message'] ?? "OTP sent successfully";
 
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+      SnackBarHelper.show(
+        context,
+        message: message,
+        type: SnackBarType.success,
+      );
 
       if (!mounted) return;
 
@@ -46,7 +56,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         ),
       );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: $e")));
+      SnackBarHelper.show(
+        context,
+        message: "Error: $e",
+        type: SnackBarType.error,
+      );
     } finally {
       if (mounted) setState(() => isLoading = false);
     }
@@ -58,7 +72,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       body: Stack(
         children: [
           Positioned.fill(
-            child: Image.asset("assets/images/login/login_bg.png", fit: BoxFit.cover),
+            child: Image.asset(
+              "assets/images/login/login_bg.png",
+              fit: BoxFit.cover,
+            ),
           ),
           Align(
             alignment: Alignment.topCenter,
@@ -93,7 +110,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         children: [
                           const Text(
                             "Forgot Password",
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                           const SizedBox(height: 20),
                           CustomTextField(

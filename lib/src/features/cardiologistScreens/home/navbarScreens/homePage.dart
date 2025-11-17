@@ -127,46 +127,53 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              /// ---- Top User Info Row ----
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 28,
-                        backgroundImage: user?.profilePic != null
-                            ? NetworkImage(user!.profilePic!)
-                            : const AssetImage(
-                                    'assets/images/homePage/clinic.png',
-                                  )
-                                  as ImageProvider,
-                      ),
-                      const SizedBox(width: 10),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            user?.username ?? "",
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
+                  Expanded(
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 28,
+                          backgroundImage: user?.profilePic != null
+                              ? NetworkImage(user!.profilePic!)
+                              : const AssetImage(
+                                      'assets/images/homePage/clinic.png',
+                                    )
+                                    as ImageProvider,
+                        ),
+                        const SizedBox(width: 10),
+
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                user?.CardioName ?? "",
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+
+                              Text(
+                                "${user?.clinicName ?? ''}, ${user?.userAddress ?? ''}",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey.shade700,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            "${user?.clinicName ?? ''}, ${user?.userAddress ?? ''}",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey.shade700,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
-                    ],
+                        ),
+                      ],
+                    ),
                   ),
+
                   InkWell(
                     onTap: () {
                       Navigator.pushNamed(context, AppRoutes.notification);

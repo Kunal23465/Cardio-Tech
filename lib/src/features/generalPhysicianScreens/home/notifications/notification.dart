@@ -1,6 +1,9 @@
+import 'package:cardio_tech/src/provider/notificationProvider/notificationProvider.dart';
+import 'package:cardio_tech/src/utils/storage_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/theme.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 class NotificationScreeen extends StatefulWidget {
   const NotificationScreeen({super.key});
@@ -10,27 +13,31 @@ class NotificationScreeen extends StatefulWidget {
 }
 
 class _NotificationScreeenState extends State<NotificationScreeen> {
-  final List<Map<String, String>> notifications = List.generate(
-    10,
-    (index) => {
-      'title': 'Notification Heading',
-      'date': '12 Sep 2025',
-      'description':
-          'Figma ipsum content flows text device rotate scrolling bullet link slice device figjam blur inspect image image export vertical draft horizontal...',
-    },
-  );
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final userId = await StorageHelper.getUserId();
+      if (userId != null) {
+        context.read<NotificationProvider>().fetchNotifications(userId: userId);
+      } else {
+        debugPrint("User ID not found in storage");
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final notificationProvider = context.watch<NotificationProvider>();
+    final notifications = notificationProvider.notifications;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.pop(context),
           icon: SvgPicture.asset("assets/icon/backbutton.svg"),
         ),
         title: Text(
@@ -49,56 +56,65 @@ class _NotificationScreeenState extends State<NotificationScreeen> {
           ),
         ),
       ),
-      body: ListView.separated(
-        padding: const EdgeInsets.all(16),
-        itemCount: notifications.length,
-        separatorBuilder: (context, index) => const SizedBox(height: 12),
-        itemBuilder: (context, index) {
-          final notif = notifications[index];
-          return Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            elevation: 1,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Title and Date Row
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        notif['title'] ?? '',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                      Text(
-                        notif['date'] ?? '',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey.shade600,
-                        ),
-                      ),
-                    ],
+      body: notificationProvider.isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : notifications.isEmpty
+          ? const Center(child: Text("No notifications"))
+          : ListView.separated(
+              padding: const EdgeInsets.all(16),
+              itemCount: notifications.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              itemBuilder: (context, index) {
+                final notif = notifications[index];
+                return Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  const SizedBox(height: 8),
-                  // Description
-                  Text(
-                    notif['description'] ?? '',
-                    style: TextStyle(fontSize: 14, color: Colors.grey.shade800),
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
+                  elevation: 1,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Title and Date Row
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                notif.message,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              notif.createdAt.split('T').first,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey.shade600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          "Status: ${notif.status}",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey.shade800,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ],
-              ),
+                );
+              },
             ),
-          );
-        },
-      ),
     );
   }
 }

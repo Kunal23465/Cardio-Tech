@@ -2,6 +2,7 @@ import 'package:cardio_tech/src/data/loginAuth/auth_service.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/custom_textfield.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/gradient_button.dart';
 import 'package:cardio_tech/src/routes/AllRoutes.dart';
+import 'package:cardio_tech/src/utils/snackbar_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -20,9 +21,13 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
 
   void _verifyOtp() async {
     final otp = otpController.text.trim();
+
     if (otp.isEmpty) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("Enter OTP")));
+      SnackBarHelper.show(
+        context,
+        message: "Enter OTP",
+        type: SnackBarType.warning,
+      );
       return;
     }
 
@@ -30,24 +35,30 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
 
     try {
       final response = await _authService.verifyOtp(widget.emailOrMobile, otp);
+
       final message = response.data is String
           ? response.data
           : response.data['message'] ?? "OTP Verified";
 
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(message)));
+      SnackBarHelper.show(
+        context,
+        message: message,
+        type: SnackBarType.success,
+      );
 
       if (!mounted) return;
 
-      // Navigate to Set New Password screen
       Navigator.pushNamed(
         context,
         AppRoutes.setNewPassword,
         arguments: widget.emailOrMobile,
       );
     } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Error: $e")));
+      SnackBarHelper.show(
+        context,
+        message: "Error: $e",
+        type: SnackBarType.error,
+      );
     } finally {
       if (mounted) setState(() => isLoading = false);
     }
@@ -85,8 +96,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                 height: constraints.maxHeight * 0.65,
                 decoration: const BoxDecoration(
                   color: Colors.white,
-                  borderRadius:
-                      BorderRadius.vertical(top: Radius.circular(40)),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(40)),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(30),
@@ -99,7 +109,9 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                           const Text(
                             "OTP Verification",
                             style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.w600),
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                           const SizedBox(height: 10),
                           Text(

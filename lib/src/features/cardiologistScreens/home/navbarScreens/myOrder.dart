@@ -45,11 +45,20 @@ class _MyOrderState extends State<MyOrder> {
     final orderStatusProvider = context.read<OrderStatusProvider>();
     final myOrderProvider = context.read<MyOrderProvider>();
 
-    // Update status if order is SUBMITTED
+    final cardioPocId = int.tryParse(order.assignedCardiologistId ?? '') ?? 0;
+    if (cardioPocId == 0) {
+      SnackBarHelper.show(
+        context,
+        message: "No assigned cardiologist found for this order",
+        type: SnackBarType.warning,
+      );
+      return;
+    }
+
     if (order.orderStatus?.toUpperCase() == 'SUBMITTED') {
       final success = await orderStatusProvider.updateStatusToInReview(
         orderDetailsId: order.orderDetailsId,
-        cardioPocId: order.approvalLevels?.first.approverPocId ?? 0,
+        cardioPocId: cardioPocId,
       );
 
       if (success) {
@@ -60,12 +69,10 @@ class _MyOrderState extends State<MyOrder> {
           message: "Failed to update order status",
           type: SnackBarType.warning,
         );
-
         return;
       }
     }
 
-    //  Navigate to ReportOrder and WAIT for the result
     final result = await Navigator.pushNamed(
       context,
       AppRoutes.reportOrder,
@@ -79,7 +86,7 @@ class _MyOrderState extends State<MyOrder> {
     );
 
     if (result == true) {
-      await myOrderProvider.fetchAllOrders(); // Refresh  order list
+      await myOrderProvider.fetchAllOrders(); // Refresh order list
     }
   }
 

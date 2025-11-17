@@ -11,6 +11,7 @@ class FinalizedOrderModel {
   final String? genderValue;
   final int? age;
   final String? createdAt;
+  final String? referredByGpName;
 
   FinalizedOrderModel({
     required this.orderDetailsId,
@@ -23,6 +24,7 @@ class FinalizedOrderModel {
     this.genderValue,
     this.age,
     this.createdAt,
+    this.referredByGpName,
   });
 
   factory FinalizedOrderModel.fromJson(Map<String, dynamic> json) {
@@ -37,6 +39,7 @@ class FinalizedOrderModel {
       genderValue: json['genderValue'],
       age: json['age'],
       createdAt: _formatApiDate(json['createdAt']),
+      referredByGpName: json['referredByGpName'],
     );
   }
   static String? _formatApiDate(String? apiDate) {

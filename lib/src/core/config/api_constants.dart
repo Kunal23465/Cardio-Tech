@@ -43,4 +43,6 @@ class ApiConstants {
       "$baseUrl/commonLookupValue/getByLookupTypeCode";
   static const String loggedInUserDetails =
       "$baseUrl/home/getLoggedUserDetails";
+  static const String notificationDetails =
+      "$baseUrl/approval/listOfUnreadRecord";
 }

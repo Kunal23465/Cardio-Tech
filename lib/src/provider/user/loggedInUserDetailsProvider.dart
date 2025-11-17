@@ -13,7 +13,6 @@ class LoggedInUserDetailsProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
-  ///  Fetch logged-in user details (requires userId)
   Future<void> fetchLoggedInUserDetails({required int userId}) async {
     _isLoading = true;
     _errorMessage = null;

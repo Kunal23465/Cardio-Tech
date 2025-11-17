@@ -6,7 +6,7 @@ class CreateOrderModel {
   final String? mobileNumber;
   final String? email;
   final String? insuranceIdNo;
-  final String medicalRecordNumber; 
+  final String medicalRecordNumber;
   final String? clinicalNote;
   final int? priorityId;
   final int? assignedCardiologistId;
@@ -22,7 +22,7 @@ class CreateOrderModel {
     this.mobileNumber,
     this.email,
     this.insuranceIdNo,
-    required this.medicalRecordNumber, 
+    required this.medicalRecordNumber,
     this.clinicalNote,
     this.priorityId,
     this.assignedCardiologistId,
@@ -44,13 +44,13 @@ class CreateOrderModel {
       "mobileNumber": mobileNumber ?? '',
       "email": email ?? '',
       "insuranceIdNo": insuranceIdNo ?? '',
-      "medicalRecordNumber": medicalRecordNumber, 
+      "medicalRecordNumber": medicalRecordNumber,
       "clinicalNote": clinicalNote ?? '',
       "priorityId": priorityId ?? 0,
       "assignedCardiologistId": assignedCardiologistId ?? 0,
       "orderStatus": orderStatus,
       "createdById": createdById,
-      "updatedBy": updatedBy,
+      // "updatedBy": updatedBy,
       "approvalLevels": approvalLevels ?? [],
     };
   }
@@ -64,7 +64,7 @@ class CreateOrderModel {
       mobileNumber: json['mobileNumber'],
       email: json['email'],
       insuranceIdNo: json['insuranceIdNo'],
-      medicalRecordNumber: json['medicalRecordNumber'] ?? '', 
+      medicalRecordNumber: json['medicalRecordNumber'] ?? '',
       clinicalNote: json['clinicalNote'],
       priorityId: json['priorityId'],
       assignedCardiologistId: json['assignedCardiologistId'],

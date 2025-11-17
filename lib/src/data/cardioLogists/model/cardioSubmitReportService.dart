@@ -26,10 +26,21 @@ class CardioSubmitReportService {
         ),
       };
 
-      //  optional field only if it has a value
+      // Optional field
       if (clinicNoteFromCardio != null && clinicNoteFromCardio.isNotEmpty) {
         formMap['clinicNoteFromCardio'] = clinicNoteFromCardio;
       }
+
+      // DEBUG: print normal fields
+      formMap.forEach((key, value) {
+        if (value is! MultipartFile) {
+          print("Field: $key = $value");
+        }
+      });
+
+      // DEBUG: print file info
+      final attachment = formMap['attachment'] as MultipartFile;
+      print("File: ${attachment.filename}, size: ${attachment.length}");
 
       final formData = FormData.fromMap(formMap);
 

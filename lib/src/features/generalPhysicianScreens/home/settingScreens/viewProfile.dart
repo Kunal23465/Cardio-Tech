@@ -1,9 +1,12 @@
+import 'package:cardio_tech/src/provider/user/loggedInUserDetailsProvider.dart';
 import 'package:cardio_tech/src/routes/AllRoutes.dart';
+import 'package:cardio_tech/src/utils/storage_helper.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/theme.dart';
+import 'package:provider/provider.dart';
 
 class ViewProfile extends StatefulWidget {
   const ViewProfile({super.key});
@@ -14,7 +17,24 @@ class ViewProfile extends StatefulWidget {
 
 class _ViewProfileState extends State<ViewProfile> {
   @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final userId = await StorageHelper.getUserId();
+      if (userId != null) {
+        context.read<LoggedInUserDetailsProvider>().fetchLoggedInUserDetails(
+          userId: userId,
+        );
+      } else {
+        debugPrint(" User ID not found in storage");
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final userProvider = context.watch<LoggedInUserDetailsProvider>();
+    final user = userProvider.userDetails;
     return Scaffold(
       backgroundColor: Colors.white,
 
@@ -76,17 +96,18 @@ class _ViewProfileState extends State<ViewProfile> {
                 children: [
                   Container(
                     width: double.infinity,
-
                     height: 200,
-
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
-
-                      image: const DecorationImage(
-                        image: AssetImage(
-                          "assets/images/setting/profile_pic.png",
-                        ),
-
+                      image: DecorationImage(
+                        image:
+                            (user?.profilePic != null &&
+                                user!.profilePic!.isNotEmpty)
+                            ? NetworkImage(user.profilePic!)
+                            : const AssetImage(
+                                    "assets/images/setting/profile_pic.png",
+                                  )
+                                  as ImageProvider,
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -120,9 +141,9 @@ class _ViewProfileState extends State<ViewProfile> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
 
-                        children: const [
+                        children: [
                           Text(
-                            "Dr. Kunal Mishra",
+                            user?.CardioName ?? "Unknown",
 
                             style: TextStyle(
                               color: Colors.white,
@@ -134,7 +155,7 @@ class _ViewProfileState extends State<ViewProfile> {
                           ),
 
                           Text(
-                            "General Physician",
+                            user?.cardioValue ?? "Unknown",
 
                             style: TextStyle(color: Colors.white70),
                           ),
@@ -154,19 +175,23 @@ class _ViewProfileState extends State<ViewProfile> {
                 children: [
                   _infoBox(
                     'assets/images/setting/myProfile/license.svg',
-                    "HGYF32651DF",
+                    user?.licenseNo ?? "Unknown",
                     "Lic No.",
                   ),
                   Container(height: 40, width: 1, color: Colors.grey.shade500),
                   _infoBox(
                     'assets/images/setting/myProfile/task-done.svg',
-                    "3+",
-                    "Years",
+                    user?.totalExperience ?? "Unknown",
+                    "",
                   ),
                   Container(height: 40, width: 1, color: Colors.grey.shade500),
                   _infoBox(
                     'assets/images/setting/myProfile/profile-fill.svg',
-                    "116+",
+
+                    user?.totalOrders != null
+                        ? user!.totalOrders.toString()
+                        : "Unknown",
+
                     "Patients",
                   ),
                 ],
@@ -181,7 +206,7 @@ class _ViewProfileState extends State<ViewProfile> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
 
-                children: const [
+                children: [
                   Text(
                     "About Me",
 
@@ -191,7 +216,7 @@ class _ViewProfileState extends State<ViewProfile> {
                   SizedBox(height: 8),
 
                   Text(
-                    "Dr. Sanjay Modi is the general physician specialist in City Hospital in Lucknow. He achieved several awards for her wonderful contribution...",
+                    user?.about ?? "No Data",
 
                     style: TextStyle(fontSize: 14, color: Colors.black54),
                   ),
@@ -211,7 +236,7 @@ class _ViewProfileState extends State<ViewProfile> {
                       'assets/images/setting/myProfile/msg.svg',
                     ),
 
-                    text: "kunalmishra@gmail.com",
+                    text: user?.email ?? "No Data",
                   ),
 
                   _contactCard(
@@ -219,7 +244,7 @@ class _ViewProfileState extends State<ViewProfile> {
                       'assets/images/setting/myProfile/call.svg',
                     ),
 
-                    text: "+91 753951365",
+                    text: user?.mobile ?? "No Data",
                   ),
 
                   _contactCard(
@@ -227,7 +252,7 @@ class _ViewProfileState extends State<ViewProfile> {
                       'assets/images/setting/myProfile/hospital.svg',
                     ),
 
-                    text: "City Hospital Lucknow, Uttar Pradesh",
+                    text: user?.clinicName ?? "No Data",
                   ),
 
                   _contactCard(
@@ -235,7 +260,7 @@ class _ViewProfileState extends State<ViewProfile> {
                       'assets/images/setting/myProfile/location.svg',
                     ),
 
-                    text: "214 A block Krishna heights Lucknow Up.",
+                    text: user?.userAddress ?? "No Data",
                   ),
                 ],
               ),

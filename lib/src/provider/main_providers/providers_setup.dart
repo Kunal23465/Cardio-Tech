@@ -15,6 +15,7 @@ import 'package:cardio_tech/src/provider/generalPhysicianProvider/new_order/all_
 import 'package:cardio_tech/src/provider/generalPhysicianProvider/new_order/create_order_provider.dart';
 import 'package:cardio_tech/src/provider/generalPhysicianProvider/new_order/gender_provider.dart';
 import 'package:cardio_tech/src/provider/generalPhysicianProvider/new_order/order_priority_provider.dart';
+import 'package:cardio_tech/src/provider/notificationProvider/notificationProvider.dart';
 import 'package:cardio_tech/src/provider/user/loggedInUserDetailsProvider.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
@@ -38,4 +39,5 @@ List<SingleChildWidget> appProviders = [
   ChangeNotifierProvider(create: (_) => AssignCardiologistProvider()),
   ChangeNotifierProvider(create: (_) => AssignOrderProvider()),
   ChangeNotifierProvider(create: (_) => FinalizedOrderProvider()),
+  ChangeNotifierProvider(create: (_) => NotificationProvider()),
 ];

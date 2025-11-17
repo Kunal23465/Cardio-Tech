@@ -19,13 +19,13 @@ class LoggedInUserDetailsService {
           final Map<String, dynamic> data = dataList.first;
           return Loggedinuserdetailsmodel.fromJson(data);
         } else {
-          return null; // no user data found
+          return null;
         }
       } else {
         throw Exception('Failed to fetch logged-in user details');
       }
     } catch (e) {
-      print("❌ Error fetching logged-in user details: $e");
+      print("Error fetching logged-in user details: $e");
       rethrow;
     }
   }

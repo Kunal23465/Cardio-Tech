@@ -29,8 +29,6 @@ dependencies:
   flutter_downloader: ^1.11.6
   flutter_painter: ^1.0.1
   flutter_colorpicker: ^1.0.3
-  image: ^4.1.7
-  http: ^1.6.0
 
 dev_dependencies:
   flutter_test:
