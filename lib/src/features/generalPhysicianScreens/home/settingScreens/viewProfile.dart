@@ -84,6 +84,7 @@ class _ViewProfileState extends State<ViewProfile> {
 
       body: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 20),
 
@@ -182,7 +183,7 @@ class _ViewProfileState extends State<ViewProfile> {
                   _infoBox(
                     'assets/images/setting/myProfile/task-done.svg',
                     user?.totalExperience ?? "Unknown",
-                    "",
+                    "     ",
                   ),
                   Container(height: 40, width: 1, color: Colors.grey.shade500),
                   _infoBox(

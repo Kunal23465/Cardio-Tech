@@ -45,4 +45,11 @@ class ApiConstants {
       "$baseUrl/home/getLoggedUserDetails";
   static const String notificationDetails =
       "$baseUrl/approval/listOfUnreadRecord";
+  static const String editProfile = "$baseUrl/home/updateProfile";
+
+  static const String getAllExperience =
+      "$baseUrl/commonLookupValue/getByLookupTypeCode/EXPERIENCE";
+
+  static const String uploadProfile = "$baseUrl/home/upload-profile-pic";
+  static const String changePassword = "$baseUrl/auth/change-password";
 }

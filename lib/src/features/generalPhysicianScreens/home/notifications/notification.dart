@@ -93,7 +93,7 @@ class _NotificationScreeenState extends State<NotificationScreeen> {
                             ),
                             const SizedBox(width: 8),
                             Text(
-                              notif.createdAt.split('T').first,
+                              notif.createdAt ?? "",
                               style: TextStyle(
                                 fontSize: 12,
                                 color: Colors.grey.shade600,

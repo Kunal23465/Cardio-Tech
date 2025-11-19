@@ -368,7 +368,8 @@ class GradientBorderCard extends StatelessWidget {
                       width: 110,
                       text:
                           order.orderStatus == "SUBMITTED" ||
-                              order.orderStatus == "FINALIZED"
+                              order.orderStatus == "FINALIZED" ||
+                              order.orderStatus == "FINALIZED_VIEW"
                           ? "Track Order"
                           : "Create Order",
                       onPressed: () async {

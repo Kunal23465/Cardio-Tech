@@ -15,60 +15,56 @@ class Cardiologistnavbar extends StatefulWidget {
 }
 
 class _CardiologistnavbarState extends State<Cardiologistnavbar> {
-  late int _currentIndex;
-  static const double navBarHeight = 90;
+  int _currentIndex = 2; // default tab
+
+  static const double navBarHeight = 60;
+
+  // --- PRELOADED SVG ICONS (NO BLINK) ---
+  Widget homeActiveIcon = const SizedBox();
+  Widget homeInactiveIcon = const SizedBox();
 
   @override
-  void initState() {
-    super.initState();
-    _currentIndex = widget.initialIndex;
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    homeActiveIcon = SvgPicture.asset(
+      'assets/images/navbar/home.svg',
+      width: 30,
+      height: 30,
+    );
+
+    homeInactiveIcon = SvgPicture.asset(
+      'assets/images/navbar/home-2.svg',
+      width: 30,
+      height: 30,
+    );
   }
+
+  final List<Widget> _pages = const [
+    MyOrder(),
+    AllOrder(),
+    HomePage(),
+    Finalized(),
+    Setting(),
+  ];
 
   void _onTabSelected(int index) {
     setState(() => _currentIndex = index);
   }
 
-  ///  Lazy load pages instead of building all at once
-  Widget _getPage(int index) {
-    switch (index) {
-      case 0:
-        return const MyOrder();
-      case 1:
-        return const AllOrder();
-      case 2:
-        return const HomePage();
-      case 3:
-        return const Finalized();
-      case 4:
-        return const Setting();
-      default:
-        return const HomePage();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final bottomInset = MediaQuery.of(context).viewPadding.bottom;
+    final bool isThreeButtonNav = bottomInset >= 40;
+
     return Scaffold(
       backgroundColor: Colors.white,
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       extendBody: true,
 
-      ///  Only build currently selected page
-      body: SafeArea(
-        top: false,
-        bottom: false,
-        child: LayoutBuilder(
-          builder: (context, constraints) => SingleChildScrollView(
-            physics: const ClampingScrollPhysics(),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: constraints.maxHeight),
-              child: IntrinsicHeight(child: _getPage(_currentIndex)),
-            ),
-          ),
-        ),
-      ),
+      body: IndexedStack(index: _currentIndex, children: _pages),
 
-      // Floating Action Button (Home)
+      // ---------------- FAB (NO BLINK) ----------------
       floatingActionButton: SizedBox(
         width: 70,
         height: 70,
@@ -77,34 +73,24 @@ class _CardiologistnavbarState extends State<Cardiologistnavbar> {
           elevation: 6,
           shape: const CircleBorder(),
           onPressed: () => _onTabSelected(2),
-          child: _currentIndex == 2
-              ? SvgPicture.asset(
-                  'assets/images/navbar/home.svg',
-                  width: 30,
-                  height: 30,
-                  fit: BoxFit.contain,
-                )
-              : SvgPicture.asset(
-                  'assets/images/navbar/home-2.svg',
-                  width: 30,
-                  height: 30,
-                  fit: BoxFit.contain,
-                ),
+          child: _currentIndex == 2 ? homeActiveIcon : homeInactiveIcon,
         ),
       ),
+
       floatingActionButtonLocation: const CustomCenterDockedFABLocation(),
 
-      bottomNavigationBar: SizedBox(
-        height: navBarHeight,
-        child: Stack(
-          clipBehavior: Clip.none,
-          alignment: Alignment.center,
-          children: [
-            Positioned.fill(child: CustomPaint(painter: NavBarPainter())),
-            SafeArea(
-              top: false,
-              bottom: true,
-              child: SizedBox(
+      // ---------------- BOTTOM NAVIGATION ----------------
+      bottomNavigationBar: SafeArea(
+        top: false,
+        bottom: isThreeButtonNav, // only for 3-button nav
+        child: SizedBox(
+          height: navBarHeight,
+          child: Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.center,
+            children: [
+              Positioned.fill(child: CustomPaint(painter: NavBarPainter())),
+              SizedBox(
                 height: navBarHeight,
                 child: Row(
                   children: [
@@ -113,7 +99,6 @@ class _CardiologistnavbarState extends State<Cardiologistnavbar> {
                         _currentIndex == 0
                             ? SvgPicture.asset(
                                 "assets/cardiologistsIcon/icon/navbar/myOrder1.svg",
-
                                 width: 24,
                                 height: 24,
                               )
@@ -122,7 +107,7 @@ class _CardiologistnavbarState extends State<Cardiologistnavbar> {
                                 width: 24,
                                 height: 24,
                               ),
-                        "My Orders",
+                        "My Order",
                         0,
                       ),
                     ),
@@ -139,11 +124,11 @@ class _CardiologistnavbarState extends State<Cardiologistnavbar> {
                                 width: 24,
                                 height: 24,
                               ),
-                        "All Orders",
+                        "All Order",
                         1,
                       ),
                     ),
-                    const SizedBox(width: 80), // space for FAB
+                    const SizedBox(width: 80),
                     Expanded(
                       child: _navButton(
                         _currentIndex == 3
@@ -154,8 +139,8 @@ class _CardiologistnavbarState extends State<Cardiologistnavbar> {
                               )
                             : SvgPicture.asset(
                                 "assets/cardiologistsIcon/icon/navbar/Finalized.svg",
-                                width: 20,
-                                height: 20,
+                                width: 24,
+                                height: 24,
                               ),
                         "Finalized",
                         3,
@@ -181,8 +166,8 @@ class _CardiologistnavbarState extends State<Cardiologistnavbar> {
                   ],
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -191,7 +176,6 @@ class _CardiologistnavbarState extends State<Cardiologistnavbar> {
   Widget _navButton(Widget icon, String label, int index) {
     return GestureDetector(
       onTap: () => _onTabSelected(index),
-      behavior: HitTestBehavior.translucent,
       child: SizedBox(
         width: 80,
         height: 60,
@@ -211,16 +195,25 @@ class _CardiologistnavbarState extends State<Cardiologistnavbar> {
   }
 }
 
+// ---------- FAB ADJUST ONLY FOR 3-BUTTON NAVIGATION ---------- //
+
 class CustomCenterDockedFABLocation extends StandardFabLocation
     with FabCenterOffsetX, FabDockedOffsetY {
   const CustomCenterDockedFABLocation();
 
   @override
-  Offset getOffset(ScaffoldPrelayoutGeometry scaffoldGeometry) {
-    final Offset baseOffset = super.getOffset(scaffoldGeometry);
-    return baseOffset.translate(0, -20);
+  Offset getOffset(ScaffoldPrelayoutGeometry geometry) {
+    final base = super.getOffset(geometry);
+    double bottomInset = geometry.minInsets.bottom;
+
+    bool isThreeButton = bottomInset >= 40;
+    double lift = isThreeButton ? bottomInset * 0.40 : 0;
+
+    return base.translate(0, -20 - lift);
   }
 }
+
+// ---------------- NAV BAR PAINTER ---------------- //
 
 class NavBarPainter extends CustomPainter {
   @override

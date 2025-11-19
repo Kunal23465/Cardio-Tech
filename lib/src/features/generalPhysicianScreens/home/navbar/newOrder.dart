@@ -1,5 +1,3 @@
-// lib/src/features/home/navbar/new_order.dart
-
 import 'dart:io';
 import 'package:cardio_tech/src/data/generalPhysician/models/New_order/create_order_model.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/gradient_button.dart';
@@ -291,7 +289,7 @@ class _NewOrderState extends State<NewOrder> {
     final orderId = await createOrderProvider.createOrSubmitOrder(
       orderModel: order,
       createdById: userId,
-      updatedBy: userId,
+      updatedById: userId,
       orderStatus: status,
       ekgReport: ekgReport,
       uploadInsuranceIDProof: uploadInsuranceIDProof,

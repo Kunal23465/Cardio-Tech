@@ -15,7 +15,7 @@ class CreateOrderProvider extends ChangeNotifier {
   Future<int?> createOrSubmitOrder({
     required CreateOrderModel orderModel,
     required int createdById,
-    required int updatedBy,
+    required int updatedById,
     required String orderStatus,
     File? ekgReport,
     File? uploadInsuranceIDProof,
@@ -29,7 +29,7 @@ class CreateOrderProvider extends ChangeNotifier {
       final responseModel = await _repository.createOrSubmitOrder(
         orderModel.toJson(
           createdById: createdById,
-          updatedBy: updatedBy,
+          updatedById: updatedById,
           orderStatus: orderStatus,
         ),
       );

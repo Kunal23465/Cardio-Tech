@@ -11,6 +11,10 @@ import 'package:cardio_tech/src/provider/generalPhysicianProvider/allPatient/get
 import 'package:cardio_tech/src/provider/generalPhysicianProvider/allPatient/orderFilterProvider.dart';
 import 'package:cardio_tech/src/provider/generalPhysicianProvider/allPatient/submitOrderDetailsProvider.dart';
 import 'package:cardio_tech/src/provider/generalPhysicianProvider/commons/allStatusProvider.dart';
+import 'package:cardio_tech/src/provider/generalPhysicianProvider/commons/changePassword/changePasswordProvider.dart';
+import 'package:cardio_tech/src/provider/generalPhysicianProvider/commons/editProfile.dart/editProfileProvider.dart';
+import 'package:cardio_tech/src/provider/generalPhysicianProvider/commons/editProfile.dart/experienceProvider.dart';
+import 'package:cardio_tech/src/provider/generalPhysicianProvider/commons/editProfile.dart/uploadProfileProvider.dart';
 import 'package:cardio_tech/src/provider/generalPhysicianProvider/new_order/all_cardiologist_provider.dart';
 import 'package:cardio_tech/src/provider/generalPhysicianProvider/new_order/create_order_provider.dart';
 import 'package:cardio_tech/src/provider/generalPhysicianProvider/new_order/gender_provider.dart';
@@ -40,4 +44,8 @@ List<SingleChildWidget> appProviders = [
   ChangeNotifierProvider(create: (_) => AssignOrderProvider()),
   ChangeNotifierProvider(create: (_) => FinalizedOrderProvider()),
   ChangeNotifierProvider(create: (_) => NotificationProvider()),
+  ChangeNotifierProvider(create: (_) => EditProfileProvider()),
+  ChangeNotifierProvider(create: (_) => ExperienceProvider()),
+  ChangeNotifierProvider(create: (_) => ChangePasswordProvider()),
+  ChangeNotifierProvider(create: (_) => UploadProfileProvider()),
 ];

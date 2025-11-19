@@ -13,6 +13,8 @@ class Loggedinuserdetailsmodel {
   final String? licenseNo;
   final String? totalExperience;
   final String? about;
+  final String? firstName;
+  final String? lastName;
 
   Loggedinuserdetailsmodel({
     required this.email,
@@ -29,6 +31,8 @@ class Loggedinuserdetailsmodel {
     this.licenseNo,
     this.totalExperience,
     this.about,
+    this.firstName,
+    this.lastName,
   });
 
   //  Optional: factory constructor for creating model from JSON
@@ -48,6 +52,8 @@ class Loggedinuserdetailsmodel {
       licenseNo: json['licenseNo'] ?? '',
       totalExperience: json['totalExperience'] ?? '',
       about: json['about'] ?? '',
+      firstName: json['firstName'] ?? '',
+      lastName: json['lastName'] ?? '',
     );
   }
 
@@ -67,6 +73,8 @@ class Loggedinuserdetailsmodel {
       'licenseNo': licenseNo,
       'about': about,
       'username': username,
+      'firstName': firstName,
+      'lastName': lastName,
     };
   }
 }

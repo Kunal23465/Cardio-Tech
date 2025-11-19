@@ -4,6 +4,7 @@ import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/Da
 import 'package:cardio_tech/src/features/widgets/orderDetailsCard.dart';
 import 'package:cardio_tech/src/provider/cardioLogistsProvider/myOrderProvider.dart';
 import 'package:cardio_tech/src/provider/cardioLogistsProvider/orderStatusProvider.dart';
+import 'package:cardio_tech/src/provider/notificationProvider/notificationProvider.dart';
 import 'package:cardio_tech/src/provider/user/loggedInUserDetailsProvider.dart';
 import 'package:cardio_tech/src/routes/AllRoutes.dart';
 import 'package:cardio_tech/src/utils/snackbar_helper.dart';
@@ -117,6 +118,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     final userProvider = context.watch<LoggedInUserDetailsProvider>();
     final user = userProvider.userDetails;
     final orderProvider = context.watch<MyOrderProvider>();
+    final notificationProvider = context.watch<NotificationProvider>();
+    final notifications = notificationProvider.notifications;
+    final bool hasUnread = notifications.any(
+      (n) => n.status.toUpperCase() == "UNREAD",
+    );
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -133,15 +139,34 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   Expanded(
                     child: Row(
                       children: [
-                        CircleAvatar(
-                          radius: 28,
-                          backgroundImage: user?.profilePic != null
-                              ? NetworkImage(user!.profilePic!)
-                              : const AssetImage(
-                                      'assets/images/homePage/clinic.png',
-                                    )
-                                    as ImageProvider,
+                        InkWell(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (_) => Dialog(
+                                backgroundColor: Colors.black,
+                                insetPadding: EdgeInsets.zero,
+                                child: InteractiveViewer(
+                                  child: Image.network(
+                                    user?.profilePic ?? "",
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                          borderRadius: BorderRadius.circular(50),
+                          child: CircleAvatar(
+                            radius: 28,
+                            backgroundImage: user?.profilePic != null
+                                ? NetworkImage(user!.profilePic!)
+                                : const AssetImage(
+                                        'assets/images/homePage/clinic.png',
+                                      )
+                                      as ImageProvider,
+                          ),
                         ),
+
                         const SizedBox(width: 10),
 
                         Expanded(
@@ -175,8 +200,18 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   ),
 
                   InkWell(
-                    onTap: () {
-                      Navigator.pushNamed(context, AppRoutes.notification);
+                    onTap: () async {
+                      await Navigator.pushNamed(
+                        context,
+                        AppRoutes.notification,
+                      );
+
+                      final userId = await StorageHelper.getUserId();
+                      if (userId != null) {
+                        await context
+                            .read<NotificationProvider>()
+                            .fetchNotifications(userId: userId);
+                      }
                     },
                     borderRadius: BorderRadius.circular(50),
                     child: Container(
@@ -186,7 +221,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         shape: BoxShape.circle,
                       ),
                       child: SvgPicture.asset(
-                        'assets/images/homePage/notification.svg',
+                        hasUnread
+                            ? 'assets/images/homePage/notification.svg'
+                            : 'assets/images/homePage/notification1.svg',
                         fit: BoxFit.contain,
                       ),
                     ),

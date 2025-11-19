@@ -1,8 +1,21 @@
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/custom_textfield.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/theme.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/gradient_button.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+
+import 'package:cardio_tech/src/provider/generalPhysicianProvider/commons/editProfile.dart/editProfileProvider.dart';
+import 'package:cardio_tech/src/provider/generalPhysicianProvider/commons/editProfile.dart/uploadProfileProvider.dart';
+import 'package:cardio_tech/src/provider/user/loggedInUserDetailsProvider.dart';
+import 'package:cardio_tech/src/provider/generalPhysicianProvider/commons/editProfile.dart/experienceProvider.dart';
+
+import 'package:cardio_tech/src/data/generalPhysician/models/editProfile/editProfileModel.dart';
+import 'package:cardio_tech/src/utils/snackbar_helper.dart';
+import 'package:cardio_tech/src/utils/storage_helper.dart';
 
 class Editprofile extends StatefulWidget {
   const Editprofile({super.key});
@@ -12,31 +25,156 @@ class Editprofile extends StatefulWidget {
 }
 
 class _EditprofileState extends State<Editprofile> {
-  final aboutController = TextEditingController();
-  final emailController = TextEditingController();
+  // Controllers
+  final firstNameController = TextEditingController();
+  final lastNameController = TextEditingController();
+  final fullNameController = TextEditingController();
   final phoneController = TextEditingController();
+  final emailController = TextEditingController();
   final addressController = TextEditingController();
+  final aboutController = TextEditingController();
+
+  int? selectedExperienceId;
+
+  File? selectedImage;
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.microtask(() async {
+      final userId = await StorageHelper.getUserId();
+
+      if (userId != null) {
+        final userProvider = context.read<LoggedInUserDetailsProvider>();
+        final experienceProvider = context.read<ExperienceProvider>();
+
+        await userProvider.fetchLoggedInUserDetails(userId: userId);
+        final user = userProvider.userDetails;
+
+        await experienceProvider.loadExperiences();
+
+        if (user != null) {
+          firstNameController.text = user.firstName ?? "";
+          lastNameController.text = user.lastName ?? "";
+          fullNameController.text = user.CardioName;
+          phoneController.text = user.mobile;
+          emailController.text = user.email;
+          addressController.text = user.userAddress;
+          aboutController.text = user.about ?? "";
+
+          if (user.totalExperience != null) {
+            selectedExperienceId = int.tryParse(user.totalExperience!);
+            setState(() {});
+          }
+        }
+      }
+    });
+  }
 
   @override
   void dispose() {
-    aboutController.dispose();
-    emailController.dispose();
+    firstNameController.dispose();
+    lastNameController.dispose();
+    fullNameController.dispose();
     phoneController.dispose();
+    emailController.dispose();
     addressController.dispose();
+    aboutController.dispose();
     super.dispose();
+  }
+
+  /// PICK IMAGE
+  Future<void> pickImage() async {
+    final picker = ImagePicker();
+    final picked = await picker.pickImage(source: ImageSource.gallery);
+
+    if (picked != null) {
+      setState(() {
+        selectedImage = File(picked.path);
+      });
+    }
+  }
+
+  Future<void> handleUpdate() async {
+    final userId = await StorageHelper.getUserId();
+    if (userId == null) return;
+
+    final editProvider = context.read<EditProfileProvider>();
+    final uploadProvider = context.read<UploadProfileProvider>();
+    final userProvider = context.read<LoggedInUserDetailsProvider>();
+    final user = userProvider.userDetails;
+    if (user == null) return;
+
+    // Prepare model with StorageHelper userId
+    EditProfileModel model = EditProfileModel(
+      userDetailsId: int.parse(
+        userId.toString(),
+      ), // send this to EditProfile API
+      firstName: firstNameController.text,
+      lastName: lastNameController.text,
+      pocPhone: phoneController.text,
+      pocEmail: emailController.text,
+      address: addressController.text,
+      licenseNo: user.licenseNo,
+      about: aboutController.text,
+      experienceLookupId: selectedExperienceId,
+    );
+
+    // Call update profile API
+    final updateSuccess = await editProvider.updateProfile(model);
+    if (!updateSuccess) {
+      SnackBarHelper.show(
+        context,
+        message: "Failed to update profile",
+        type: SnackBarType.error,
+      );
+      return;
+    }
+
+    //  Get returned userDetailsId from provider
+    final updatedUserId = editProvider.updatedUserDetailsId.toString();
+    print("Updated userDetailsId = $updatedUserId");
+
+    // Upload image using returned userDetailsId
+    if (selectedImage != null) {
+      final uploadSuccess = await uploadProvider.uploadProfile(
+        userId: updatedUserId,
+        file: selectedImage!,
+      );
+
+      if (!uploadSuccess) {
+        SnackBarHelper.show(
+          context,
+          message: "Profile updated but image upload failed!",
+          type: SnackBarType.error,
+        );
+      }
+    }
+
+    await userProvider.fetchLoggedInUserDetails(userId: userId);
+
+    SnackBarHelper.show(
+      context,
+      message: "Profile updated successfully",
+      type: SnackBarType.success,
+    );
+
+    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = context.watch<LoggedInUserDetailsProvider>();
+    final user = userProvider.userDetails;
+
     return Scaffold(
       backgroundColor: Colors.white,
 
       appBar: AppBar(
         backgroundColor: Colors.white,
         leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.pop(context),
           icon: SvgPicture.asset("assets/icon/backbutton.svg"),
         ),
         title: Text(
@@ -57,88 +195,160 @@ class _EditprofileState extends State<Editprofile> {
         ),
       ),
 
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Stack(
-              alignment: Alignment.bottomCenter,
-              children: [
-                Container(
-                  width: double.infinity,
-                  height: 200,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    image: const DecorationImage(
-                      image: AssetImage(
-                        "assets/images/setting/profile_pic.png",
-                      ),
-                      fit: BoxFit.cover,
+      body: user == null
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  GestureDetector(
+                    // onTap: pickImage,
+                    child: Stack(
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          height: 200,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            image: DecorationImage(
+                              image: selectedImage != null
+                                  ? FileImage(selectedImage!)
+                                  : (user.profilePic != null &&
+                                        user.profilePic!.isNotEmpty)
+                                  ? NetworkImage(user.profilePic!)
+                                  : const AssetImage(
+                                          "assets/images/setting/profile_pic.png",
+                                        )
+                                        as ImageProvider,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          top: 10,
+                          left: 10,
+                          child: GestureDetector(
+                            onTap: pickImage,
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                // color: Colors.black54,
+                                shape: BoxShape.circle,
+                              ),
+                              child: SvgPicture.asset(
+                                'assets/images/setting/editProfile.svg',
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-              ],
-            ),
 
-            const SizedBox(height: 30),
+                  const SizedBox(height: 30),
 
-            CustomTextField(
-              label: "About Me",
-              hint: "Write about yourself",
-              controller: aboutController,
-            ),
-            const SizedBox(height: 16),
+                  CustomTextField(
+                    label: "First Name",
+                    controller: firstNameController,
+                  ),
+                  const SizedBox(height: 16),
 
-            CustomTextField(
-              label: "Email",
-              hint: "kunalmishra@gmail.com",
-              controller: emailController,
-            ),
-            const SizedBox(height: 16),
+                  CustomTextField(
+                    label: "Last Name",
+                    controller: lastNameController,
+                  ),
+                  const SizedBox(height: 16),
 
-            CustomTextField(
-              label: "Phone",
-              hint: "+91 753951365",
-              controller: phoneController,
-            ),
-            const SizedBox(height: 16),
+                  CustomTextField(
+                    label: "Full Name",
+                    controller: fullNameController,
+                  ),
+                  const SizedBox(height: 16),
 
-            CustomTextField(
-              label: "Hospital",
-              hint: "City Hospital Lucknow, Uttar Pradesh",
-              controller: phoneController,
-            ),
-            const SizedBox(height: 16),
+                  CustomTextField(label: "Phone", controller: phoneController),
+                  const SizedBox(height: 16),
 
-            CustomTextField(
-              label: "Address",
-              hint: "214 A block Krishna heights Lucknow Up.",
-              controller: addressController,
-            ),
+                  CustomTextField(label: "Email", controller: emailController),
+                  const SizedBox(height: 16),
 
-            const SizedBox(height: 40),
+                  CustomTextField(
+                    label: "Address",
+                    controller: addressController,
+                  ),
+                  const SizedBox(height: 16),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: GradientButton(
-                    text: 'Cancel',
-                    isOutlined: true,
-                    onPressed: () {
-                      Navigator.pop(context);
+                  CustomTextField(label: "About", controller: aboutController),
+                  const SizedBox(height: 20),
+
+                  // EXPERIENCE DROPDOWN
+                  Consumer<ExperienceProvider>(
+                    builder: (context, expProvider, child) {
+                      return expProvider.experienceList.isEmpty
+                          ? const CircularProgressIndicator()
+                          : CustomTextField(
+                              label: "Experience",
+                              fieldType: FieldType.dropdown,
+                              dropdownItems: expProvider.experienceList
+                                  .map((e) => e.value)
+                                  .toList(),
+                              selectedValue: selectedExperienceId != null
+                                  ? expProvider.experienceList
+                                        .firstWhere(
+                                          (e) =>
+                                              e.commonLookupValueDetailsId ==
+                                              selectedExperienceId,
+                                        )
+                                        .value
+                                  : null,
+                              onChanged: (val) {
+                                final selected = expProvider.experienceList
+                                    .firstWhere((e) => e.value == val);
+
+                                setState(() {
+                                  selectedExperienceId =
+                                      selected.commonLookupValueDetailsId;
+                                });
+
+                                expProvider.setSelectedExperience(selected);
+                              },
+                            );
                     },
                   ),
-                ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: GradientButton(text: 'Update', onPressed: () {}),
-                ),
-              ],
+
+                  const SizedBox(height: 20),
+
+                  // BUTTONS
+                  Row(
+                    children: [
+                      Expanded(
+                        child: GradientButton(
+                          text: 'Cancel',
+                          isOutlined: true,
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ),
+                      const SizedBox(width: 20),
+
+                      Expanded(
+                        child: Consumer<EditProfileProvider>(
+                          builder: (context, provider, child) {
+                            return GradientButton(
+                              text: provider.isLoading
+                                  ? "Updating..."
+                                  : "Update",
+                              onPressed: provider.isLoading
+                                  ? null
+                                  : () => handleUpdate(),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
-      ),
     );
   }
 }

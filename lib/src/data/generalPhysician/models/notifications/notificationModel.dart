@@ -1,8 +1,10 @@
+import 'package:intl/intl.dart';
+
 class NotificationModel {
   final int approvalNotificationsDetailsId;
   final String message;
   final String status;
-  final String createdAt;
+  final String? createdAt;
   final String? updatedAt;
 
   NotificationModel({
@@ -19,7 +21,7 @@ class NotificationModel {
           json['approvalNotificationsDetailsId'] ?? 0,
       message: json['message'] ?? '',
       status: json['status'] ?? '',
-      createdAt: json['createdAt'] ?? '',
+      createdAt: _formatApiDate(json['createdAt'] ?? ''),
       updatedAt: json['updatedAt'],
     );
   }
@@ -32,5 +34,15 @@ class NotificationModel {
       'createdAt': createdAt,
       'updatedAt': updatedAt,
     };
+  }
+
+  static String? _formatApiDate(String? apiDate) {
+    if (apiDate == null || apiDate.isEmpty) return null;
+    try {
+      final date = DateTime.parse(apiDate);
+      return DateFormat('dd MMM yyyy').format(date);
+    } catch (e) {
+      return apiDate;
+    }
   }
 }

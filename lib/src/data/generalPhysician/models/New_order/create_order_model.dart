@@ -33,7 +33,7 @@ class CreateOrderModel {
 
   Map<String, dynamic> toJson({
     required int createdById,
-    required int updatedBy,
+    required int updatedById,
     required String orderStatus,
   }) {
     return {
@@ -50,7 +50,7 @@ class CreateOrderModel {
       "assignedCardiologistId": assignedCardiologistId ?? 0,
       "orderStatus": orderStatus,
       "createdById": createdById,
-      // "updatedBy": updatedBy,
+      "updatedById": updatedById,
       "approvalLevels": approvalLevels ?? [],
     };
   }
