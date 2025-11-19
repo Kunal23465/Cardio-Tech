@@ -1,6 +1,5 @@
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/gradient_border_dropdown.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/gradient_button.dart';
-import 'package:cardio_tech/src/routes/AllRoutes.dart';
 import 'package:flutter/material.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/theme.dart';
 import 'package:flutter_svg/svg.dart';
@@ -59,7 +58,6 @@ class _TrackorderState extends State<Trackorder> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         child: Column(
           children: [
-            // 🔍 Search bar
             Container(
               margin: const EdgeInsets.only(top: 8, bottom: 12),
               decoration: BoxDecoration(
@@ -90,7 +88,6 @@ class _TrackorderState extends State<Trackorder> {
               ),
             ),
 
-            //  Status & Priority Filters
             Row(
               children: [
                 Expanded(
@@ -117,7 +114,6 @@ class _TrackorderState extends State<Trackorder> {
 
             const SizedBox(height: 16),
 
-            // 📋 Orders List
             Expanded(
               child: ListView.builder(
                 itemCount: orders.length,
@@ -138,7 +134,6 @@ class _TrackorderState extends State<Trackorder> {
 }
 
 //
-// 📦 Reusable Track Order Card
 //
 class TrackOrderCard extends StatelessWidget {
   final Map<String, String> order;
@@ -236,9 +231,7 @@ class TrackOrderCard extends StatelessWidget {
                         height: 30,
                         width: 110,
                         text: 'Track Order',
-                        onPressed: () {
-                          Navigator.pushNamed(context, AppRoutes.orderDetails);
-                        },
+                        onPressed: () {},
                       ),
                     ],
                   ),

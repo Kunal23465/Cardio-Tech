@@ -17,7 +17,7 @@ class Navbar extends StatefulWidget {
 class _NavbarState extends State<Navbar> {
   int _currentIndex = 2; // default tab
 
-  static const double navBarHeight = 60;
+  static const double navBarHeight = 70;
 
   // --- PRELOADED SVG ICONS (NO BLINK) ---
   Widget homeActiveIcon = const SizedBox();
@@ -40,16 +40,34 @@ class _NavbarState extends State<Navbar> {
     );
   }
 
-  final List<Widget> _pages = const [
-    NewOrder(),
-    AllPatient(),
-    HomePage(),
-    Trackorder(),
-    Setting(),
-  ];
+  List<Widget?> _pages = [null, null, null, null, null];
 
   void _onTabSelected(int index) {
-    setState(() => _currentIndex = index);
+    setState(() {
+      _currentIndex = index;
+
+      if (_pages[index] == null) {
+        if (index == 0)
+          _pages[index] = const NewOrder();
+        else if (index == 1)
+          _pages[index] = const AllPatient();
+        else if (index == 2)
+          _pages[index] = const HomePage();
+        else if (index == 3)
+          _pages[index] = const Trackorder();
+        else if (index == 4)
+          _pages[index] = const Setting();
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Load only HomePage at login
+    _currentIndex = 2;
+    _pages[2] = const HomePage(); // Home API will run here
   }
 
   @override
@@ -59,10 +77,14 @@ class _NavbarState extends State<Navbar> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      resizeToAvoidBottomInset: true,
+      resizeToAvoidBottomInset: false,
       extendBody: true,
 
-      body: IndexedStack(index: _currentIndex, children: _pages),
+      // body: IndexedStack(index: _currentIndex, children: _pages),
+      body: IndexedStack(
+        index: _currentIndex,
+        children: _pages.map((page) => page ?? const SizedBox()).toList(),
+      ),
 
       // ---------------- FAB (NO BLINK) ----------------
       floatingActionButton: SizedBox(
@@ -174,11 +196,14 @@ class _NavbarState extends State<Navbar> {
   }
 
   Widget _navButton(Widget icon, String label, int index) {
-    return GestureDetector(
+    return InkWell(
       onTap: () => _onTabSelected(index),
-      child: SizedBox(
-        width: 80,
-        height: 60,
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      child: Container(
+        width: double.infinity, //FULL WIDTH TAP AREA
+        height: 70, // LARGE TAP HEIGHT
+        padding: const EdgeInsets.symmetric(vertical: 8),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

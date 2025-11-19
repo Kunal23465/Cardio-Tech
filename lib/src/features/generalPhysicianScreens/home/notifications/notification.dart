@@ -17,11 +17,11 @@ class _NotificationScreeenState extends State<NotificationScreeen> {
   void initState() {
     super.initState();
     Future.microtask(() async {
-      final userId = await StorageHelper.getUserId();
-      if (userId != null) {
-        context.read<NotificationProvider>().fetchNotifications(userId: userId);
+      final pocId = await StorageHelper.getPocId();
+      if (pocId != null) {
+        context.read<NotificationProvider>().fetchNotifications(userId: pocId);
       } else {
-        debugPrint("User ID not found in storage");
+        debugPrint("Poc ID not found in storage");
       }
     });
   }

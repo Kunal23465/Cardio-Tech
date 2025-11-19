@@ -6,6 +6,7 @@ class StorageHelper {
   static const String keyRefreshToken = "refreshToken";
   static const String keyStaffType = "staffType";
   static const String keyIsLoggedIn = "isLoggedIn";
+  static const String keyPocId = "pocId";
 
   ///  Save Login Response Data
   static Future<void> saveLoginData({
@@ -13,10 +14,12 @@ class StorageHelper {
     required String accessToken,
     required String refreshToken,
     required String staffType,
+    required int pocId,
   }) async {
     final prefs = await SharedPreferences.getInstance();
 
     await prefs.setInt(keyUserId, userId);
+    await prefs.setInt(keyPocId, pocId);
     await prefs.setString(keyAccessToken, accessToken);
     await prefs.setString(keyRefreshToken, refreshToken);
     await prefs.setString(keyStaffType, staffType);
@@ -29,6 +32,11 @@ class StorageHelper {
   static Future<int?> getUserId() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getInt(keyUserId);
+  }
+
+  static Future<int?> getPocId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(keyPocId);
   }
 
   static Future<String?> getAccessToken() async {

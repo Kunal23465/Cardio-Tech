@@ -4,6 +4,7 @@ import 'package:cardio_tech/src/features/cardiologistScreens/home/widgets/Cardio
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/navbar.dart';
 import 'package:cardio_tech/src/provider/main_providers/providers_setup.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -14,9 +15,15 @@ import 'src/routes/AllRoutes.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  //  FORCE APP TO PORTRAIT MODE ONLY
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+
   //  Initialize downloader once for the entire app
   await FlutterDownloader.initialize(
-    debug: false, // set to false in production
+    debug: true, // set to false in production
     ignoreSsl: true,
   );
 

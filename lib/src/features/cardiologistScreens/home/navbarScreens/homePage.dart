@@ -58,12 +58,25 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           .read<LoggedInUserDetailsProvider>()
           .fetchLoggedInUserDetails(userId: userId);
     }
+
     await context.read<MyOrderProvider>().fetchAllOrders();
+
+    /// 🔥 Load notifications using POC ID (correct)
+    final pocId = await StorageHelper.getPocId();
+    if (pocId != null) {
+      context.read<NotificationProvider>().fetchNotifications(userId: pocId);
+    }
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
     if (state == AppLifecycleState.resumed) {
+      final pocId = await StorageHelper.getPocId();
+      if (pocId != null) {
+        context.read<NotificationProvider>().fetchNotifications(userId: pocId);
+      }
+
+      /// Refresh orders
       context.read<MyOrderProvider>().fetchAllOrders();
     }
   }
@@ -206,11 +219,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         AppRoutes.notification,
                       );
 
-                      final userId = await StorageHelper.getUserId();
-                      if (userId != null) {
+                      final pocId = await StorageHelper.getPocId();
+                      if (pocId != null) {
                         await context
                             .read<NotificationProvider>()
-                            .fetchNotifications(userId: userId);
+                            .fetchNotifications(userId: pocId);
                       }
                     },
                     borderRadius: BorderRadius.circular(50),

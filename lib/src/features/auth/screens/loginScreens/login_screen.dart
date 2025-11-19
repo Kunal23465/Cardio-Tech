@@ -85,8 +85,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
         final staffType = await StorageHelper.getStaffType();
         final userId = await StorageHelper.getUserId();
+        final pocId = await StorageHelper.getPocId();
 
-        print(" Login success for UserID: $userId, Staff Type: $staffType");
+        print(
+          " Login success for UserID: $userId, Staff Type: $staffType , Poc ID : $pocId",
+        );
 
         if (!mounted) return;
 

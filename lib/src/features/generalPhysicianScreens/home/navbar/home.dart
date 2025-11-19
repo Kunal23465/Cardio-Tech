@@ -65,17 +65,21 @@ class _HomePageState extends State<HomePage> {
 
     Future.microtask(() async {
       final userId = await StorageHelper.getUserId();
+      final pocId = await StorageHelper.getPocId();
 
       if (userId != null) {
         // Fetch user details
         context.read<LoggedInUserDetailsProvider>().fetchLoggedInUserDetails(
           userId: userId,
         );
-
-        // Fetch notifications
-        context.read<NotificationProvider>().fetchNotifications(userId: userId);
       } else {
         debugPrint("User ID not found in storage");
+      }
+
+      if (pocId != null) {
+        context.read<NotificationProvider>().fetchNotifications(userId: pocId);
+      } else {
+        debugPrint("POC ID missing — notifications not loaded!");
       }
     });
   }
@@ -173,11 +177,11 @@ class _HomePageState extends State<HomePage> {
                             AppRoutes.notification,
                           );
 
-                          final userId = await StorageHelper.getUserId();
-                          if (userId != null) {
+                          final pocId = await StorageHelper.getPocId();
+                          if (pocId != null) {
                             await context
                                 .read<NotificationProvider>()
-                                .fetchNotifications(userId: userId);
+                                .fetchNotifications(userId: pocId);
                           }
                         },
                         borderRadius: BorderRadius.circular(50),

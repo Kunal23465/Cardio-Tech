@@ -80,12 +80,14 @@ class _CustomTextFieldState extends State<CustomTextField> {
       case FieldType.download:
         suffixIcon = _buildSuffixIcon(Icons.download, widget.onDownload);
         break;
-      case FieldType.dropdown:
-        suffixIcon = const Padding(
-          padding: EdgeInsets.only(right: 8),
-          child: Icon(Icons.arrow_drop_down, size: 24, color: Colors.grey),
+      case FieldType.download:
+        fieldChild = TextFormField(
+          readOnly: true,
+          decoration: const InputDecoration(border: InputBorder.none),
         );
+        suffixIcon = _buildSuffixIcon(Icons.download, widget.onDownload);
         break;
+
       case FieldType.dob:
         suffixIcon = const Padding(
           padding: EdgeInsets.only(right: 10),
@@ -210,7 +212,12 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 color: widget.enabled ? Colors.white : Colors.grey.shade200,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: fieldChild,
+              child: widget.fieldType == FieldType.download
+                  ? GestureDetector(
+                      onTap: widget.onDownload,
+                      child: AbsorbPointer(child: fieldChild),
+                    )
+                  : fieldChild,
             ),
           ),
         ),

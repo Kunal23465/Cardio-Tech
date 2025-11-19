@@ -19,11 +19,13 @@ class AuthRepository {
         final accessToken = data['accessToken'];
         final refreshToken = data['refreshToken'];
         final userId = data['userId'];
+        final pocId = data['pocId'];
         final staffType = data['staffType'];
 
         if (accessToken != null) {
           await StorageHelper.saveLoginData(
             userId: userId,
+            pocId: pocId,
             accessToken: accessToken,
             refreshToken: refreshToken ?? '',
             staffType: staffType ?? '',
