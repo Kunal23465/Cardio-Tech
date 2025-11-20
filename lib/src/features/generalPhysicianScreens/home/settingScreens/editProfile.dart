@@ -33,6 +33,7 @@ class _EditprofileState extends State<Editprofile> {
   final emailController = TextEditingController();
   final addressController = TextEditingController();
   final aboutController = TextEditingController();
+  final aboutLicenseNo = TextEditingController();
 
   int? selectedExperienceId;
 
@@ -62,9 +63,17 @@ class _EditprofileState extends State<Editprofile> {
           emailController.text = user.email;
           addressController.text = user.userAddress;
           aboutController.text = user.about ?? "";
+          aboutLicenseNo.text = user.licenseNo ?? "";
 
-          if (user.totalExperience != null) {
-            selectedExperienceId = int.tryParse(user.totalExperience!);
+          if (user.totalExperience != null &&
+              user.totalExperience!.isNotEmpty) {
+            // Extract number from "17 years"
+            final exp = RegExp(r'\d+').stringMatch(user.totalExperience!);
+
+            if (exp != null) {
+              selectedExperienceId = int.parse(exp);
+            }
+
             setState(() {});
           }
         }
@@ -81,6 +90,7 @@ class _EditprofileState extends State<Editprofile> {
     emailController.dispose();
     addressController.dispose();
     aboutController.dispose();
+    aboutLicenseNo.dispose();
     super.dispose();
   }
 
@@ -116,7 +126,7 @@ class _EditprofileState extends State<Editprofile> {
       pocPhone: phoneController.text,
       pocEmail: emailController.text,
       address: addressController.text,
-      licenseNo: user.licenseNo,
+      licenseNo: aboutLicenseNo.text,
       about: aboutController.text,
       experienceLookupId: selectedExperienceId,
     );
@@ -278,7 +288,17 @@ class _EditprofileState extends State<Editprofile> {
                   ),
                   const SizedBox(height: 16),
 
-                  CustomTextField(label: "About", controller: aboutController),
+                  CustomTextField(
+                    label: "License No",
+                    controller: aboutLicenseNo,
+                  ),
+                  const SizedBox(height: 16),
+
+                  CustomTextField(
+                    label: "About",
+                    controller: aboutController,
+                    fieldType: FieldType.note,
+                  ),
                   const SizedBox(height: 20),
 
                   // EXPERIENCE DROPDOWN

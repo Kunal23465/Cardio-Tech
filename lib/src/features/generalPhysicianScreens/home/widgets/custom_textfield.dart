@@ -123,6 +123,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
     switch (widget.fieldType) {
       case FieldType.dropdown:
         fieldChild = DropdownButtonFormField<String>(
+          dropdownColor: Colors.white,
           initialValue:
               (widget.selectedValue == null || widget.selectedValue!.isEmpty)
               ? "Select"
@@ -175,13 +176,15 @@ class _CustomTextFieldState extends State<CustomTextField> {
           obscureText: widget.obscureText,
           style: TextStyle(color: Colors.black.withOpacity(0.9)),
           maxLines: widget.fieldType == FieldType.note ? null : 1,
-          minLines: widget.fieldType == FieldType.note ? 3 : 1,
+          minLines: widget.fieldType == FieldType.note ? 1 : 1,
           maxLength: widget.maxLength,
           inputFormatters: widget.inputFormatters,
           decoration: decoration.copyWith(
             counterText: "",
-            hintStyle: TextStyle(color: Colors.grey.shade200),
+            hintText: widget.hint,
+            hintStyle: const TextStyle(color: Colors.grey),
           ),
+
           validator: (val) {
             final error = widget.validator?.call(val);
             WidgetsBinding.instance.addPostFrameCallback((_) {

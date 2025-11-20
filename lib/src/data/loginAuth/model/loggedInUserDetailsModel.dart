@@ -15,6 +15,7 @@ class Loggedinuserdetailsmodel {
   final String? about;
   final String? firstName;
   final String? lastName;
+  final int? experienceId;
 
   Loggedinuserdetailsmodel({
     required this.email,
@@ -33,9 +34,9 @@ class Loggedinuserdetailsmodel {
     this.about,
     this.firstName,
     this.lastName,
+    this.experienceId,
   });
 
-  //  Optional: factory constructor for creating model from JSON
   factory Loggedinuserdetailsmodel.fromJson(Map<String, dynamic> json) {
     return Loggedinuserdetailsmodel(
       email: json['email'] ?? '',
@@ -47,34 +48,14 @@ class Loggedinuserdetailsmodel {
       username: json['username'] ?? '',
       CardioName: json['CardioName'] ?? '',
       clinicDetailsId: json['clinicDetailsId'] ?? 0,
-      totalOrders: json['totalOrders'] ?? '',
+      totalOrders: json['totalOrders'] ?? 0,
       cardioValue: json['cardioValue'] ?? '',
-      licenseNo: json['licenseNo'] ?? '',
-      totalExperience: json['totalExperience'] ?? '',
-      about: json['about'] ?? '',
-      firstName: json['firstName'] ?? '',
-      lastName: json['lastName'] ?? '',
+      licenseNo: json['licenseNo'],
+      totalExperience: json['totalExperience'],
+      about: json['about'],
+      firstName: json['firstName'],
+      lastName: json['lastName'],
+      experienceId: json['experienceId'],
     );
-  }
-
-  //  Optional: method to convert object to JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'email': email,
-      'mobile': mobile,
-      'profilePic': profilePic,
-      'clinicName': clinicName,
-      'name': name,
-      'userAddress': userAddress,
-      'username': username,
-      'clinicDetailsId': clinicDetailsId,
-      'totalOrders': totalOrders,
-      'cardioValue': cardioValue,
-      'licenseNo': licenseNo,
-      'about': about,
-      'username': username,
-      'firstName': firstName,
-      'lastName': lastName,
-    };
   }
 }

@@ -35,6 +35,7 @@ class GradientBorderDropdown extends StatelessWidget {
           child: DropdownButton<String>(
             value: value,
             isExpanded: true,
+            dropdownColor: Colors.white,
             icon: SvgPicture.asset('assets/icon/arrow-down.svg'),
             items: items
                 .map(

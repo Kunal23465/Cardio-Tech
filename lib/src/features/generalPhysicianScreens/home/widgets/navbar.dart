@@ -194,7 +194,7 @@ class _NavbarState extends State<Navbar> {
                                 width: 24,
                                 height: 24,
                               ),
-                        "Setting",
+                        "Settings",
                         4,
                       ),
                     ),

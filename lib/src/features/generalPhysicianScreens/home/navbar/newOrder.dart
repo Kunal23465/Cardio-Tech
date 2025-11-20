@@ -432,7 +432,7 @@ class _NewOrderState extends State<NewOrder> {
                                   enabled: _isEditingNameDob,
                                   decoration: const InputDecoration(
                                     isDense: true,
-                                    hintText: "Name from EKG",
+                                    hintText: "Enter Name ",
                                     border: InputBorder.none,
                                   ),
                                   style: const TextStyle(fontSize: 15),
@@ -463,7 +463,7 @@ class _NewOrderState extends State<NewOrder> {
                                       : null,
                                   decoration: const InputDecoration(
                                     isDense: true,
-                                    hintText: "DOB from EKG",
+                                    hintText: "Enter DOB",
                                     border: InputBorder.none,
                                   ),
                                   style: const TextStyle(fontSize: 15),
@@ -489,8 +489,6 @@ class _NewOrderState extends State<NewOrder> {
                       ),
                     ),
                   ),
-
-                  const SizedBox(height: 24),
 
                   const SizedBox(height: 16),
 
@@ -586,6 +584,7 @@ class _NewOrderState extends State<NewOrder> {
                     label: "Clinical Note ",
                     hint: "Enter Note",
                     controller: clinicalNoteController,
+                    fieldType: FieldType.note,
                     // validator: (v) =>
                     //     v == null || v.isEmpty ? "Enter note" : null,
                   ),

@@ -360,36 +360,41 @@ class GradientBorderCard extends StatelessWidget {
                 if (order.orderStatus == "SUBMITTED" ||
                     order.orderStatus == "IN_PROGRESS" ||
                     order.orderStatus == "FINALIZED" ||
-                    order.orderStatus == "IN_REVIEW")
+                    order.orderStatus == "IN_REVIEW" ||
+                    order.orderStatus == "FINALIZED_VIEW")
                   SizedBox(
                     width: 110,
                     child: GradientButton(
                       height: 30,
                       width: 110,
-                      text:
-                          order.orderStatus == "SUBMITTED" ||
-                              order.orderStatus == "FINALIZED" ||
-                              order.orderStatus == "FINALIZED_VIEW"
+                      text: order.orderStatus == "FINALIZED_VIEW"
+                          ? "Order Closed"
+                          : (order.orderStatus == "SUBMITTED" ||
+                                order.orderStatus == "FINALIZED")
                           ? "Track Order"
                           : "Create Order",
-                      onPressed: () async {
-                        if (order.orderStatus == "SUBMITTED" ||
-                            order.orderStatus == "FINALIZED") {
-                          Navigator.pushNamed(
-                            context,
-                            AppRoutes.orderDetails,
-                            arguments: order,
-                          );
-                        } else if (order.orderStatus == "IN_PROGRESS") {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  NewOrder(orderId: order.orderDetailsId),
-                            ),
-                          );
-                        }
-                      },
+
+                      // Disable action for FINALIZED_VIEW
+                      onPressed: order.orderStatus == "FINALIZED_VIEW"
+                          ? null
+                          : () async {
+                              if (order.orderStatus == "SUBMITTED" ||
+                                  order.orderStatus == "FINALIZED") {
+                                Navigator.pushNamed(
+                                  context,
+                                  AppRoutes.orderDetails,
+                                  arguments: order,
+                                );
+                              } else if (order.orderStatus == "IN_PROGRESS") {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        NewOrder(orderId: order.orderDetailsId),
+                                  ),
+                                );
+                              }
+                            },
                     ),
                   ),
               ],

@@ -117,8 +117,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           ),
                           const SizedBox(height: 20),
                           CustomTextField(
-                            label: "Mobile or Email",
-                            hint: "Enter Email Or Mobile No.",
+                            label: "Email",
+                            hint: "Enter Email",
                             controller: forgotPassEmailController,
                           ),
                           const SizedBox(height: 20),
