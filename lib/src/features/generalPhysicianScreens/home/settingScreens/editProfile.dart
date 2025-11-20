@@ -67,14 +67,22 @@ class _EditprofileState extends State<Editprofile> {
 
           if (user.totalExperience != null &&
               user.totalExperience!.isNotEmpty) {
-            // Extract number from "17 years"
             final exp = RegExp(r'\d+').stringMatch(user.totalExperience!);
 
             if (exp != null) {
-              selectedExperienceId = int.parse(exp);
-            }
+              final parsed = int.tryParse(exp);
 
-            setState(() {});
+              // check exist in list
+              final exist = experienceProvider.experienceList.any(
+                (e) => e.commonLookupValueDetailsId == parsed,
+              );
+
+              if (exist) {
+                selectedExperienceId = parsed;
+              } else {
+                selectedExperienceId = null;
+              }
+            }
           }
         }
       }
@@ -318,12 +326,19 @@ class _EditprofileState extends State<Editprofile> {
                                           (e) =>
                                               e.commonLookupValueDetailsId ==
                                               selectedExperienceId,
+                                          orElse: () =>
+                                              expProvider.experienceList.first,
                                         )
                                         .value
                                   : null,
+
                               onChanged: (val) {
                                 final selected = expProvider.experienceList
-                                    .firstWhere((e) => e.value == val);
+                                    .firstWhere(
+                                      (e) => e.value == val,
+                                      orElse: () =>
+                                          expProvider.experienceList.first,
+                                    );
 
                                 setState(() {
                                   selectedExperienceId =

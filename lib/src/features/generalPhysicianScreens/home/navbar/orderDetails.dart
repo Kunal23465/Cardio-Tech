@@ -7,6 +7,7 @@ import 'package:cardio_tech/src/utils/snackbar_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/theme.dart';
+import 'package:provider/provider.dart';
 
 class Orderdetails extends StatefulWidget {
   const Orderdetails({super.key});
@@ -22,10 +23,18 @@ class _OrderdetailsState extends State<Orderdetails> {
   @override
   void initState() {
     super.initState();
-    submitProvider = SubmitOrderDetailsProvider();
-    downloadProvider = DownloadEkgReportProvider();
+    submitProvider = Provider.of<SubmitOrderDetailsProvider>(
+      context,
+      listen: false,
+    );
+    downloadProvider = Provider.of<DownloadEkgReportProvider>(
+      context,
+      listen: false,
+    );
 
     downloadProvider.addListener(() {
+      if (!mounted) return; // FIX
+
       if (downloadProvider.isSuccess) {
         SnackBarHelper.show(
           context,
@@ -37,6 +46,8 @@ class _OrderdetailsState extends State<Orderdetails> {
     });
 
     downloadProvider.addListener(() {
+      if (!mounted) return; // FIX
+
       if (downloadProvider.errorMessage != null) {
         SnackBarHelper.show(
           context,
@@ -47,8 +58,9 @@ class _OrderdetailsState extends State<Orderdetails> {
       }
     });
 
-    // Listen for success
     submitProvider.addListener(() {
+      if (!mounted) return; // FIX
+
       if (submitProvider.isSuccess) {
         SnackBarHelper.show(
           context,
@@ -60,13 +72,15 @@ class _OrderdetailsState extends State<Orderdetails> {
     });
 
     submitProvider.addListener(() {
+      if (!mounted) return; // FIX
+
       if (submitProvider.errorMessage != null) {
         SnackBarHelper.show(
           context,
           message: "Failed to close order: ${submitProvider.errorMessage}",
           type: SnackBarType.error,
         );
-        submitProvider.reset(); // Reset after showing
+        submitProvider.reset();
       }
     });
   }
@@ -263,18 +277,38 @@ class _OrderdetailsState extends State<Orderdetails> {
               ),
             ),
             const SizedBox(height: 30),
-            CustomTextField(
-              label: "EKG Report",
-              fieldType: FieldType.download,
-              controller: TextEditingController(
-                text: order.ekgReportName ?? '',
-              ),
-              onDownload: () {
-                downloadProvider.downloadEkgReport(
-                  order.uploadInsuranceIDProof!,
-                );
+            Consumer<DownloadEkgReportProvider>(
+              builder: (context, downloadProvider, _) {
+                return downloadProvider.isLoading
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.primary,
+                        ),
+                      )
+                    : CustomTextField(
+                        label: "EKG Report",
+                        fieldType: FieldType.download,
+                        controller: TextEditingController(
+                          text: order.ekgReportName ?? '',
+                        ),
+                        onDownload: () {
+                          final fileId = order.uploadInsuranceIDProof;
+
+                          if (fileId == null || fileId.isEmpty) {
+                            SnackBarHelper.show(
+                              context,
+                              message: "EKG Report not available",
+                              type: SnackBarType.error,
+                            );
+                            return;
+                          }
+
+                          downloadProvider.downloadEkgReport(fileId);
+                        },
+                      );
               },
             ),
+
             const SizedBox(height: 30),
             CustomTextField(
               label: "Clinical Note",

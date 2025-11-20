@@ -370,16 +370,17 @@ class GradientBorderCard extends StatelessWidget {
                       text: order.orderStatus == "FINALIZED_VIEW"
                           ? "Order Closed"
                           : (order.orderStatus == "SUBMITTED" ||
-                                order.orderStatus == "FINALIZED")
+                                order.orderStatus == "FINALIZED" ||
+                                order.orderStatus == "IN_REVIEW")
                           ? "Track Order"
                           : "Create Order",
 
-                      // Disable action for FINALIZED_VIEW
                       onPressed: order.orderStatus == "FINALIZED_VIEW"
                           ? null
                           : () async {
                               if (order.orderStatus == "SUBMITTED" ||
-                                  order.orderStatus == "FINALIZED") {
+                                  order.orderStatus == "FINALIZED" ||
+                                  order.orderStatus == "IN_REVIEW") {
                                 Navigator.pushNamed(
                                   context,
                                   AppRoutes.orderDetails,

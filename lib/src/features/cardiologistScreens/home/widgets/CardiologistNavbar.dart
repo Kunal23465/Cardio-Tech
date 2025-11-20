@@ -40,16 +40,16 @@ class _CardiologistnavbarState extends State<Cardiologistnavbar> {
     );
   }
 
-  List<Widget?> _pages = [null, null, null, null, null];
+  final List<Widget?> _pages = [null, null, null, null, null];
 
   void _onTabSelected(int index) {
     setState(() {
       _currentIndex = index;
 
       if (_pages[index] == null) {
-        if (index == 0)
+        if (index == 0) {
           _pages[index] = const MyOrder();
-        else if (index == 1)
+        } else if (index == 1)
           _pages[index] = const AllOrder();
         else if (index == 2)
           _pages[index] = const HomePage();
