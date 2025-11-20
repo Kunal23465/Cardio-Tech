@@ -3,8 +3,12 @@ import 'package:cardio_tech/src/features/generalPhysicianScreens/home/navbar/hom
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/navbar/newOrder.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/navbar/setting.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/navbar/trackOrder.dart';
+import 'package:cardio_tech/src/provider/generalPhysicianProvider/allPatient/orderFilterProvider.dart';
+import 'package:cardio_tech/src/provider/generalPhysicianProvider/commons/allStatusProvider.dart';
+import 'package:cardio_tech/src/provider/generalPhysicianProvider/new_order/order_priority_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 class Navbar extends StatefulWidget {
   final int initialIndex;
@@ -44,8 +48,17 @@ class _NavbarState extends State<Navbar> {
 
   void _onTabSelected(int index) {
     setState(() {
+      if (index == 3) return;
       _currentIndex = index;
 
+      // Refresh All Patients every time tab is selected
+      if (index == 1) {
+        context.read<OrderFilterProvider>().fetchFilteredOrders();
+        context.read<OrderPriorityProvider>().fetchOrderPriorities();
+        context.read<AllStatusProvider>().getAllStatus();
+      }
+
+      // Load page only once (keep your optimization)
       if (_pages[index] == null) {
         if (index == 0)
           _pages[index] = const NewOrder();
