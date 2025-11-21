@@ -118,10 +118,17 @@ class _HomePageState extends State<HomePage> {
                                     backgroundColor: Colors.black,
                                     insetPadding: EdgeInsets.zero,
                                     child: InteractiveViewer(
-                                      child: Image.network(
-                                        user?.profilePic ?? "",
-                                        fit: BoxFit.contain,
-                                      ),
+                                      child:
+                                          user?.profilePic != null &&
+                                              user!.profilePic!.isNotEmpty
+                                          ? Image.network(
+                                              user!.profilePic!,
+                                              fit: BoxFit.contain,
+                                            )
+                                          : Image.asset(
+                                              'assets/images/people/avatar.png',
+                                              fit: BoxFit.contain,
+                                            ),
                                     ),
                                   ),
                                 );
@@ -129,10 +136,12 @@ class _HomePageState extends State<HomePage> {
                               borderRadius: BorderRadius.circular(50),
                               child: CircleAvatar(
                                 radius: 28,
-                                backgroundImage: user?.profilePic != null
+                                backgroundImage:
+                                    user?.profilePic != null &&
+                                        user!.profilePic!.isNotEmpty
                                     ? NetworkImage(user!.profilePic!)
                                     : const AssetImage(
-                                            'assets/images/homePage/clinic.png',
+                                            'assets/images/people/avatar.png',
                                           )
                                           as ImageProvider,
                               ),

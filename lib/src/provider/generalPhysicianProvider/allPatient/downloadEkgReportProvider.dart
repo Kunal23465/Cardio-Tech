@@ -30,12 +30,13 @@ class DownloadEkgReportProvider extends ChangeNotifier {
     } catch (e) {
       _errorMessage = "Error: $e";
     } finally {
+      await Future.delayed(const Duration(milliseconds: 500));
+
       _isLoading = false;
       notifyListeners();
     }
   }
 
-  /// Resets the state (useful after showing SnackBars)
   void reset() {
     _isLoading = false;
     _isSuccess = false;

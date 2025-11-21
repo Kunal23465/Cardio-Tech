@@ -16,10 +16,10 @@ class MyOrder extends StatefulWidget {
   const MyOrder({super.key});
 
   @override
-  State<MyOrder> createState() => _MyOrderState();
+  MyOrderState createState() => MyOrderState();
 }
 
-class _MyOrderState extends State<MyOrder> {
+class MyOrderState extends State<MyOrder> {
   String selectedStatus = "All Status";
   String selectedPriority = "All Priority";
 
@@ -31,6 +31,10 @@ class _MyOrderState extends State<MyOrder> {
       context.read<OrderPriorityProvider>().fetchOrderPriorities();
       context.read<MyOrderProvider>().fetchAllOrders();
     });
+  }
+
+  void refreshPage() {
+    context.read<MyOrderProvider>().fetchAllOrders();
   }
 
   void clearFilters() {

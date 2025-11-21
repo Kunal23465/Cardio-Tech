@@ -61,7 +61,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
     await context.read<MyOrderProvider>().fetchAllOrders();
 
-    /// 🔥 Load notifications using POC ID (correct)
+    ///  Load notifications using POC ID (correct)
     final pocId = await StorageHelper.getPocId();
     if (pocId != null) {
       context.read<NotificationProvider>().fetchNotifications(userId: pocId);
@@ -160,10 +160,17 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                 backgroundColor: Colors.black,
                                 insetPadding: EdgeInsets.zero,
                                 child: InteractiveViewer(
-                                  child: Image.network(
-                                    user?.profilePic ?? "",
-                                    fit: BoxFit.contain,
-                                  ),
+                                  child:
+                                      user?.profilePic != null &&
+                                          user!.profilePic!.isNotEmpty
+                                      ? Image.network(
+                                          user!.profilePic!,
+                                          fit: BoxFit.contain,
+                                        )
+                                      : Image.asset(
+                                          'assets/images/people/avatar.png',
+                                          fit: BoxFit.contain,
+                                        ),
                                 ),
                               ),
                             );
@@ -171,10 +178,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                           borderRadius: BorderRadius.circular(50),
                           child: CircleAvatar(
                             radius: 28,
-                            backgroundImage: user?.profilePic != null
+                            backgroundImage:
+                                user?.profilePic != null &&
+                                    user!.profilePic!.isNotEmpty
                                 ? NetworkImage(user!.profilePic!)
                                 : const AssetImage(
-                                        'assets/images/homePage/clinic.png',
+                                        'assets/images/people/avatar.png',
                                       )
                                       as ImageProvider,
                           ),
@@ -246,7 +255,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
               const SizedBox(height: 20),
 
-              /// ---- Dashboard Cards ----
+              /// Dashboard Cards
               Column(
                 children: [
                   for (var i = 0; i < _dashboardCards.length; i += 2)
@@ -299,15 +308,15 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     ? const Center(child: Text("No orders found"))
                     : ListView.builder(
                         physics: const BouncingScrollPhysics(),
-                        padding: EdgeInsets.only(
-                          bottom:
-                              kBottomNavigationBarHeight +
-                              MediaQuery.of(context).padding.bottom +
-                              40,
-                          top: 0,
-                          left: 0,
-                          right: 0,
-                        ),
+                        // padding: EdgeInsets.only(
+                        //   bottom:
+                        //       kBottomNavigationBarHeight +
+                        //       MediaQuery.of(context).padding.bottom +
+                        //       40,
+                        //   top: 0,
+                        //   left: 0,
+                        //   right: 0,
+                        // ),
                         itemCount: orderProvider.orders.length,
                         itemBuilder: (context, index) {
                           final order = orderProvider.orders[index];

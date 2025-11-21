@@ -3,8 +3,11 @@ import 'package:cardio_tech/src/features/cardiologistScreens/home/navbarScreens/
 import 'package:cardio_tech/src/features/cardiologistScreens/home/navbarScreens/homePage.dart';
 import 'package:cardio_tech/src/features/cardiologistScreens/home/navbarScreens/myOrder.dart';
 import 'package:cardio_tech/src/features/cardiologistScreens/home/navbarScreens/setting.dart';
+import 'package:cardio_tech/src/provider/cardioLogistsProvider/finalizedProvider/finalizedProvider.dart';
+import 'package:cardio_tech/src/provider/cardioLogistsProvider/myOrderProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 class Cardiologistnavbar extends StatefulWidget {
   final int initialIndex;
@@ -15,6 +18,8 @@ class Cardiologistnavbar extends StatefulWidget {
 }
 
 class _CardiologistnavbarState extends State<Cardiologistnavbar> {
+  final GlobalKey<MyOrderState> myOrderKey = GlobalKey<MyOrderState>();
+
   int _currentIndex = 2; // default tab
 
   static const double navBarHeight = 70;
@@ -47,26 +52,37 @@ class _CardiologistnavbarState extends State<Cardiologistnavbar> {
       _currentIndex = index;
 
       if (_pages[index] == null) {
-        if (index == 0) {
-          _pages[index] = const MyOrder();
-        } else if (index == 1)
+        if (index == 0)
+          _pages[index] = MyOrder(key: myOrderKey);
+        else if (index == 1)
           _pages[index] = const AllOrder();
         else if (index == 2)
           _pages[index] = const HomePage();
-        else if (index == 3)
+        else if (index == 3) {
           _pages[index] = const Finalized();
-        else if (index == 4)
+        } else if (index == 4)
           _pages[index] = const Setting();
       }
     });
+    if (index == 3) {
+      context.read<FinalizedOrderProvider>().getFinalizedOrders();
+    }
+    if (index == 0) {
+      myOrderKey.currentState?.refreshPage();
+    }
+    if (index == 2) {
+      context.read<MyOrderProvider>().fetchAllOrders();
+      ;
+    }
   }
 
   @override
   void initState() {
     super.initState();
-
     _currentIndex = 2;
     _pages[2] = const HomePage();
+
+    _pages[0] = MyOrder(key: myOrderKey);
   }
 
   @override
@@ -127,7 +143,7 @@ class _CardiologistnavbarState extends State<Cardiologistnavbar> {
                                 width: 24,
                                 height: 24,
                               ),
-                        "My Order",
+                        "My Orders",
                         0,
                       ),
                     ),
@@ -144,7 +160,7 @@ class _CardiologistnavbarState extends State<Cardiologistnavbar> {
                                 width: 24,
                                 height: 24,
                               ),
-                        "All Order",
+                        "All Orders",
                         1,
                       ),
                     ),

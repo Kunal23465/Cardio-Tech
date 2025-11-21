@@ -23,6 +23,7 @@ class _OrderdetailsState extends State<Orderdetails> {
   @override
   void initState() {
     super.initState();
+
     submitProvider = Provider.of<SubmitOrderDetailsProvider>(
       context,
       listen: false,
@@ -33,7 +34,9 @@ class _OrderdetailsState extends State<Orderdetails> {
     );
 
     downloadProvider.addListener(() {
-      if (!mounted) return; // FIX
+      if (!mounted) return;
+
+      if (downloadProvider.isLoading) return;
 
       if (downloadProvider.isSuccess) {
         SnackBarHelper.show(
@@ -42,24 +45,23 @@ class _OrderdetailsState extends State<Orderdetails> {
           type: SnackBarType.success,
         );
         downloadProvider.reset();
+        return;
       }
-    });
-
-    downloadProvider.addListener(() {
-      if (!mounted) return; // FIX
 
       if (downloadProvider.errorMessage != null) {
         SnackBarHelper.show(
           context,
-          message: "Failed to download EKG Report.",
+          message: downloadProvider.errorMessage!,
           type: SnackBarType.error,
         );
         downloadProvider.reset();
+        return;
       }
     });
 
+    /// Submit order listeners (leave as is)
     submitProvider.addListener(() {
-      if (!mounted) return; // FIX
+      if (!mounted) return;
 
       if (submitProvider.isSuccess) {
         SnackBarHelper.show(
@@ -68,13 +70,7 @@ class _OrderdetailsState extends State<Orderdetails> {
           type: SnackBarType.success,
         );
         submitProvider.reset();
-      }
-    });
-
-    submitProvider.addListener(() {
-      if (!mounted) return; // FIX
-
-      if (submitProvider.errorMessage != null) {
+      } else if (submitProvider.errorMessage != null) {
         SnackBarHelper.show(
           context,
           message: "Failed to close order: ${submitProvider.errorMessage}",
@@ -319,31 +315,32 @@ class _OrderdetailsState extends State<Orderdetails> {
             ),
             const SizedBox(height: 30),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: GradientButton(
-                    text: 'Cancel',
-                    isOutlined: true,
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
+            if (order.orderStatus == "FINALIZED")
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: GradientButton(
+                      text: 'Cancel',
+                      isOutlined: true,
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
                   ),
-                ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: GradientButton(
-                    text: 'Close Order',
-                    onPressed: () {
-                      submitProvider.submitOrderDetails(
-                        orderDetailsId: order.orderDetailsId,
-                      );
-                    },
+                  const SizedBox(width: 20),
+                  Expanded(
+                    child: GradientButton(
+                      text: 'Close Order',
+                      onPressed: () {
+                        submitProvider.submitOrderDetails(
+                          orderDetailsId: order.orderDetailsId,
+                        );
+                      },
+                    ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
           ],
         ),
       ),

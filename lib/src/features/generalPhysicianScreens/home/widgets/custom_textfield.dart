@@ -80,13 +80,13 @@ class _CustomTextFieldState extends State<CustomTextField> {
       case FieldType.download:
         suffixIcon = _buildSuffixIcon(Icons.download, widget.onDownload);
         break;
-      case FieldType.download:
-        fieldChild = TextFormField(
-          readOnly: true,
-          decoration: const InputDecoration(border: InputBorder.none),
-        );
-        suffixIcon = _buildSuffixIcon(Icons.download, widget.onDownload);
-        break;
+      // case FieldType.download:
+      //   fieldChild = TextFormField(
+      //     readOnly: true,
+      //     decoration: const InputDecoration(border: InputBorder.none),
+      //   );
+      //   suffixIcon = _buildSuffixIcon(Icons.download, widget.onDownload);
+      //   break;
 
       case FieldType.dob:
         suffixIcon = const Padding(

@@ -236,7 +236,7 @@ class _EditprofileState extends State<Editprofile> {
                                         user.profilePic!.isNotEmpty)
                                   ? NetworkImage(user.profilePic!)
                                   : const AssetImage(
-                                          "assets/images/setting/profile_pic.png",
+                                          "assets/images/people/avatar.png",
                                         )
                                         as ImageProvider,
                               fit: BoxFit.cover,

@@ -163,12 +163,38 @@ class _SettingState extends State<Setting> {
           children: [
             ListTile(
               contentPadding: const EdgeInsets.all(12),
-              leading: CircleAvatar(
-                radius: 28,
-                backgroundImage: user?.profilePic != null
-                    ? NetworkImage(user!.profilePic!)
-                    : const AssetImage('assets/images/homePage/clinic.png')
-                          as ImageProvider,
+              leading: InkWell(
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (_) => Dialog(
+                      backgroundColor: Colors.black,
+                      insetPadding: EdgeInsets.zero,
+                      child: InteractiveViewer(
+                        child:
+                            user?.profilePic != null &&
+                                user!.profilePic!.isNotEmpty
+                            ? Image.network(
+                                user!.profilePic!,
+                                fit: BoxFit.contain,
+                              )
+                            : Image.asset(
+                                'assets/images/people/avatar.png',
+                                fit: BoxFit.contain,
+                              ),
+                      ),
+                    ),
+                  );
+                },
+                borderRadius: BorderRadius.circular(50),
+                child: CircleAvatar(
+                  radius: 28,
+                  backgroundImage:
+                      user?.profilePic != null && user!.profilePic!.isNotEmpty
+                      ? NetworkImage(user!.profilePic!)
+                      : const AssetImage('assets/images/people/avatar.png')
+                            as ImageProvider,
+                ),
               ),
               title: Text(
                 user?.CardioName ?? "",
@@ -241,9 +267,10 @@ class _SettingState extends State<Setting> {
                     },
                   ),
 
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 16),
 
                   buildLogoutTile(),
+                  const SizedBox(height: 30),
                 ],
               ),
             ),

@@ -65,6 +65,11 @@ class _FinalizedState extends State<Finalized> {
                       onChanged: (value) {
                         setState(() => searchText = value);
 
+                        if (value.isEmpty) {
+                          provider.getFinalizedOrders();
+                          return;
+                        }
+
                         final isNumeric = int.tryParse(value) != null;
                         if (isNumeric) {
                           provider.getFinalizedOrders(
