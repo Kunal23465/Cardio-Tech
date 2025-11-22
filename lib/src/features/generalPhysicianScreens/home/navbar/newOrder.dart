@@ -8,6 +8,7 @@ import 'package:cardio_tech/src/provider/generalPhysicianProvider/new_order/all_
 import 'package:cardio_tech/src/provider/generalPhysicianProvider/new_order/create_order_provider.dart';
 import 'package:cardio_tech/src/provider/generalPhysicianProvider/new_order/gender_provider.dart';
 import 'package:cardio_tech/src/provider/generalPhysicianProvider/new_order/order_priority_provider.dart';
+import 'package:cardio_tech/src/routes/AllRoutes.dart';
 import 'package:cardio_tech/src/utils/snackbar_helper.dart';
 import 'package:cardio_tech/src/utils/storage_helper.dart';
 import 'package:file_picker/file_picker.dart';
@@ -155,7 +156,6 @@ class _NewOrderState extends State<NewOrder> {
     }
   }
 
-  /// Camera/File picker for EKG report
   Future<void> _pickEkgAndRunOcr() async {
     final picker = ImagePicker();
     final pickedFile = await showModalBottomSheet<XFile?>(
@@ -282,8 +282,8 @@ class _NewOrderState extends State<NewOrder> {
         {"approverPocId": selectedCardiologistId ?? 0, "approvalLevel": 1},
       ],
 
-      ekgReport: null,
-      uploadInsuranceIDProof: null,
+      ekgReport: existingOrder?.ekgReport,
+      uploadInsuranceIDProof: existingOrder?.uploadInsuranceIDProof,
     );
 
     final orderId = await createOrderProvider.createOrSubmitOrder(
@@ -312,7 +312,6 @@ class _NewOrderState extends State<NewOrder> {
     }
 
     if (createOrderProvider.isSuccess && orderId != null) {
-      //  Reset only for new order creation
       if (existingOrder == null) {
         setState(() {
           nameController.clear();
@@ -330,6 +329,13 @@ class _NewOrderState extends State<NewOrder> {
           selectedDate = null;
           _enterIdManually = false;
         });
+      }
+      if (context.mounted) {
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          AppRoutes.genNavbar,
+          (route) => false,
+        );
       }
     }
   }
@@ -371,7 +377,6 @@ class _NewOrderState extends State<NewOrder> {
               key: _formKey,
               child: Column(
                 children: [
-                  /// --- EKG Upload + Name/DOB Section ---
                   GestureDetector(
                     onTap: _pickEkgAndRunOcr,
                     child: AbsorbPointer(
@@ -380,20 +385,21 @@ class _NewOrderState extends State<NewOrder> {
                         fieldType: FieldType.file,
                         hint: ekgReport != null
                             ? ekgReport!.path.split('/').last
-                            : "Tap to capture or upload EKG Report",
-                        // customIcon: 'assets/icon/upload.svg',
+                            : (ekgReportUrl != null
+                                  ? "Uploaded: ${ekgReportUrl!.split('/').last}"
+                                  : "Tap to upload"),
+
                         controller: TextEditingController(
-                          text: ekgReport?.path ?? '',
+                          text: ekgReport != null
+                              ? ekgReport!.path
+                              : (ekgReportUrl ?? ''),
                         ),
-                        // validator: (v) =>
-                        //     ekgReport == null ? "Please choose EKG file" : null,
                       ),
                     ),
                   ),
 
                   const SizedBox(height: 20),
 
-                  /// --- Name + DOB row with Edit button ---
                   Container(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -533,8 +539,6 @@ class _NewOrderState extends State<NewOrder> {
                   //     return null;
                   //   },
                   // ),
-
-                  // const SizedBox(height: 16),
                   _enterIdManually
                       ? CustomTextField(
                           label: "Insurance ID",
@@ -549,10 +553,14 @@ class _NewOrderState extends State<NewOrder> {
                               fieldType: FieldType.file,
                               hint: uploadInsuranceIDProof != null
                                   ? uploadInsuranceIDProof!.path.split('/').last
-                                  : "Tap to capture or upload Insurance Proof",
-                              // customIcon: 'assets/icon/upload.svg',
+                                  : (insuranceProofUrl != null
+                                        ? "Uploaded: ${insuranceProofUrl!.split('/').last}"
+                                        : "Tap to upload"),
+
                               controller: TextEditingController(
-                                text: uploadInsuranceIDProof?.path ?? '',
+                                text: uploadInsuranceIDProof != null
+                                    ? uploadInsuranceIDProof!.path
+                                    : (insuranceProofUrl ?? ''),
                               ),
                             ),
                           ),
@@ -611,9 +619,6 @@ class _NewOrderState extends State<NewOrder> {
                               () => selectedPriorityId = selected.priorityId,
                             );
                           },
-                          // validator: (v) => selectedPriorityId == null
-                          //     ? "Select priority"
-                          //     : null,
                         ),
                   const SizedBox(height: 16),
 
@@ -639,9 +644,6 @@ class _NewOrderState extends State<NewOrder> {
                               () => selectedCardiologistId = selected.id,
                             );
                           },
-                          // validator: (v) => selectedCardiologistId == null
-                          //     ? "Select cardiologist"
-                          //     : null,
                         ),
                   const SizedBox(height: 30),
 

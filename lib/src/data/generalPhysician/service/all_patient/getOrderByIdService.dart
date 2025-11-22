@@ -6,7 +6,9 @@ class GetOrderByIdService {
   final ApiClient _apiClient = ApiClient();
 
   Future<GetOrderByIdModel?> getOrderById(int orderId) async {
-    final response = await _apiClient.get("${ApiConstants.getOrderById}/$orderId");
+    final response = await _apiClient.get(
+      "${ApiConstants.getOrderById}/$orderId",
+    );
 
     if (response.statusCode == 200 && response.data != null) {
       final data = response.data['data'];

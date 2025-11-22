@@ -37,7 +37,7 @@ class CreateOrderModel {
     required String orderStatus,
   }) {
     return {
-      "orderDetailsId": orderDetailsId ?? 0,
+      "orderDetailsId": orderDetailsId,
       "patientName": patientName ?? '',
       "dateOfBirth": dateOfBirth ?? '',
       "genderId": genderId ?? 0,
@@ -52,6 +52,9 @@ class CreateOrderModel {
       "createdById": createdById,
       "updatedById": updatedById,
       "approvalLevels": approvalLevels ?? [],
+
+      "ekgReport": ekgReport,
+      "uploadInsuranceIDProof": uploadInsuranceIDProof,
     };
   }
 

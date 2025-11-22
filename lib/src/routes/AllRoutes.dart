@@ -1,6 +1,7 @@
 import 'package:cardio_tech/src/features/cardiologistScreens/home/otherScreens/cardiologistOrderDetails.dart';
 import 'package:cardio_tech/src/features/cardiologistScreens/home/otherScreens/reportOrder.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/navbar/allPatient.dart';
+import 'package:cardio_tech/src/features/generalPhysicianScreens/home/navbar/home.dart';
 import 'package:flutter/material.dart';
 import '../features/auth/screens/loginScreens/forgot_password_screen.dart';
 import '../features/auth/screens/loginScreens/login_screen.dart';
@@ -35,6 +36,7 @@ class AppRoutes {
   static const String newOrder = '/new-order';
   static const String orderDetails = '/order-details';
   static const String allPatients = '/all-details';
+  static const String genNavbar = '/gen-navbar';
 
   // for cardiologist
   static const String reportOrder = '/report-order';
@@ -62,6 +64,7 @@ class AppRoutes {
     helpCenter: (context) => const HelpCenter(),
     notification: (context) => const NotificationScreeen(),
     allPatients: (context) => const AllPatient(),
+    genNavbar: (context) => const Navbar(),
 
     //for cardiologist
     reportOrder: (context) => ReportOrder(),
