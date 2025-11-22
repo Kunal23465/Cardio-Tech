@@ -256,6 +256,7 @@ class MyOrderState extends State<MyOrder> {
                             priorityName: order.priorityName,
                             orderStatus: order.orderStatus,
                             submittedOn: order.createdAt ?? '',
+
                             onAssign: () async {
                               final result = await showModalBottomSheet(
                                 context: context,
@@ -278,6 +279,21 @@ class MyOrderState extends State<MyOrder> {
                             onReport: () => _handleReport(context, order),
                             onUnderProgress: () =>
                                 _handleReport(context, order),
+
+                            onFinalized: () {
+                              Navigator.pushNamed(
+                                context,
+                                AppRoutes.cardioOrderDetails,
+                                arguments: order,
+                              );
+                            },
+                            onFinalizedView: () {
+                              Navigator.pushNamed(
+                                context,
+                                AppRoutes.cardioOrderDetails,
+                                arguments: order,
+                              );
+                            },
                           ),
                         );
                       },

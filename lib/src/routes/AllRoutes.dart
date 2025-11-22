@@ -1,3 +1,4 @@
+import 'package:cardio_tech/src/features/cardiologistScreens/home/otherScreens/cardiologistOrderDetails.dart';
 import 'package:cardio_tech/src/features/cardiologistScreens/home/otherScreens/reportOrder.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/navbar/allPatient.dart';
 import 'package:flutter/material.dart';
@@ -37,6 +38,7 @@ class AppRoutes {
 
   // for cardiologist
   static const String reportOrder = '/report-order';
+  static const String cardioOrderDetails = '/cardioOrder-details';
 
   // ======= static routes map =======
   static Map<String, WidgetBuilder> routes = {
@@ -63,6 +65,7 @@ class AppRoutes {
 
     //for cardiologist
     reportOrder: (context) => ReportOrder(),
+    cardioOrderDetails: (context) => CardiologistOrderDetails(),
   };
 
   // ======= helper for named routes with arguments =======

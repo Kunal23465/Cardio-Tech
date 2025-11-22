@@ -375,27 +375,32 @@ class GradientBorderCard extends StatelessWidget {
                           ? "Track Order"
                           : "Create Order",
 
-                      onPressed: order.orderStatus == "FINALIZED_VIEW"
-                          ? null
-                          : () async {
-                              if (order.orderStatus == "SUBMITTED" ||
-                                  order.orderStatus == "FINALIZED" ||
-                                  order.orderStatus == "IN_REVIEW") {
-                                Navigator.pushNamed(
-                                  context,
-                                  AppRoutes.orderDetails,
-                                  arguments: order,
-                                );
-                              } else if (order.orderStatus == "IN_PROGRESS") {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        NewOrder(orderId: order.orderDetailsId),
-                                  ),
-                                );
-                              }
-                            },
+                      onPressed: () async {
+                        if (order.orderStatus == "FINALIZED_VIEW") {
+                          // open order details page here
+                          Navigator.pushNamed(
+                            context,
+                            AppRoutes.orderDetails,
+                            arguments: order,
+                          );
+                        } else if (order.orderStatus == "SUBMITTED" ||
+                            order.orderStatus == "FINALIZED" ||
+                            order.orderStatus == "IN_REVIEW") {
+                          Navigator.pushNamed(
+                            context,
+                            AppRoutes.orderDetails,
+                            arguments: order,
+                          );
+                        } else if (order.orderStatus == "IN_PROGRESS") {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  NewOrder(orderId: order.orderDetailsId),
+                            ),
+                          );
+                        }
+                      },
                     ),
                   ),
               ],

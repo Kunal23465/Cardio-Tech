@@ -16,6 +16,7 @@ class OrderFilterModel {
   final String? assignedCardiologistName;
   final String? uploadInsuranceIDProof;
   final String? ekgReportName;
+  final String? clinicName;
 
   OrderFilterModel({
     required this.orderDetailsId,
@@ -33,6 +34,7 @@ class OrderFilterModel {
     this.assignedCardiologistName,
     this.uploadInsuranceIDProof,
     this.ekgReportName,
+    this.clinicName,
   });
 
   factory OrderFilterModel.fromJson(Map<String, dynamic> json) {
@@ -52,6 +54,7 @@ class OrderFilterModel {
       assignedCardiologistName: json['assignedCardiologistName'],
       uploadInsuranceIDProof: json['uploadInsuranceIDProof'],
       ekgReportName: _extractFileName(json['ekgReport']),
+      clinicName: json['clinicName'],
     );
   }
 

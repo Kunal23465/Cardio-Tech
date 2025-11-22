@@ -1,38 +1,33 @@
-import 'package:cardio_tech/src/data/generalPhysician/models/all_patient/OrderFilterModel.dart';
-import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/custom_textfield.dart';
-import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/gradient_button.dart';
+import 'package:cardio_tech/src/data/cardioLogists/model/myOrderModel.dart';
 import 'package:cardio_tech/src/provider/generalPhysicianProvider/allPatient/downloadEkgReportProvider.dart';
-import 'package:cardio_tech/src/provider/generalPhysicianProvider/allPatient/submitOrderDetailsProvider.dart';
 import 'package:cardio_tech/src/utils/snackbar_helper.dart';
+import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/custom_textfield.dart';
+import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/theme.dart';
 import 'package:provider/provider.dart';
 
-class Orderdetails extends StatefulWidget {
-  const Orderdetails({super.key});
+class CardiologistOrderDetails extends StatefulWidget {
+  const CardiologistOrderDetails({super.key});
 
   @override
-  State<Orderdetails> createState() => _OrderdetailsState();
+  State<CardiologistOrderDetails> createState() =>
+      _CardiologistOrderDetailsState();
 }
 
-class _OrderdetailsState extends State<Orderdetails> {
-  late SubmitOrderDetailsProvider submitProvider;
+class _CardiologistOrderDetailsState extends State<CardiologistOrderDetails> {
   late DownloadEkgReportProvider downloadProvider;
 
   @override
   void initState() {
     super.initState();
 
-    submitProvider = Provider.of<SubmitOrderDetailsProvider>(
-      context,
-      listen: false,
-    );
     downloadProvider = Provider.of<DownloadEkgReportProvider>(
       context,
       listen: false,
     );
 
+    /// EKG Download Listener
     downloadProvider.addListener(() {
       if (!mounted) return;
 
@@ -41,7 +36,7 @@ class _OrderdetailsState extends State<Orderdetails> {
       if (downloadProvider.isSuccess) {
         SnackBarHelper.show(
           context,
-          message: "EKG Report downloaded successfully!",
+          message: "Report downloaded successfully!",
           type: SnackBarType.success,
         );
         downloadProvider.reset();
@@ -55,36 +50,14 @@ class _OrderdetailsState extends State<Orderdetails> {
           type: SnackBarType.error,
         );
         downloadProvider.reset();
-        return;
-      }
-    });
-
-    /// Submit order listeners (leave as is)
-    submitProvider.addListener(() {
-      if (!mounted) return;
-
-      if (submitProvider.isSuccess) {
-        SnackBarHelper.show(
-          context,
-          message: "Order closed successfully",
-          type: SnackBarType.success,
-        );
-        submitProvider.reset();
-      } else if (submitProvider.errorMessage != null) {
-        SnackBarHelper.show(
-          context,
-          message: "Failed to close order: ${submitProvider.errorMessage}",
-          type: SnackBarType.error,
-        );
-        submitProvider.reset();
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final order =
-        ModalRoute.of(context)!.settings.arguments as OrderFilterModel;
+    final MyOrderModel order =
+        ModalRoute.of(context)!.settings.arguments as MyOrderModel;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -103,20 +76,15 @@ class _OrderdetailsState extends State<Orderdetails> {
         backgroundColor: Colors.white,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
-          child: Container(
-            width: double.infinity,
-            height: 1,
-            color: AppColors.primary,
-          ),
+          child: Container(height: 1, color: AppColors.primary),
         ),
       ),
 
-      // Body
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // Patient Card
+            /// ---------------------- PATIENT CARD ----------------------
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -126,14 +94,13 @@ class _OrderdetailsState extends State<Orderdetails> {
                   BoxShadow(
                     color: Colors.black12,
                     blurRadius: 6,
-                    offset: const Offset(0, 3),
+                    offset: Offset(0, 3),
                   ),
                 ],
               ),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // Avatar
+                  /// Avatar
                   CircleAvatar(
                     radius: 28,
                     backgroundColor: Colors.grey.shade200,
@@ -143,32 +110,28 @@ class _OrderdetailsState extends State<Orderdetails> {
                   ),
                   const SizedBox(width: 16),
 
-                  // Patient Info
+                  /// Patient Info
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          order.patientName,
+                          order.patientName ?? "",
                           style: const TextStyle(
-                            fontWeight: FontWeight.w600,
                             fontSize: 16,
+                            fontWeight: FontWeight.w600,
                           ),
-                          overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 4),
                         Row(
                           children: [
                             SvgPicture.asset('assets/icon/user.svg'),
-                            const SizedBox(width: 6),
-                            Flexible(
-                              child: Text(
-                                "MRN : ${order.medicalRecordNumber}",
-                                style: const TextStyle(
-                                  fontSize: 13,
-                                  color: AppColors.primary,
-                                ),
-                                overflow: TextOverflow.ellipsis,
+                            SizedBox(width: 6),
+                            Text(
+                              "MRN: ${order.medicalRecordNumber ?? ''}",
+                              style: TextStyle(
+                                color: AppColors.primary,
+                                fontSize: 13,
                               ),
                             ),
                           ],
@@ -177,8 +140,9 @@ class _OrderdetailsState extends State<Orderdetails> {
                     ),
                   ),
 
+                  /// Status Badge
                   Container(
-                    padding: const EdgeInsets.all(1.5),
+                    padding: EdgeInsets.all(1.5),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [AppColors.primary, AppColors.secondary],
@@ -186,7 +150,7 @@ class _OrderdetailsState extends State<Orderdetails> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
+                      padding: EdgeInsets.symmetric(
                         horizontal: 14,
                         vertical: 6,
                       ),
@@ -195,7 +159,7 @@ class _OrderdetailsState extends State<Orderdetails> {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        order.orderStatus ?? '',
+                        order.orderStatus ?? "",
                         style: TextStyle(
                           color: AppColors.primary,
                           fontSize: 13,
@@ -210,24 +174,24 @@ class _OrderdetailsState extends State<Orderdetails> {
 
             const SizedBox(height: 20),
 
-            // Appointment Info
+            /// ---------------------- APPOINTMENT INFO ----------------------
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
+                color: Colors.white,
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black12,
                     blurRadius: 6,
-                    offset: const Offset(0, 3),
+                    offset: Offset(0, 3),
                   ),
                 ],
               ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Date Row
+                  /// Date
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -249,33 +213,29 @@ class _OrderdetailsState extends State<Orderdetails> {
                         const Icon(Icons.circle, color: Colors.red, size: 10),
                     ],
                   ),
-                  const SizedBox(height: 12),
+
+                  SizedBox(height: 12),
 
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        children: [
-                          SvgPicture.asset('assets/icon/hospital.svg'),
-                          const SizedBox(width: 6),
-                          Text(
-                            order.clinicName ?? '',
-                            style: TextStyle(
-                              color: Colors.black54,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
+                      SvgPicture.asset('assets/icon/hospital.svg'),
+                      SizedBox(width: 8),
+                      Text(
+                        order.clinicName ?? "",
+                        style: TextStyle(fontSize: 14, color: Colors.black54),
                       ),
                     ],
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 30),
+
+            const SizedBox(height: 25),
+
+            /// ---------------------- EKG DOWNLOAD ----------------------
             Consumer<DownloadEkgReportProvider>(
-              builder: (context, downloadProvider, _) {
-                return downloadProvider.isLoading
+              builder: (context, dp, _) {
+                return dp.isLoading
                     ? const Center(
                         child: CircularProgressIndicator(
                           color: AppColors.primary,
@@ -283,64 +243,34 @@ class _OrderdetailsState extends State<Orderdetails> {
                       )
                     : CustomTextField(
                         label: "EKG Report",
-                        fieldType: FieldType.download,
                         controller: TextEditingController(
-                          text: order.ekgReportName ?? '',
+                          text: order.ekgReport ?? "",
                         ),
+                        fieldType: FieldType.download,
                         onDownload: () {
-                          final fileId = order.uploadInsuranceIDProof;
-
-                          if (fileId == null || fileId.isEmpty) {
-                            SnackBarHelper.show(
+                          if (order.ekgReport == null ||
+                              order.ekgReport!.isEmpty) {
+                            return SnackBarHelper.show(
                               context,
                               message: "EKG Report not available",
                               type: SnackBarType.error,
                             );
-                            return;
                           }
 
-                          downloadProvider.downloadEkgReport(fileId);
+                          downloadProvider.downloadEkgReport(order.ekgReport!);
                         },
                       );
               },
             ),
 
-            const SizedBox(height: 30),
+            const SizedBox(height: 25),
+
             CustomTextField(
               label: "Clinical Note",
-              hint: "Clinical Note",
-              controller: TextEditingController(text: order.clinicalNote ?? ''),
+              controller: TextEditingController(text: order.clinicalNote ?? ""),
               fieldType: FieldType.note,
               enabled: false,
             ),
-            const SizedBox(height: 30),
-
-            if (order.orderStatus == "FINALIZED")
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: GradientButton(
-                      text: 'Cancel',
-                      isOutlined: true,
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 20),
-                  Expanded(
-                    child: GradientButton(
-                      text: 'Close Order',
-                      onPressed: () {
-                        submitProvider.submitOrderDetails(
-                          orderDetailsId: order.orderDetailsId,
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
           ],
         ),
       ),
