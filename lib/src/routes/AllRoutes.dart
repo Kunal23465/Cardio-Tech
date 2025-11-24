@@ -1,7 +1,6 @@
 import 'package:cardio_tech/src/features/cardiologistScreens/home/otherScreens/cardiologistOrderDetails.dart';
 import 'package:cardio_tech/src/features/cardiologistScreens/home/otherScreens/reportOrder.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/navbar/allPatient.dart';
-import 'package:cardio_tech/src/features/generalPhysicianScreens/home/navbar/home.dart';
 import 'package:flutter/material.dart';
 import '../features/auth/screens/loginScreens/forgot_password_screen.dart';
 import '../features/auth/screens/loginScreens/login_screen.dart';

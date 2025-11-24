@@ -19,6 +19,16 @@ class Orderdetails extends StatefulWidget {
 class _OrderdetailsState extends State<Orderdetails> {
   late SubmitOrderDetailsProvider submitProvider;
   late DownloadEkgReportProvider downloadProvider;
+  static String? _extractFileName(String? fileUrl) {
+    if (fileUrl == null || fileUrl.isEmpty) return null;
+    try {
+      // Extract everything after the last "/"
+      return fileUrl.split('/').last;
+    } catch (e) {
+      // Return the original string if something goes wrong
+      return fileUrl;
+    }
+  }
 
   @override
   void initState() {
@@ -85,6 +95,7 @@ class _OrderdetailsState extends State<Orderdetails> {
   Widget build(BuildContext context) {
     final order =
         ModalRoute.of(context)!.settings.arguments as OrderFilterModel;
+    print("EKG Report Name: ${order.ekgReportName}");
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -285,10 +296,10 @@ class _OrderdetailsState extends State<Orderdetails> {
                         label: "EKG Report",
                         fieldType: FieldType.download,
                         controller: TextEditingController(
-                          text: order.ekgReportName ?? '',
+                          text: _extractFileName(order.ekgReportName ?? ''),
                         ),
                         onDownload: () {
-                          final fileId = order.uploadInsuranceIDProof;
+                          final fileId = order.ekgReportName;
 
                           if (fileId == null || fileId.isEmpty) {
                             SnackBarHelper.show(

@@ -175,7 +175,7 @@ class _SettingState extends State<Setting> {
                             user?.profilePic != null &&
                                 user!.profilePic!.isNotEmpty
                             ? Image.network(
-                                user!.profilePic!,
+                                user.profilePic!,
                                 fit: BoxFit.contain,
                               )
                             : Image.asset(
@@ -191,7 +191,7 @@ class _SettingState extends State<Setting> {
                   radius: 28,
                   backgroundImage:
                       user?.profilePic != null && user!.profilePic!.isNotEmpty
-                      ? NetworkImage(user!.profilePic!)
+                      ? NetworkImage(user.profilePic!)
                       : const AssetImage('assets/images/people/avatar.png')
                             as ImageProvider,
                 ),

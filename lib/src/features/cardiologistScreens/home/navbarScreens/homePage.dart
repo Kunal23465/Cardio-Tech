@@ -164,7 +164,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                       user?.profilePic != null &&
                                           user!.profilePic!.isNotEmpty
                                       ? Image.network(
-                                          user!.profilePic!,
+                                          user.profilePic!,
                                           fit: BoxFit.contain,
                                         )
                                       : Image.asset(
@@ -181,7 +181,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                             backgroundImage:
                                 user?.profilePic != null &&
                                     user!.profilePic!.isNotEmpty
-                                ? NetworkImage(user!.profilePic!)
+                                ? NetworkImage(user.profilePic!)
                                 : const AssetImage(
                                         'assets/images/people/avatar.png',
                                       )

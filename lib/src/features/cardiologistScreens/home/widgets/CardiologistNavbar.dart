@@ -52,9 +52,9 @@ class _CardiologistnavbarState extends State<Cardiologistnavbar> {
       _currentIndex = index;
 
       if (_pages[index] == null) {
-        if (index == 0)
+        if (index == 0) {
           _pages[index] = MyOrder(key: myOrderKey);
-        else if (index == 1)
+        } else if (index == 1)
           _pages[index] = const AllOrder();
         else if (index == 2)
           _pages[index] = const HomePage();
@@ -72,7 +72,6 @@ class _CardiologistnavbarState extends State<Cardiologistnavbar> {
     }
     if (index == 2) {
       context.read<MyOrderProvider>().fetchAllOrders();
-      ;
     }
   }
 

@@ -197,7 +197,7 @@ class _ViewProfileState extends State<ViewProfile> {
                   Expanded(
                     child: _infoBox(
                       'assets/images/setting/myProfile/profile-fill.svg',
-                      user?.totalOrders?.toString() ?? "Unknown",
+                      user?.totalOrders.toString() ?? "Unknown",
                       "Patients",
                     ),
                   ),

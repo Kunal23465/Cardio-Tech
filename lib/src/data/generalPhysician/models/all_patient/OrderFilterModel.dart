@@ -53,7 +53,7 @@ class OrderFilterModel {
       priorityName: json['priorityName'],
       assignedCardiologistName: json['assignedCardiologistName'],
       uploadInsuranceIDProof: json['uploadInsuranceIDProof'],
-      ekgReportName: _extractFileName(json['ekgReport']),
+      ekgReportName: json['ekgReport'],
       clinicName: json['clinicName'],
     );
   }
