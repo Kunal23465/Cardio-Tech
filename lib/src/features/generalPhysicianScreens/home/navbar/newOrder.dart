@@ -411,7 +411,7 @@ class _NewOrderState extends State<NewOrder> {
                           onTap: _pickInsuranceWithCamera,
                           child: AbsorbPointer(
                             child: CustomTextField(
-                              label: "Upload Insurance ID",
+                              label: "Upload Insurance ID ",
                               fieldType: FieldType.file,
                               hint: uploadInsuranceIDProof != null
                                   ? uploadInsuranceIDProof!.path.split('/').last
@@ -624,6 +624,33 @@ class _NewOrderState extends State<NewOrder> {
                   //       ),
                   const SizedBox(height: 16),
 
+                  // CustomTextField(
+                  //   label: "Mobile Number",
+                  //   hint: "Enter Phone No.",
+                  //   controller: mobileController,
+                  //   maxLength: 10,
+                  //   // inputFormatters: [
+                  //   //   FilteringTextInputFormatter.digitsOnly,
+                  //   //   LengthLimitingTextInputFormatter(10),
+                  //   // ]
+                  //   validator: (v) {
+                  //     if (v == null || v.isEmpty) {
+                  //       return "Enter mobile number";
+                  //     } else if (!RegExp(r'^[0-9]{10}$').hasMatch(v)) {
+                  //       return "Mobile number must be 10 digits";
+                  //     }
+                  //     return null;
+                  //   },
+                  // ),
+                  CustomTextField(
+                    label: "Medical Record Number *",
+                    hint: "Enter MRN",
+                    controller: medicalRecordController,
+                    validator: (v) =>
+                        v == null || v.isEmpty ? "Enter MRN" : null,
+                  ),
+                  const SizedBox(height: 16),
+
                   cardioProvider.isLoading
                       ? const CircularProgressIndicator()
                       : CustomTextField(
@@ -647,33 +674,6 @@ class _NewOrderState extends State<NewOrder> {
                             );
                           },
                         ),
-                  const SizedBox(height: 16),
-
-                  // CustomTextField(
-                  //   label: "Mobile Number",
-                  //   hint: "Enter Phone No.",
-                  //   controller: mobileController,
-                  //   maxLength: 10,
-                  //   // inputFormatters: [
-                  //   //   FilteringTextInputFormatter.digitsOnly,
-                  //   //   LengthLimitingTextInputFormatter(10),
-                  //   // ]
-                  //   validator: (v) {
-                  //     if (v == null || v.isEmpty) {
-                  //       return "Enter mobile number";
-                  //     } else if (!RegExp(r'^[0-9]{10}$').hasMatch(v)) {
-                  //       return "Mobile number must be 10 digits";
-                  //     }
-                  //     return null;
-                  //   },
-                  // ),
-                  CustomTextField(
-                    label: "Medical Record Number ",
-                    hint: "Enter MRN",
-                    controller: medicalRecordController,
-                    validator: (v) =>
-                        v == null || v.isEmpty ? "Enter MRN" : null,
-                  ),
                   const SizedBox(height: 16),
 
                   CustomTextField(

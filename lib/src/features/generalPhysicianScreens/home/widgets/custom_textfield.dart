@@ -107,7 +107,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
     // --- Build decoration ---
     InputDecoration decoration = _buildDecoration(suffix: suffixIcon).copyWith(
-      errorStyle: const TextStyle(height: 0, color: Colors.transparent),
+      errorStyle: const TextStyle(height: 0, fontSize: 0),
+      // helperText: "",
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
         borderSide: BorderSide.none,
@@ -248,45 +249,96 @@ class _CustomTextFieldState extends State<CustomTextField> {
   }
 
   /// --- Decoration builder with label handling ---
+  // InputDecoration _buildDecoration({Widget? suffix}) {
+  //   final hasStar = widget.label.contains('*');
+  //   final parts = widget.label.split('*');
+
+  //   return InputDecoration(
+  //     label: hasStar
+  //         ? RichText(
+  //             text: TextSpan(
+  //               children: [
+  //                 TextSpan(
+  //                   text: parts[0].trim(),
+  //                   style: const TextStyle(
+  //                     color: Colors.black,
+  //                     fontSize: 20.0,
+  //                     backgroundColor: Colors.white,
+  //                   ),
+  //                 ),
+  //                 const TextSpan(
+  //                   text: ' *',
+  //                   style: TextStyle(
+  //                     color: Colors.red,
+  //                     fontSize: 20.0,
+  //                     backgroundColor: Colors.white,
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           )
+  //         : Text(
+  //             widget.label,
+  //             style: const TextStyle(
+  //               color: Colors.black,
+  //               fontSize: 20.0,
+  //               backgroundColor: Colors.white,
+  //             ),
+  //           ),
+  //     filled: true,
+  //     fillColor: Colors.white,
+  //     contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+  //     enabledBorder: OutlineInputBorder(
+  //       borderRadius: BorderRadius.circular(10),
+  //       borderSide: BorderSide.none,
+  //     ),
+  //     focusedBorder: OutlineInputBorder(
+  //       borderRadius: BorderRadius.circular(10),
+  //       borderSide: BorderSide.none,
+  //     ),
+  //     floatingLabelBehavior: FloatingLabelBehavior.always,
+  //     hintStyle: const TextStyle(color: Colors.grey),
+  //     suffixIcon: suffix,
+  //     suffixIconConstraints: const BoxConstraints(minWidth: 24, minHeight: 24),
+  //   );
+  // }
+
   InputDecoration _buildDecoration({Widget? suffix}) {
     final hasStar = widget.label.contains('*');
     final parts = widget.label.split('*');
 
     return InputDecoration(
-      label: hasStar
-          ? RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: parts[0].trim(),
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 20.0,
-                      backgroundColor: Colors.white,
+      label: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 6),
+        margin: const EdgeInsets.only(left: 8, bottom: 4),
+        color: Colors.white,
+        child: hasStar
+            ? RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: parts[0].trim(),
+                      style: const TextStyle(color: Colors.black, fontSize: 18),
                     ),
-                  ),
-                  const TextSpan(
-                    text: ' *',
-                    style: TextStyle(
-                      color: Colors.red,
-                      fontSize: 20.0,
-                      backgroundColor: Colors.white,
+                    const TextSpan(
+                      text: ' *',
+                      style: TextStyle(color: Colors.red, fontSize: 16),
                     ),
-                  ),
-                ],
+                  ],
+                ),
+              )
+            : Text(
+                widget.label,
+                style: const TextStyle(color: Colors.black, fontSize: 18),
               ),
-            )
-          : Text(
-              widget.label,
-              style: const TextStyle(
-                color: Colors.black,
-                fontSize: 20.0,
-                backgroundColor: Colors.white,
-              ),
-            ),
+      ),
+
+      floatingLabelBehavior: FloatingLabelBehavior.always,
+
       filled: true,
       fillColor: Colors.white,
-      contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
         borderSide: BorderSide.none,
@@ -295,10 +347,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
         borderRadius: BorderRadius.circular(10),
         borderSide: BorderSide.none,
       ),
-      floatingLabelBehavior: FloatingLabelBehavior.always,
-      hintStyle: const TextStyle(color: Colors.grey),
+
       suffixIcon: suffix,
-      suffixIconConstraints: const BoxConstraints(minWidth: 24, minHeight: 24),
     );
   }
 }
