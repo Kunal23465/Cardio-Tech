@@ -179,7 +179,7 @@ class _NewOrderState extends State<NewOrder> {
                 title: const Text('Choose from Files'),
                 onTap: () async {
                   final result = await FilePicker.platform.pickFiles(
-                    type: FileType.image,
+                    type: FileType.any,
                   );
                   if (result != null && result.files.single.path != null) {
                     Navigator.pop(context, XFile(result.files.single.path!));
@@ -373,6 +373,7 @@ class _NewOrderState extends State<NewOrder> {
         children: [
           SingleChildScrollView(
             padding: const EdgeInsets.all(16),
+
             child: Form(
               key: _formKey,
               child: Column(
@@ -381,7 +382,7 @@ class _NewOrderState extends State<NewOrder> {
                     onTap: _pickEkgAndRunOcr,
                     child: AbsorbPointer(
                       child: CustomTextField(
-                        label: "EKG Report",
+                        label: "EKG ",
                         fieldType: FieldType.file,
                         hint: ekgReport != null
                             ? ekgReport!.path.split('/').last
@@ -399,6 +400,48 @@ class _NewOrderState extends State<NewOrder> {
                   ),
 
                   const SizedBox(height: 20),
+
+                  _enterIdManually
+                      ? CustomTextField(
+                          label: "Insurance ID",
+                          hint: "Enter Insurance ID",
+                          controller: insuranceIdController,
+                        )
+                      : GestureDetector(
+                          onTap: _pickInsuranceWithCamera,
+                          child: AbsorbPointer(
+                            child: CustomTextField(
+                              label: "Upload Insurance ID",
+                              fieldType: FieldType.file,
+                              hint: uploadInsuranceIDProof != null
+                                  ? uploadInsuranceIDProof!.path.split('/').last
+                                  : (insuranceProofUrl != null
+                                        ? "Uploaded: ${insuranceProofUrl!.split('/').last}"
+                                        : "Tap to upload"),
+
+                              controller: TextEditingController(
+                                text: uploadInsuranceIDProof != null
+                                    ? uploadInsuranceIDProof!.path
+                                    : (insuranceProofUrl ?? ''),
+                              ),
+                            ),
+                          ),
+                        ),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: TextButton(
+                      onPressed: () =>
+                          setState(() => _enterIdManually = !_enterIdManually),
+                      child: Text(
+                        _enterIdManually
+                            ? "Upload Insurance ID Instead"
+                            : "Enter ID Details Manually",
+                        style: const TextStyle(color: AppColors.primary),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 6),
 
                   Container(
                     decoration: BoxDecoration(
@@ -498,128 +541,87 @@ class _NewOrderState extends State<NewOrder> {
 
                   const SizedBox(height: 16),
 
-                  genderProvider.isLoading
-                      ? const CircularProgressIndicator()
-                      : CustomTextField(
-                          label: "Gender ",
-                          fieldType: FieldType.dropdown,
-                          dropdownItems: genderProvider.genderList
-                              .map((e) => e.value ?? '')
-                              .toList(),
-                          selectedValue: selectedGenderId != null
-                              ? genderProvider.genderList
-                                    .firstWhere((e) => e.id == selectedGenderId)
-                                    .value
-                              : null,
-                          onChanged: (val) {
-                            final selected = genderProvider.genderList
-                                .firstWhere((g) => g.value == val);
-                            setState(() => selectedGenderId = selected.id);
-                          },
-                          // validator: (v) =>
-                          //     selectedGenderId == null ? "Select gender" : null,
-                        ),
-                  const SizedBox(height: 16),
-
-                  // CustomTextField(
-                  //   label: "Mobile Number",
-                  //   hint: "Enter Phone No.",
-                  //   controller: mobileController,
-                  //   maxLength: 10,
-                  //   // inputFormatters: [
-                  //   //   FilteringTextInputFormatter.digitsOnly,
-                  //   //   LengthLimitingTextInputFormatter(10),
-                  //   // ]
-                  //   validator: (v) {
-                  //     if (v == null || v.isEmpty) {
-                  //       return "Enter mobile number";
-                  //     } else if (!RegExp(r'^[0-9]{10}$').hasMatch(v)) {
-                  //       return "Mobile number must be 10 digits";
-                  //     }
-                  //     return null;
-                  //   },
-                  // ),
-                  _enterIdManually
-                      ? CustomTextField(
-                          label: "Insurance ID",
-                          hint: "Enter Insurance ID",
-                          controller: insuranceIdController,
-                        )
-                      : GestureDetector(
-                          onTap: _pickInsuranceWithCamera,
-                          child: AbsorbPointer(
-                            child: CustomTextField(
-                              label: "Upload Insurance ID",
-                              fieldType: FieldType.file,
-                              hint: uploadInsuranceIDProof != null
-                                  ? uploadInsuranceIDProof!.path.split('/').last
-                                  : (insuranceProofUrl != null
-                                        ? "Uploaded: ${insuranceProofUrl!.split('/').last}"
-                                        : "Tap to upload"),
-
-                              controller: TextEditingController(
-                                text: uploadInsuranceIDProof != null
-                                    ? uploadInsuranceIDProof!.path
-                                    : (insuranceProofUrl ?? ''),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: genderProvider.isLoading
+                            ? const CircularProgressIndicator()
+                            : CustomTextField(
+                                label: "Gender",
+                                fieldType: FieldType.dropdown,
+                                dropdownItems: genderProvider.genderList
+                                    .map((e) => e.value ?? '')
+                                    .toList(),
+                                selectedValue: selectedGenderId != null
+                                    ? genderProvider.genderList
+                                          .firstWhere(
+                                            (e) => e.id == selectedGenderId,
+                                          )
+                                          .value
+                                    : null,
+                                onChanged: (val) {
+                                  final selected = genderProvider.genderList
+                                      .firstWhere((g) => g.value == val);
+                                  setState(
+                                    () => selectedGenderId = selected.id,
+                                  );
+                                },
                               ),
-                            ),
-                          ),
-                        ),
-
-                  TextButton(
-                    onPressed: () =>
-                        setState(() => _enterIdManually = !_enterIdManually),
-                    child: Text(
-                      _enterIdManually
-                          ? "Upload Insurance ID Instead"
-                          : "Enter ID Details Manually",
-                      style: const TextStyle(color: AppColors.primary),
-                    ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: priorityProvider.isLoading
+                            ? const CircularProgressIndicator()
+                            : CustomTextField(
+                                label: "Priority",
+                                fieldType: FieldType.dropdown,
+                                dropdownItems: priorityProvider.priorities
+                                    .map((e) => e.priorityName)
+                                    .toList(),
+                                selectedValue: selectedPriorityId != null
+                                    ? priorityProvider.priorities
+                                          .firstWhere(
+                                            (e) =>
+                                                e.priorityId ==
+                                                selectedPriorityId,
+                                          )
+                                          .priorityName
+                                    : null,
+                                onChanged: (val) {
+                                  final selected = priorityProvider.priorities
+                                      .firstWhere((e) => e.priorityName == val);
+                                  setState(
+                                    () => selectedPriorityId =
+                                        selected.priorityId,
+                                  );
+                                },
+                              ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 16),
+                  // const SizedBox(width: 12),
 
-                  CustomTextField(
-                    label: "Medical Record Number ",
-                    hint: "Enter MRN",
-                    controller: medicalRecordController,
-                    validator: (v) =>
-                        v == null || v.isEmpty ? "Enter MRN" : null,
-                  ),
-                  const SizedBox(height: 16),
-
-                  CustomTextField(
-                    label: "Clinical Note ",
-                    hint: "Enter Note",
-                    controller: clinicalNoteController,
-                    fieldType: FieldType.note,
-                    // validator: (v) =>
-                    //     v == null || v.isEmpty ? "Enter note" : null,
-                  ),
-                  const SizedBox(height: 16),
-
-                  priorityProvider.isLoading
-                      ? const CircularProgressIndicator()
-                      : CustomTextField(
-                          label: "Select Priority ",
-                          fieldType: FieldType.dropdown,
-                          dropdownItems: priorityProvider.priorities
-                              .map((e) => e.priorityName)
-                              .toList(),
-                          selectedValue: selectedPriorityId != null
-                              ? priorityProvider.priorities
-                                    .firstWhere(
-                                      (e) => e.priorityId == selectedPriorityId,
-                                    )
-                                    .priorityName
-                              : null,
-                          onChanged: (val) {
-                            final selected = priorityProvider.priorities
-                                .firstWhere((e) => e.priorityName == val);
-                            setState(
-                              () => selectedPriorityId = selected.priorityId,
-                            );
-                          },
-                        ),
+                  // genderProvider.isLoading
+                  //     ? const CircularProgressIndicator()
+                  //     : CustomTextField(
+                  //         label: "Gender ",
+                  //         fieldType: FieldType.dropdown,
+                  //         dropdownItems: genderProvider.genderList
+                  //             .map((e) => e.value ?? '')
+                  //             .toList(),
+                  //         selectedValue: selectedGenderId != null
+                  //             ? genderProvider.genderList
+                  //                   .firstWhere((e) => e.id == selectedGenderId)
+                  //                   .value
+                  //             : null,
+                  //         onChanged: (val) {
+                  //           final selected = genderProvider.genderList
+                  //               .firstWhere((g) => g.value == val);
+                  //           setState(() => selectedGenderId = selected.id);
+                  //         },
+                  //         // validator: (v) =>
+                  //         //     selectedGenderId == null ? "Select gender" : null,
+                  //       ),
                   const SizedBox(height: 16),
 
                   cardioProvider.isLoading
@@ -645,7 +647,70 @@ class _NewOrderState extends State<NewOrder> {
                             );
                           },
                         ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 16),
+
+                  // CustomTextField(
+                  //   label: "Mobile Number",
+                  //   hint: "Enter Phone No.",
+                  //   controller: mobileController,
+                  //   maxLength: 10,
+                  //   // inputFormatters: [
+                  //   //   FilteringTextInputFormatter.digitsOnly,
+                  //   //   LengthLimitingTextInputFormatter(10),
+                  //   // ]
+                  //   validator: (v) {
+                  //     if (v == null || v.isEmpty) {
+                  //       return "Enter mobile number";
+                  //     } else if (!RegExp(r'^[0-9]{10}$').hasMatch(v)) {
+                  //       return "Mobile number must be 10 digits";
+                  //     }
+                  //     return null;
+                  //   },
+                  // ),
+                  CustomTextField(
+                    label: "Medical Record Number ",
+                    hint: "Enter MRN",
+                    controller: medicalRecordController,
+                    validator: (v) =>
+                        v == null || v.isEmpty ? "Enter MRN" : null,
+                  ),
+                  const SizedBox(height: 16),
+
+                  CustomTextField(
+                    label: "Clinical Note ",
+                    hint: "Enter Note",
+                    controller: clinicalNoteController,
+                    fieldType: FieldType.note,
+                    // validator: (v) =>
+                    //     v == null || v.isEmpty ? "Enter note" : null,
+                  ),
+                  const SizedBox(height: 16),
+
+                  // priorityProvider.isLoading
+                  //     ? const CircularProgressIndicator()
+                  //     : CustomTextField(
+                  //         label: "Select Priority ",
+                  //         fieldType: FieldType.dropdown,
+                  //         dropdownItems: priorityProvider.priorities
+                  //             .map((e) => e.priorityName)
+                  //             .toList(),
+                  //         selectedValue: selectedPriorityId != null
+                  //             ? priorityProvider.priorities
+                  //                   .firstWhere(
+                  //                     (e) => e.priorityId == selectedPriorityId,
+                  //                   )
+                  //                   .priorityName
+                  //             : null,
+                  //         onChanged: (val) {
+                  //           final selected = priorityProvider.priorities
+                  //               .firstWhere((e) => e.priorityName == val);
+                  //           setState(
+                  //             () => selectedPriorityId = selected.priorityId,
+                  //           );
+                  //         },
+                  //       ),
+                  // const SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
                   Row(
                     children: [

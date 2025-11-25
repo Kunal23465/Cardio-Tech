@@ -293,7 +293,7 @@ class _OrderdetailsState extends State<Orderdetails> {
                         ),
                       )
                     : CustomTextField(
-                        label: "EKG Report",
+                        label: "EKG ",
                         fieldType: FieldType.download,
                         controller: TextEditingController(
                           text: _extractFileName(order.ekgReportName ?? ''),
