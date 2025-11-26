@@ -138,7 +138,7 @@ class _ImageEditorState extends State<ImageEditor> {
                     child: isNetworkImage
                         ? ImagePainter.network(
                             widget.imagePath,
-                            controller: _controller, // ✅ use controller
+                            controller: _controller, //  use controller
                             scalable: true,
                           )
                         : ImagePainter.asset(

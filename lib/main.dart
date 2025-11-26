@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget {
     Widget initialScreen;
 
     if (isLoggedIn) {
-      if (staffType == "Cardio Tech Support") {
+      if (staffType == "Cardiologist") {
         initialScreen = const Cardiologistnavbar();
       } else if (staffType == "General Physician") {
         initialScreen = const Navbar();

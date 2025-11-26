@@ -29,6 +29,7 @@ dependencies:
   flutter_downloader: ^1.11.6
   flutter_painter: ^1.0.1
   flutter_colorpicker: ^1.0.3
+  syncfusion_flutter_pdfviewer: ^31.2.15
 
 dev_dependencies:
   flutter_test:

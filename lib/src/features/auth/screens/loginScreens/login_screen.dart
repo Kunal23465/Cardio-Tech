@@ -100,7 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
         );
 
         // Navigate based on user role
-        if (staffType == "Cardio Tech Support") {
+        if (staffType == "Cardiologist") {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (_) => const Cardiologistnavbar()),
@@ -223,21 +223,21 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             const SizedBox(height: 10),
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                Row(
-                                  children: [
-                                    Checkbox(
-                                      value: rememberMe,
-                                      onChanged: (val) {
-                                        setState(() {
-                                          rememberMe = val ?? false;
-                                        });
-                                      },
-                                    ),
-                                    const Text("Remember me"),
-                                  ],
-                                ),
+                                // Row(
+                                //   children: [
+                                //     Checkbox(
+                                //       value: rememberMe,
+                                //       onChanged: (val) {
+                                //         setState(() {
+                                //           rememberMe = val ?? false;
+                                //         });
+                                //       },
+                                //     ),
+                                // const Text("Remember me"),
+                                //   ],
+                                // ),
                                 Flexible(
                                   child: TextButton(
                                     onPressed: () {

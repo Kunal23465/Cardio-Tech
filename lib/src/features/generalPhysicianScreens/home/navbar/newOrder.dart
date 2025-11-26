@@ -471,7 +471,7 @@ class _NewOrderState extends State<NewOrder> {
                                 const Text(
                                   "Name",
                                   style: TextStyle(
-                                    fontWeight: FontWeight.bold,
+                                    // fontWeight: FontWeight.bold,
                                     fontSize: 14,
                                   ),
                                 ),
@@ -498,7 +498,7 @@ class _NewOrderState extends State<NewOrder> {
                                 const Text(
                                   "DOB",
                                   style: TextStyle(
-                                    fontWeight: FontWeight.bold,
+                                    // fontWeight: FontWeight.bold,
                                     fontSize: 14,
                                   ),
                                 ),

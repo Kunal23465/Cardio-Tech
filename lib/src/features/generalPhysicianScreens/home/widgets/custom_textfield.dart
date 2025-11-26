@@ -164,6 +164,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
           controller: TextEditingController(text: uploadedFileName ?? ''),
           decoration: decoration.copyWith(
             hintText: uploadedFileName ?? widget.hint ?? 'Upload File',
+            hintStyle: const TextStyle(color: Colors.grey),
           ),
         );
         break;
@@ -309,7 +310,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
     return InputDecoration(
       label: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 12),
         margin: const EdgeInsets.only(left: 8, bottom: 4),
         color: Colors.white,
         child: hasStar
