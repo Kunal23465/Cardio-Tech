@@ -5,6 +5,8 @@ class FinalizedOrderModel {
   final String clinicName;
   final String patientName;
   final String medicalRecordNumber;
+  final String? clinicalNote;
+  final String? clinicNoteFromCardio;
   final String? ekgReport;
   final String? orderStatus;
   final String? priorityName;
@@ -25,6 +27,8 @@ class FinalizedOrderModel {
     this.age,
     this.createdAt,
     this.referredByGpName,
+    this.clinicalNote,
+    this.clinicNoteFromCardio,
   });
 
   factory FinalizedOrderModel.fromJson(Map<String, dynamic> json) {
@@ -40,6 +44,8 @@ class FinalizedOrderModel {
       age: json['age'],
       createdAt: _formatApiDate(json['createdAt']),
       referredByGpName: json['referredByGpName'],
+      clinicalNote: json['clinicalNote'],
+      clinicNoteFromCardio: json['clinicNoteFromCardio'],
     );
   }
   static String? _formatApiDate(String? apiDate) {

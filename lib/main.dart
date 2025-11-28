@@ -11,31 +11,32 @@ import 'package:provider/provider.dart';
 import 'src/features/auth/screens/loginScreens/login_screen.dart';
 import 'src/features/generalPhysicianScreens/home/widgets/theme.dart';
 import 'src/routes/AllRoutes.dart';
+import 'package:flutter/foundation.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  //  FORCE APP TO PORTRAIT MODE ONLY
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
+  // ---- ONLY ON MOBILE ----
+  if (!kIsWeb) {
+    // Portrait mode (not supported on web)
+    await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
 
-  //  Initialize downloader once for the entire app
-  await FlutterDownloader.initialize(
-    debug: true, // set to false in production
-    ignoreSsl: true,
-  );
+    // Flutter downloader (NOT supported on web)  false
+    await FlutterDownloader.initialize(debug: false, ignoreSsl: true);
 
-  //  Ask for notification permission once globally (Android 13+)
-  final notificationStatus = await Permission.notification.request();
-  if (notificationStatus.isGranted) {
-    print(" Notification permission granted");
-  } else {
-    print(" Notification permission denied");
+    // Notification permission (NOT supported on web)
+    final notificationStatus = await Permission.notification.request();
+    if (notificationStatus.isGranted) {
+      print(" Notification permission granted");
+    } else {
+      print(" Notification permission denied");
+    }
   }
 
-  //  Restore session and token
+  // ---- COMMON CODE (WEB + MOBILE) ----
   final accessToken = await StorageHelper.getAccessToken();
   final isLoggedIn = await StorageHelper.isLoggedIn();
   final staffType = await StorageHelper.getStaffType();

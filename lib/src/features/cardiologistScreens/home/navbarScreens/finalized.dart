@@ -1,6 +1,7 @@
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/theme.dart';
 import 'package:cardio_tech/src/features/widgets/orderDetailsCard.dart';
 import 'package:cardio_tech/src/provider/cardioLogistsProvider/finalizedProvider/finalizedProvider.dart';
+import 'package:cardio_tech/src/routes/AllRoutes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -126,6 +127,13 @@ class _FinalizedState extends State<Finalized> {
                             priorityName: order.priorityName ?? '',
                             orderStatus: order.orderStatus ?? '',
                             submittedOn: order.createdAt ?? '',
+                            onFinalized: () {
+                              Navigator.pushNamed(
+                                context,
+                                AppRoutes.cardioFinalizedOrderDetails,
+                                arguments: order,
+                              );
+                            },
                           ),
                         );
                       },

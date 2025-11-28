@@ -4,6 +4,7 @@ import 'package:cardio_tech/src/features/cardiologistScreens/home/navbarScreens/
 import 'package:cardio_tech/src/features/cardiologistScreens/home/navbarScreens/myOrder.dart';
 import 'package:cardio_tech/src/features/cardiologistScreens/home/navbarScreens/setting.dart';
 import 'package:cardio_tech/src/provider/cardioLogistsProvider/finalizedProvider/finalizedProvider.dart';
+import 'package:cardio_tech/src/provider/cardioLogistsProvider/home/StatusCountCardioProvider.dart';
 import 'package:cardio_tech/src/provider/cardioLogistsProvider/myOrderProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -72,6 +73,7 @@ class _CardiologistnavbarState extends State<Cardiologistnavbar> {
     }
     if (index == 2) {
       context.read<MyOrderProvider>().fetchAllOrders();
+      context.read<StatusCountCardioProvider>().fetchCardioStatusCounts();
     }
   }
 

@@ -1,9 +1,11 @@
+import 'package:cardio_tech/src/provider/cardioLogistsProvider/allOrders/CardioAllOrderProvider.dart';
 import 'package:cardio_tech/src/provider/cardioLogistsProvider/assignCardioProvider.dart';
 import 'package:cardio_tech/src/provider/cardioLogistsProvider/assignClinicProvider.dart';
 import 'package:cardio_tech/src/provider/cardioLogistsProvider/assignOrderProvider.dart';
 import 'package:cardio_tech/src/provider/cardioLogistsProvider/cardioSubmitReportProvider.dart';
 import 'package:cardio_tech/src/provider/cardioLogistsProvider/finalizedProvider/finalizedProvider.dart';
 import 'package:cardio_tech/src/provider/cardioLogistsProvider/getAllStatusProvider.dart';
+import 'package:cardio_tech/src/provider/cardioLogistsProvider/home/StatusCountCardioProvider.dart';
 import 'package:cardio_tech/src/provider/cardioLogistsProvider/myOrderProvider.dart';
 import 'package:cardio_tech/src/provider/cardioLogistsProvider/orderStatusProvider.dart';
 import 'package:cardio_tech/src/provider/generalPhysicianProvider/allPatient/downloadEkgReportProvider.dart';
@@ -15,6 +17,7 @@ import 'package:cardio_tech/src/provider/generalPhysicianProvider/commons/change
 import 'package:cardio_tech/src/provider/generalPhysicianProvider/commons/editProfile.dart/editProfileProvider.dart';
 import 'package:cardio_tech/src/provider/generalPhysicianProvider/commons/editProfile.dart/experienceProvider.dart';
 import 'package:cardio_tech/src/provider/generalPhysicianProvider/commons/editProfile.dart/uploadProfileProvider.dart';
+import 'package:cardio_tech/src/provider/generalPhysicianProvider/home/StatusCountGpProvider.dart';
 import 'package:cardio_tech/src/provider/generalPhysicianProvider/new_order/all_cardiologist_provider.dart';
 import 'package:cardio_tech/src/provider/generalPhysicianProvider/new_order/create_order_provider.dart';
 import 'package:cardio_tech/src/provider/generalPhysicianProvider/new_order/gender_provider.dart';
@@ -48,4 +51,7 @@ List<SingleChildWidget> appProviders = [
   ChangeNotifierProvider(create: (_) => ExperienceProvider()),
   ChangeNotifierProvider(create: (_) => ChangePasswordProvider()),
   ChangeNotifierProvider(create: (_) => UploadProfileProvider()),
+  ChangeNotifierProvider(create: (_) => StatusCountGpProvider()),
+  ChangeNotifierProvider(create: (_) => StatusCountCardioProvider()),
+  ChangeNotifierProvider(create: (_) => CardioAllOrderProvider()),
 ];

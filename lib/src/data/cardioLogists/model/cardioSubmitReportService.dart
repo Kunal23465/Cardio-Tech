@@ -20,7 +20,7 @@ class CardioSubmitReportService {
         'approvalLevel': approvalLevel,
         'approverPocId': approverPocId,
         'action': action,
-        'attachment': MultipartFile.fromBytes(
+        'ekgReport': MultipartFile.fromBytes(
           attachmentBytes,
           filename: "report_$orderId.png",
         ),
@@ -39,7 +39,7 @@ class CardioSubmitReportService {
       });
 
       // DEBUG: print file info
-      final attachment = formMap['attachment'] as MultipartFile;
+      final attachment = formMap['ekgReport'] as MultipartFile;
       print("File: ${attachment.filename}, size: ${attachment.length}");
 
       final formData = FormData.fromMap(formMap);

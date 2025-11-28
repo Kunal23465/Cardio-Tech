@@ -1,5 +1,5 @@
 import 'package:cardio_tech/src/core/config/api_constants.dart';
-import 'package:cardio_tech/src/data/cardioLogists/model/myOrderModel.dart';
+import 'package:cardio_tech/src/data/cardioLogists/model/allOrders/cardioAllOrderModel.dart';
 import 'package:cardio_tech/src/provider/generalPhysicianProvider/allPatient/downloadEkgReportProvider.dart';
 import 'package:cardio_tech/src/utils/snackbar_helper.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/custom_textfield.dart';
@@ -9,15 +9,14 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
-class CardiologistOrderDetails extends StatefulWidget {
-  const CardiologistOrderDetails({super.key});
+class AllOrderOrderDetails extends StatefulWidget {
+  const AllOrderOrderDetails({super.key});
 
   @override
-  State<CardiologistOrderDetails> createState() =>
-      _CardiologistOrderDetailsState();
+  State<AllOrderOrderDetails> createState() => _AllOrderOrderDetailsState();
 }
 
-class _CardiologistOrderDetailsState extends State<CardiologistOrderDetails> {
+class _AllOrderOrderDetailsState extends State<AllOrderOrderDetails> {
   late DownloadEkgReportProvider downloadProvider;
 
   bool _isPdf(String fileName) {
@@ -85,7 +84,8 @@ class _CardiologistOrderDetailsState extends State<CardiologistOrderDetails> {
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final order = ModalRoute.of(context)!.settings.arguments as MyOrderModel;
+      final order =
+          ModalRoute.of(context)!.settings.arguments as CardioAllOrderModel;
 
       final fileName = order.ekgReport ?? "";
 
@@ -105,8 +105,8 @@ class _CardiologistOrderDetailsState extends State<CardiologistOrderDetails> {
 
   @override
   Widget build(BuildContext context) {
-    final MyOrderModel order =
-        ModalRoute.of(context)!.settings.arguments as MyOrderModel;
+    final CardioAllOrderModel order =
+        ModalRoute.of(context)!.settings.arguments as CardioAllOrderModel;
 
     return Scaffold(
       backgroundColor: Colors.white,

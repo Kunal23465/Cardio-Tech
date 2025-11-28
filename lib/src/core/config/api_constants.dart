@@ -1,6 +1,6 @@
 class ApiConstants {
-  // static const String baseUrl = "https://scardiopre.srdt.co.in";
-  static const String baseUrl = "http://10.8.20.71:9025";
+  static const String baseUrl = "https://scardiopre.srdt.co.in";
+  // static const String baseUrl = "http://10.8.20.71:9025";
 
   // Auth Endpoints
   static const String login = "$baseUrl/auth/login";
@@ -20,6 +20,7 @@ class ApiConstants {
       "$baseUrl/cardio/cardiologists/getAllCardiologisticWithBusinessName";
   static const String filterOrders = "$baseUrl/cardio/orders/filter";
   static const String getOrderById = "$baseUrl/cardio/orders/getByOrderId";
+  static const String statusCountGp = "$baseUrl/poc/dashboard/gpDashboard";
 
   //Cardiologist Api
   static const String getAllSearchOrder =
@@ -37,6 +38,10 @@ class ApiConstants {
       "$baseUrl/order-assignment/orderAssignFromCardiologistIdToCardiologist";
   static const String finalizedOrder =
       "$baseUrl/cardio/cardiologists/filterFinalisedOrder";
+  static const String statusCountCardio =
+      "$baseUrl/cardio/cardiologists/dashboard";
+  static const String cardioAllOrder =
+      "$baseUrl/cardio/cardiologists/allOrdersAssignedToClinic";
 
   //Common APIs
   static const String getAllStatus =

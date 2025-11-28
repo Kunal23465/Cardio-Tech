@@ -27,7 +27,10 @@ class SubmitOrderDetailsProvider extends ChangeNotifier {
       final closedById = await StorageHelper.getUserId();
 
       if (closedById == null) {
-        throw Exception("User ID not found in local storage");
+        _errorMessage = "User ID not found in local storage";
+        _isLoading = false;
+        notifyListeners();
+        return;
       }
 
       // 🔹 Send API request
@@ -46,5 +49,12 @@ class SubmitOrderDetailsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void reset() {}
+  /// Resets provider state
+  void reset() {
+    _submittedOrder = null;
+    _isLoading = false;
+    _errorMessage = null;
+    _isSuccess = false;
+    notifyListeners();
+  }
 }

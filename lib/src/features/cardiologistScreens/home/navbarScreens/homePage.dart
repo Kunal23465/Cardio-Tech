@@ -1,7 +1,9 @@
+import 'package:cardio_tech/src/data/cardioLogists/model/home/statusCountCardioModel.dart';
 import 'package:cardio_tech/src/data/cardioLogists/model/myOrderModel.dart';
 import 'package:cardio_tech/src/features/cardiologistScreens/home/widgets/assignCard.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/DashboardCard.dart';
 import 'package:cardio_tech/src/features/widgets/orderDetailsCard.dart';
+import 'package:cardio_tech/src/provider/cardioLogistsProvider/home/StatusCountCardioProvider.dart';
 import 'package:cardio_tech/src/provider/cardioLogistsProvider/myOrderProvider.dart';
 import 'package:cardio_tech/src/provider/cardioLogistsProvider/orderStatusProvider.dart';
 import 'package:cardio_tech/src/provider/notificationProvider/notificationProvider.dart';
@@ -21,33 +23,42 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
-  final List<Map<String, dynamic>> _dashboardCards = [
-    {
-      'title': '100',
-      'subtitle': 'High Priority ',
-      'iconPath': 'assets/images/homePage/dashboard/icon2.svg',
-    },
-    {
-      'title': '75',
-      'subtitle': 'Sign Off',
-      'iconPath': 'assets/cardiologistsIcon/icon/other/icon1.svg',
-    },
-    {
-      'title': '240',
-      'subtitle': 'Total Orders Assigned',
-      'iconPath': 'assets/images/homePage/dashboard/icon3.svg',
-    },
-    {
-      'title': '180',
-      'subtitle': 'Finalized Orders',
-      'iconPath': 'assets/cardiologistsIcon/icon/other/icon2.svg',
-    },
-  ];
+  List<Map<String, dynamic>> getCardioDashboardCards(
+    StatusCountCardioModel data,
+  ) {
+    return [
+      {
+        'title': data.highPriorityOrders.toString(),
+        'subtitle': 'High Priority Orders',
+        'iconPath': 'assets/images/homePage/dashboard/icon2.svg',
+      },
+      {
+        'title': data.signOff.toString(),
+        'subtitle': 'Sign off',
+        'iconPath': 'assets/cardiologistsIcon/icon/other/icon1.svg',
+      },
+      {
+        'title': data.submittedOrders.toString(),
+        'subtitle': 'Total Orders Assigned',
+        'iconPath': 'assets/images/homePage/dashboard/icon3.svg',
+      },
+      {
+        'title': data.finalizedOrders.toString(),
+        'subtitle': 'Finalized Orders',
+        'iconPath': 'assets/cardiologistsIcon/icon/other/icon2.svg',
+      },
+    ];
+  }
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<StatusCountCardioProvider>().fetchCardioStatusCounts();
+    });
+
     _fetchInitialData();
   }
 
@@ -136,6 +147,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     final bool hasUnread = notifications.any(
       (n) => n.status.toUpperCase() == "UNREAD",
     );
+
+    final cardioStatusProvider = context.watch<StatusCountCardioProvider>();
+    final cardioStatusData = cardioStatusProvider.cardioStatusData;
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -256,36 +270,60 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               const SizedBox(height: 20),
 
               /// Dashboard Cards
-              Column(
-                children: [
-                  for (var i = 0; i < _dashboardCards.length; i += 2)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: OrderCard(
-                              title: _dashboardCards[i]['title'] ?? '',
-                              subtitle: _dashboardCards[i]['subtitle'] ?? '',
-                              iconPath: _dashboardCards[i]['iconPath'] ?? '',
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          if (i + 1 < _dashboardCards.length)
-                            Expanded(
-                              child: OrderCard(
-                                title: _dashboardCards[i + 1]['title'] ?? '',
-                                subtitle:
-                                    _dashboardCards[i + 1]['subtitle'] ?? '',
-                                iconPath:
-                                    _dashboardCards[i + 1]['iconPath'] ?? '',
+              if (cardioStatusProvider.isLoading)
+                Center(child: CircularProgressIndicator())
+              else if (cardioStatusData == null)
+                Text("No status data")
+              else
+                Column(
+                  children: [
+                    for (
+                      var i = 0;
+                      i < getCardioDashboardCards(cardioStatusData).length;
+                      i += 2
+                    )
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: IntrinsicHeight(
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: OrderCard(
+                                  title: getCardioDashboardCards(
+                                    cardioStatusData,
+                                  )[i]['title'],
+                                  subtitle: getCardioDashboardCards(
+                                    cardioStatusData,
+                                  )[i]['subtitle'],
+                                  iconPath: getCardioDashboardCards(
+                                    cardioStatusData,
+                                  )[i]['iconPath'],
+                                ),
                               ),
-                            ),
-                        ],
+                              const SizedBox(width: 12),
+                              if (i + 1 <
+                                  getCardioDashboardCards(
+                                    cardioStatusData,
+                                  ).length)
+                                Expanded(
+                                  child: OrderCard(
+                                    title: getCardioDashboardCards(
+                                      cardioStatusData,
+                                    )[i + 1]['title'],
+                                    subtitle: getCardioDashboardCards(
+                                      cardioStatusData,
+                                    )[i + 1]['subtitle'],
+                                    iconPath: getCardioDashboardCards(
+                                      cardioStatusData,
+                                    )[i + 1]['iconPath'],
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
-                ],
-              ),
+                  ],
+                ),
 
               const SizedBox(height: 20),
 

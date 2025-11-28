@@ -15,6 +15,7 @@ class MyOrderModel {
   final String? genderValue;
   final String? clinicName;
   final String? createdByGpName;
+  final String? cardioNote;
 
   final List<ApprovalLevel>? approvalLevels;
 
@@ -34,6 +35,7 @@ class MyOrderModel {
     this.approvalLevels,
     this.clinicName,
     this.createdByGpName,
+    this.cardioNote,
   });
 
   factory MyOrderModel.fromJson(Map<String, dynamic> json) {
@@ -52,6 +54,7 @@ class MyOrderModel {
       genderValue: json["genderValue"],
       clinicName: json["clinicName"],
       createdByGpName: json["createdByGpName"],
+      cardioNote: json["cardioNote"],
 
       approvalLevels: (json["approvalLevels"] as List?)
           ?.map((e) => ApprovalLevel.fromJson(e))
@@ -76,6 +79,7 @@ class MyOrderModel {
       "genderValue": genderValue,
       "clinicName": clinicName,
       "createdByGpName": createdByGpName,
+      "cardioNote": cardioNote,
 
       "approvalLevels": approvalLevels?.map((e) => e.toJson()).toList(),
     };
@@ -130,6 +134,7 @@ extension MyOrderModelCopy on MyOrderModel {
     String? genderValue,
     String? clinicName,
     String? createdByGpName,
+    String? cardioNote,
     List<ApprovalLevel>? approvalLevels,
   }) {
     return MyOrderModel(
@@ -149,6 +154,7 @@ extension MyOrderModelCopy on MyOrderModel {
       genderValue: genderValue ?? this.genderValue,
       clinicName: clinicName ?? this.clinicName,
       createdByGpName: createdByGpName ?? this.createdByGpName,
+      cardioNote: cardioNote ?? this.cardioNote,
       approvalLevels: approvalLevels ?? this.approvalLevels,
     );
   }

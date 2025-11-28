@@ -429,6 +429,7 @@ class _NewOrderState extends State<NewOrder> {
                         ),
                   Align(
                     alignment: Alignment.centerLeft,
+                    // alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () =>
                           setState(() => _enterIdManually = !_enterIdManually),
@@ -684,7 +685,6 @@ class _NewOrderState extends State<NewOrder> {
                     // validator: (v) =>
                     //     v == null || v.isEmpty ? "Enter note" : null,
                   ),
-                  const SizedBox(height: 16),
 
                   // priorityProvider.isLoading
                   //     ? const CircularProgressIndicator()

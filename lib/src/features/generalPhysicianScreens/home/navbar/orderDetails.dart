@@ -4,6 +4,7 @@ import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/cu
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/gradient_button.dart';
 import 'package:cardio_tech/src/provider/generalPhysicianProvider/allPatient/downloadEkgReportProvider.dart';
 import 'package:cardio_tech/src/provider/generalPhysicianProvider/allPatient/submitOrderDetailsProvider.dart';
+import 'package:cardio_tech/src/routes/AllRoutes.dart';
 import 'package:cardio_tech/src/utils/snackbar_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -121,16 +122,29 @@ class _OrderdetailsState extends State<Orderdetails> {
     });
 
     /// Submit order
+    /// Submit order
     submitProvider.addListener(() {
       if (!mounted) return;
 
       if (submitProvider.isSuccess) {
+        // Show success SnackBar
         SnackBarHelper.show(
           context,
           message: "Order closed successfully",
           type: SnackBarType.success,
         );
+
+        // Reset provider state
         submitProvider.reset();
+
+        // Navigate safely
+        if (context.mounted) {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            AppRoutes.genNavbar,
+            (route) => false,
+          );
+        }
       } else if (submitProvider.errorMessage != null) {
         SnackBarHelper.show(
           context,
@@ -286,6 +300,7 @@ class _OrderdetailsState extends State<Orderdetails> {
                     ),
                   ],
                 ),
+
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -429,7 +444,7 @@ class _OrderdetailsState extends State<Orderdetails> {
                   ],
                 ),
 
-                SizedBox(height: 20),
+                SizedBox(height: 16),
               ],
 
               // Consumer<DownloadEkgReportProvider>(

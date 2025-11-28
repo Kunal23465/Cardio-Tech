@@ -5,6 +5,7 @@ import 'package:cardio_tech/src/features/generalPhysicianScreens/home/navbar/set
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/navbar/trackOrder.dart';
 import 'package:cardio_tech/src/provider/generalPhysicianProvider/allPatient/orderFilterProvider.dart';
 import 'package:cardio_tech/src/provider/generalPhysicianProvider/commons/allStatusProvider.dart';
+import 'package:cardio_tech/src/provider/generalPhysicianProvider/home/StatusCountGpProvider.dart';
 import 'package:cardio_tech/src/provider/generalPhysicianProvider/new_order/order_priority_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -56,6 +57,9 @@ class _NavbarState extends State<Navbar> {
         context.read<OrderFilterProvider>().fetchFilteredOrders();
         context.read<OrderPriorityProvider>().fetchOrderPriorities();
         context.read<AllStatusProvider>().getAllStatus();
+      }
+      if (index == 2) {
+        context.read<StatusCountGpProvider>().fetchStatusCounts();
       }
 
       // Load page only once (keep your optimization)

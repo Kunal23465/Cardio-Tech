@@ -1,14 +1,15 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_painter/image_painter.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/custom_textfield.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/gradient_button.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/theme.dart';
 import 'package:cardio_tech/src/provider/cardioLogistsProvider/cardioSubmitReportProvider.dart';
 import 'package:cardio_tech/src/provider/cardioLogistsProvider/myOrderProvider.dart';
 import 'package:cardio_tech/src/utils/snackbar_helper.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:provider/provider.dart';
 
 class ImageEditor extends StatefulWidget {
   final String imagePath;
@@ -32,14 +33,14 @@ class ImageEditor extends StatefulWidget {
 
 class _ImageEditorState extends State<ImageEditor> {
   late final ImagePainterController _controller;
-  late TextEditingController _commentController;
-  late TextEditingController _clinicNoteFromCardioController;
+  late final TextEditingController _commentController;
+  late final TextEditingController _clinicNoteFromCardioController;
 
   @override
   void initState() {
     super.initState();
 
-    // initialize the controller with defaults
+    /// Initialize Image Painter Controller
     _controller = ImagePainterController(
       strokeWidth: 2.0,
       color: Colors.red,
@@ -50,15 +51,16 @@ class _ImageEditorState extends State<ImageEditor> {
     _clinicNoteFromCardioController = TextEditingController();
   }
 
-  bool get isNetworkImage => widget.imagePath.startsWith("http");
+  bool get isNetworkImage => widget.imagePath.toLowerCase().startsWith("http");
 
+  /// Submit Final Report
   Future<void> _handleSubmit(BuildContext context) async {
     final provider = context.read<CardioSumbitReportProvider>();
-    final orderData = context.read<MyOrderProvider>();
+    final orderProvider = context.read<MyOrderProvider>();
 
-    final Uint8List? image = await _controller.exportImage();
+    Uint8List? editedImage = await _controller.exportImage();
 
-    if (image == null) {
+    if (editedImage == null) {
       SnackBarHelper.show(
         context,
         message: "No image data found",
@@ -67,8 +69,12 @@ class _ImageEditorState extends State<ImageEditor> {
       return;
     }
 
-    // Take the latest approval level
-    final lastApproval = widget.approvalLevels?.last;
+    /// Take last approval level safely
+    final lastApproval =
+        (widget.approvalLevels != null && widget.approvalLevels!.isNotEmpty)
+        ? widget.approvalLevels!.last
+        : null;
+
     final approvalLevel = lastApproval?['approvalLevel'] ?? 0;
     final approverPocId = lastApproval?['approverPocId'] ?? 0;
 
@@ -77,7 +83,7 @@ class _ImageEditorState extends State<ImageEditor> {
       approvalLevel: approvalLevel,
       approverPocId: approverPocId,
       action: "FINALIZED",
-      attachmentBytes: image,
+      attachmentBytes: editedImage,
       clinicNoteFromCardio: _clinicNoteFromCardioController.text.trim(),
     );
 
@@ -90,7 +96,8 @@ class _ImageEditorState extends State<ImageEditor> {
         type: SnackBarType.success,
       );
 
-      await orderData.fetchAllOrders();
+      await orderProvider.fetchAllOrders();
+
       await Future.delayed(const Duration(seconds: 1));
       if (mounted) Navigator.pop(context);
     } else {
@@ -100,6 +107,14 @@ class _ImageEditorState extends State<ImageEditor> {
         type: SnackBarType.error,
       );
     }
+  }
+
+  @override
+  void dispose() {
+    _commentController.dispose();
+    _clinicNoteFromCardioController.dispose();
+    // _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -115,14 +130,14 @@ class _ImageEditorState extends State<ImageEditor> {
         ),
         elevation: 0,
         title: Text(
-          widget.patientName ?? 'Unknown',
+          widget.patientName ?? "Unknown",
           style: const TextStyle(
             color: AppColors.primary,
             fontWeight: FontWeight.bold,
           ),
         ),
         bottom: const PreferredSize(
-          preferredSize: Size.fromHeight(1.0),
+          preferredSize: Size.fromHeight(1),
           child: Divider(height: 1, thickness: 1, color: AppColors.primary),
         ),
       ),
@@ -132,13 +147,14 @@ class _ImageEditorState extends State<ImageEditor> {
           children: [
             Column(
               children: [
+                /// Image Editor Area
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.only(top: 0),
                     child: isNetworkImage
                         ? ImagePainter.network(
                             widget.imagePath,
-                            controller: _controller, //  use controller
+                            controller: _controller,
                             scalable: true,
                           )
                         : ImagePainter.asset(
@@ -148,6 +164,8 @@ class _ImageEditorState extends State<ImageEditor> {
                           ),
                   ),
                 ),
+
+                /// Clinical Notes (Readonly)
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 12,
@@ -160,6 +178,8 @@ class _ImageEditorState extends State<ImageEditor> {
                     enabled: false,
                   ),
                 ),
+
+                /// Cardio Note (Editable)
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 12,
@@ -169,17 +189,17 @@ class _ImageEditorState extends State<ImageEditor> {
                     label: "Clinic Note From Cardio",
                     controller: _clinicNoteFromCardioController,
                     fieldType: FieldType.text,
-                    enabled: true,
                   ),
                 ),
+
+                /// Bottom Buttons
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
                         child: GradientButton(
-                          text: 'Cancel',
+                          text: "Cancel",
                           isOutlined: true,
                           onPressed: () => Navigator.pop(context),
                         ),
@@ -187,7 +207,7 @@ class _ImageEditorState extends State<ImageEditor> {
                       const SizedBox(width: 20),
                       Expanded(
                         child: GradientButton(
-                          text: 'Submit',
+                          text: "Submit",
                           onPressed: () => _handleSubmit(context),
                         ),
                       ),
@@ -196,6 +216,8 @@ class _ImageEditorState extends State<ImageEditor> {
                 ),
               ],
             ),
+
+            /// Loading Overlay
             if (isLoading)
               Container(
                 color: Colors.black.withOpacity(0.3),

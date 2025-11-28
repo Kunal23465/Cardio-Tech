@@ -1,6 +1,8 @@
+import 'package:cardio_tech/src/data/generalPhysician/models/home/statusCountGpModel.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/theme.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/DashboardCard.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/gradient_button.dart';
+import 'package:cardio_tech/src/provider/generalPhysicianProvider/home/StatusCountGpProvider.dart';
 import 'package:cardio_tech/src/provider/notificationProvider/notificationProvider.dart';
 import 'package:cardio_tech/src/routes/AllRoutes.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
@@ -18,38 +20,40 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<Map<String, dynamic>> _dashboardCards = [
-    {
-      'title': '100',
-      'subtitle': 'In Progress',
-      'iconPath': 'assets/images/homePage/dashboard/icon1.svg',
-    },
-    {
-      'title': '100',
-      'subtitle': 'High Priority Queue',
-      'iconPath': 'assets/images/homePage/dashboard/icon2.svg',
-    },
-    {
-      'title': '100',
-      'subtitle': 'Total Orders Created',
-      'iconPath': 'assets/images/homePage/dashboard/icon3.svg',
-    },
-    {
-      'title': '100',
-      'subtitle': 'In Review',
-      'iconPath': 'assets/images/homePage/dashboard/icon4.svg',
-    },
-    {
-      'title': '100',
-      'subtitle': 'Reports Finalized',
-      'iconPath': 'assets/images/homePage/dashboard/icon5.svg',
-    },
-    {
-      'title': '100',
-      'subtitle': 'Acknowledged',
-      'iconPath': 'assets/images/homePage/dashboard/icon6.svg',
-    },
-  ];
+  List<Map<String, dynamic>> getDashboardCards(StatusCountGpModel data) {
+    return [
+      {
+        'title': data.inProgress.toString(),
+        'subtitle': 'In Progress',
+        'iconPath': 'assets/images/homePage/dashboard/icon1.svg',
+      },
+      {
+        'title': data.highPriorityOrders.toString(),
+        'subtitle': 'High Priority Queue',
+        'iconPath': 'assets/images/homePage/dashboard/icon2.svg',
+      },
+      {
+        'title': data.totalOrdersCreated.toString(),
+        'subtitle': 'Total Orders Created',
+        'iconPath': 'assets/images/homePage/dashboard/icon3.svg',
+      },
+      {
+        'title': data.inReview.toString(),
+        'subtitle': 'In Review',
+        'iconPath': 'assets/images/homePage/dashboard/icon4.svg',
+      },
+      {
+        'title': data.finalizedOrders.toString(),
+        'subtitle': 'Reports Finalized',
+        'iconPath': 'assets/images/homePage/dashboard/icon5.svg',
+      },
+      {
+        'title': data.acknowledged.toString(),
+        'subtitle': 'Acknowledged',
+        'iconPath': 'assets/images/homePage/dashboard/icon6.svg',
+      },
+    ];
+  }
 
   final List<String> banners = [
     'assets/images/homePage/banner.png',
@@ -64,6 +68,8 @@ class _HomePageState extends State<HomePage> {
     super.initState();
 
     Future.microtask(() async {
+      context.read<StatusCountGpProvider>().fetchStatusCounts();
+
       final userId = await StorageHelper.getUserId();
       final pocId = await StorageHelper.getPocId();
 
@@ -93,6 +99,8 @@ class _HomePageState extends State<HomePage> {
     final bool hasUnread = notifications.any(
       (n) => n.status.toUpperCase() == "UNREAD",
     );
+    final statusProvider = context.watch<StatusCountGpProvider>();
+    final statusData = statusProvider.statusData;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -272,44 +280,58 @@ class _HomePageState extends State<HomePage> {
                   ),
                   const SizedBox(height: 20),
 
-                  Column(
-                    children: [
-                      for (var i = 0; i < _dashboardCards.length; i += 2)
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: IntrinsicHeight(
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Expanded(
-                                  child: OrderCard(
-                                    title: _dashboardCards[i]['title'] ?? '',
-                                    subtitle:
-                                        _dashboardCards[i]['subtitle'] ?? '',
-                                    iconPath:
-                                        _dashboardCards[i]['iconPath'] ?? '',
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                if (i + 1 < _dashboardCards.length)
+                  if (statusProvider.isLoading)
+                    Center(child: CircularProgressIndicator())
+                  else if (statusData == null)
+                    Text("No status data")
+                  else
+                    Column(
+                      children: [
+                        for (
+                          var i = 0;
+                          i < getDashboardCards(statusData).length;
+                          i += 2
+                        )
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: IntrinsicHeight(
+                              child: Row(
+                                children: [
                                   Expanded(
                                     child: OrderCard(
-                                      title:
-                                          _dashboardCards[i + 1]['title'] ?? '',
-                                      subtitle:
-                                          _dashboardCards[i + 1]['subtitle'] ??
-                                          '',
-                                      iconPath:
-                                          _dashboardCards[i + 1]['iconPath'] ??
-                                          '',
+                                      title: getDashboardCards(
+                                        statusData,
+                                      )[i]['title'],
+                                      subtitle: getDashboardCards(
+                                        statusData,
+                                      )[i]['subtitle'],
+                                      iconPath: getDashboardCards(
+                                        statusData,
+                                      )[i]['iconPath'],
                                     ),
                                   ),
-                              ],
+                                  const SizedBox(width: 12),
+                                  if (i + 1 <
+                                      getDashboardCards(statusData).length)
+                                    Expanded(
+                                      child: OrderCard(
+                                        title: getDashboardCards(
+                                          statusData,
+                                        )[i + 1]['title'],
+                                        subtitle: getDashboardCards(
+                                          statusData,
+                                        )[i + 1]['subtitle'],
+                                        iconPath: getDashboardCards(
+                                          statusData,
+                                        )[i + 1]['iconPath'],
+                                      ),
+                                    ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                    ],
-                  ),
+                      ],
+                    ),
                   const SizedBox(height: 20),
                 ],
               ),
