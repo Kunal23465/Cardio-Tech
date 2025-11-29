@@ -14,13 +14,12 @@ class _PrivacypolicyState extends State<Privacypolicy> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.pop(context),
           icon: SvgPicture.asset('assets/icon/backbutton.svg'),
         ),
         title: Text(
@@ -39,141 +38,191 @@ class _PrivacypolicyState extends State<Privacypolicy> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: double.infinity,
-              height: 150,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                image: const DecorationImage(
-                  image: AssetImage("assets/images/setting/privacyPolicy.png"),
-                  // fit: BoxFit.cover,
+
+      // Responsive body using LayoutBuilder
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          bool isWeb = constraints.maxWidth > 600;
+
+          return SingleChildScrollView(
+            padding: EdgeInsets.symmetric(
+              horizontal: isWeb ? 80 : 16,
+              vertical: 20,
+            ),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 900),
+
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Responsive Banner Image
+                    Container(
+                      width: double.infinity,
+                      height: isWeb ? 300 : 150,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        image: const DecorationImage(
+                          image: AssetImage(
+                            "assets/images/setting/privacyPolicy.png",
+                          ),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 30),
+
+                    // Section 1
+                    Text(
+                      "Our Commitment",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: isWeb ? 28 : 20,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    Text(
+                      "At Cardio tech, protecting the privacy and security of patient and physician data is our highest priority. Every ECG, medical report, and case shared on our platform is stored with strict confidentiality, safeguarded by advanced encryption, and accessed only by authorized users to ensure complete trust and compliance.",
+                      style: TextStyle(
+                        fontSize: isWeb ? 16 : 14,
+                        color: Colors.black87,
+                        height: 1.6,
+                      ),
+                    ),
+
+                    const SizedBox(height: 30),
+
+                    // Section 2
+                    Text(
+                      "How We Protect Data",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: isWeb ? 28 : 20,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    Text(
+                      "We use advanced security protocols, including end-to-end encryption, secure logins, and strict role-based access controls, to safeguard every piece of medical information shared on our platform. Only authorized users can view or exchange data, ensuring complete confidentiality at all times. Regular audits, monitoring, and updates further strengthen our system’s security, minimizing risks of breaches. By maintaining these safeguards, Cardio tech provides physicians, cardiologists, and patients the assurance that their data is always protected with the highest level of care.",
+                      style: TextStyle(
+                        fontSize: isWeb ? 16 : 14,
+                        color: Colors.black87,
+                        height: 1.6,
+                      ),
+                    ),
+
+                    const SizedBox(height: 30),
+
+                    // Section 3
+                    Text(
+                      "Your Rights",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: isWeb ? 28 : 20,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    Text(
+                      "Users have full control over their data, with the ability to update, access, or request deletion anytime. Cardio tech ensures transparency in data usage, building trust through privacy-first practices.",
+                      style: TextStyle(
+                        fontSize: isWeb ? 16 : 14,
+                        color: Colors.black87,
+                        height: 1.6,
+                      ),
+                    ),
+
+                    const SizedBox(height: 35),
+
+                    // Highlight Section Title
+                    Text(
+                      "Our Key Highlights",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: isWeb ? 28 : 20,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Responsive Cards: Grid on Web, Column on Mobile
+                    isWeb
+                        ? GridView.count(
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            crossAxisCount: 3,
+                            crossAxisSpacing: 20,
+                            mainAxisSpacing: 20,
+                            childAspectRatio: 0.9,
+                            children: [
+                              _highlightCard(
+                                "Data Security",
+                                "All sensitive medical data is secured with advanced encryption, safe storage, and restricted access, ensuring confidentiality and compliance at every step.",
+                              ),
+                              _highlightCard(
+                                "User Privacy",
+                                "Only verified and authorized users can access data, ensuring strict role-based controls, privacy protection, and accountability across the platform.",
+                              ),
+                              _highlightCard(
+                                "Compliance",
+                                "Our platform strictly follows healthcare privacy laws and regulations, ensuring compliance and secure handling of sensitive patient data.",
+                              ),
+                            ],
+                          )
+                        : Column(
+                            children: [
+                              _highlightCard(
+                                "Data Security",
+                                "All sensitive medical data is secured with advanced encryption, safe storage, and restricted access, ensuring confidentiality and compliance at every step.",
+                              ),
+                              _highlightCard(
+                                "User Privacy",
+                                "Only verified and authorized users can access data, ensuring strict role-based controls, privacy protection, and accountability across the platform.",
+                              ),
+                              _highlightCard(
+                                "Compliance",
+                                "Our platform strictly follows healthcare privacy laws and regulations, ensuring compliance and secure handling of sensitive patient data.",
+                              ),
+                            ],
+                          ),
+                  ],
                 ),
               ),
             ),
-            const SizedBox(height: 20),
-
-            Text(
-              "Our Commitment",
-              style: TextStyle(
-                // color: AppColors.primary,
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              "At Cardio tech, protecting the privacy and security of patient and physician data is our highest priority. Every ECG, medical report, and case shared on our platform is stored with strict confidentiality, safeguarded by advanced encryption, and accessed only by authorized users to ensure complete trust and compliance",
-              style: const TextStyle(
-                fontSize: 14,
-                color: Colors.black87,
-                height: 1.5,
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            Text(
-              "How We Protect Data",
-              style: TextStyle(
-                // color: AppColors.primary,
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              "We use advanced security protocols, including end-to-end encryption, secure logins, and strict role-based access controls, to safeguard every piece of medical information shared on our platform. Only authorized users can view or exchange data, ensuring complete confidentiality at all times. Regular audits, monitoring, and updates further strengthen our system’s security, minimizing risks of breaches. By maintaining these safeguards, Cardio tech provides physicians, cardiologists, and patients the assurance that their data is always protected with the highest level of care",
-              style: const TextStyle(
-                fontSize: 14,
-                color: Colors.black87,
-                height: 1.5,
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            Text(
-              "Your Rights",
-              style: TextStyle(
-                // color: AppColors.primary,
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              "Users have full control over their data, with the ability to update, access, or request deletion anytime. Cardio tech ensures transparency in data usage, building trust through privacy-first practices",
-              style: const TextStyle(
-                fontSize: 14,
-                color: Colors.black87,
-                height: 1.5,
-              ),
-            ),
-
-            const SizedBox(height: 24),
-
-            Text(
-              "Our Key Highlights",
-              style: TextStyle(
-                // color: AppColors.primary,
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            _highlightCard(
-              "Data Security",
-              "All sensitive medical data is secured with advanced encryption, safe storage, and restricted access, ensuring confidentiality and compliance at every step",
-            ),
-            _highlightCard(
-              "User Privacy",
-              "Only verified and authorized users can access data, ensuring strict role-based controls, privacy protection, and accountability across the platform",
-            ),
-            _highlightCard(
-              "Compliance",
-              "Our platform strictly follows healthcare privacy laws and regulations, ensuring compliance, patient confidentiality, and secure handling of sensitive medical data",
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
 
-  //  Card Widget
-  Widget _highlightCard(String number, String desc) {
+  // Responsive Card Widget
+  Widget _highlightCard(String title, String desc) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: const Color(0xFFEef7f5),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            number,
+            title,
             style: TextStyle(
-              fontSize: 22,
+              fontSize: 20,
               fontWeight: FontWeight.bold,
               color: AppColors.primary,
             ),
             textAlign: TextAlign.center,
-          ),     
-
-          const SizedBox(height: 6),
+          ),
+          const SizedBox(height: 12),
           Text(
             desc,
             style: const TextStyle(
-              fontSize: 13,
+              fontSize: 14,
               color: Colors.black54,
-              height: 1.4,
+              height: 1.5,
             ),
             textAlign: TextAlign.center,
           ),
@@ -182,4 +231,3 @@ class _PrivacypolicyState extends State<Privacypolicy> {
     );
   }
 }
-  
