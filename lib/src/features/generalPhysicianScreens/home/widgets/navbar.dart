@@ -154,54 +154,57 @@ class _NavbarState extends State<Navbar> {
                       child: _navButton(
                         _currentIndex == 1
                             ? SvgPicture.asset(
-                                "assets/images/navbar/patients.svg",
-                                width: 24,
-                                height: 24,
-                              )
-                            : SvgPicture.asset(
-                                "assets/images/navbar/patients-2.svg",
-                                width: 24,
-                                height: 24,
-                              ),
-                        "All Patients",
-                        1,
-                      ),
-                    ),
-                    const SizedBox(width: 80),
-                    Expanded(
-                      child: _navButton(
-                        _currentIndex == 3
-                            ? SvgPicture.asset(
+                                // "assets/images/navbar/patients.svg",
                                 "assets/images/navbar/order.svg",
                                 width: 24,
                                 height: 24,
                               )
                             : SvgPicture.asset(
+                                // "assets/images/navbar/patients-2.svg",
                                 "assets/images/navbar/order-2.svg",
                                 width: 24,
                                 height: 24,
                               ),
+                        // "All Patients",
                         "Track Order",
-                        3,
+                        1,
                       ),
                     ),
-                    Expanded(
-                      child: _navButton(
-                        _currentIndex == 4
-                            ? SvgPicture.asset(
-                                "assets/images/navbar/setting.svg",
-                                width: 24,
-                                height: 24,
-                              )
-                            : SvgPicture.asset(
-                                "assets/images/navbar/setting-2.svg",
-                                width: 24,
-                                height: 24,
-                              ),
-                        "Settings",
-                        4,
-                      ),
-                    ),
+                    // const SizedBox(width: 80),
+                    // Expanded(
+                    //   child: _navButton(
+                    //     _currentIndex == 3
+                    //         ? SvgPicture.asset(
+                    //             "assets/images/navbar/order.svg",
+                    //             width: 24,
+                    //             height: 24,
+                    //           )
+                    //         : SvgPicture.asset(
+                    //             "assets/images/navbar/order-2.svg",
+                    //             width: 24,
+                    //             height: 24,
+                    //           ),
+                    //     "Track Order",
+                    //     3,
+                    //   ),
+                    // ),
+                    // Expanded(
+                    //   child: _navButton(
+                    //     _currentIndex == 4
+                    //         ? SvgPicture.asset(
+                    //             "assets/images/navbar/setting.svg",
+                    //             width: 24,
+                    //             height: 24,
+                    //           )
+                    //         : SvgPicture.asset(
+                    //             "assets/images/navbar/setting-2.svg",
+                    //             width: 24,
+                    //             height: 24,
+                    //           ),
+                    //     "Settings",
+                    //     4,
+                    //   ),
+                    // ),
                   ],
                 ),
               ),

@@ -122,6 +122,12 @@ class _SettingState extends State<Setting> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: SvgPicture.asset("assets/icon/backbutton.svg"),
+        ),
         title: Text(
           "Settings",
           style: TextStyle(

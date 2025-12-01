@@ -252,6 +252,14 @@ class _NewOrderState extends State<NewOrder> {
     required BuildContext context,
   }) async {
     if (!_formKey.currentState!.validate()) return;
+    if (ekgReport == null && ekgReportUrl == null) {
+      SnackBarHelper.show(
+        context,
+        message: "Please upload EKG report",
+        type: SnackBarType.warning,
+      );
+      return;
+    }
 
     final createOrderProvider = context.read<CreateOrderProvider>();
     final userId = await StorageHelper.getUserId() ?? 0;
@@ -266,7 +274,11 @@ class _NewOrderState extends State<NewOrder> {
     }
 
     final order = CreateOrderModel(
-      orderDetailsId: existingOrder?.orderDetailsId ?? 0,
+      // orderDetailsId: existingOrder?.orderDetailsId ?? 0,
+      orderDetailsId: widget.orderId == null
+          ? 0
+          : existingOrder?.orderDetailsId ?? 0,
+
       patientName: nameController.text,
       dateOfBirth: apiDob,
       genderId: selectedGenderId ?? 0,
@@ -382,7 +394,7 @@ class _NewOrderState extends State<NewOrder> {
                     onTap: _pickEkgAndRunOcr,
                     child: AbsorbPointer(
                       child: CustomTextField(
-                        label: "EKG ",
+                        label: "EKG *",
                         fieldType: FieldType.file,
                         hint: ekgReport != null
                             ? ekgReport!.path.split('/').last
@@ -469,23 +481,41 @@ class _NewOrderState extends State<NewOrder> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
-                                  "Name",
-                                  style: TextStyle(
-                                    // fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                  ),
+                                Row(
+                                  children: [
+                                    const Text(
+                                      "Name",
+                                      style: TextStyle(fontSize: 14),
+                                    ),
+                                    const Text(
+                                      " *",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.red, // 🔴 red star
+                                      ),
+                                    ),
+                                  ],
                                 ),
+
                                 const SizedBox(height: 4),
-                                TextField(
+
+                                TextFormField(
                                   controller: nameController,
                                   enabled: _isEditingNameDob,
+                                  autovalidateMode:
+                                      AutovalidateMode.onUserInteraction,
                                   decoration: const InputDecoration(
                                     isDense: true,
-                                    hintText: "Enter Name ",
+                                    hintText: "Enter Name",
                                     border: InputBorder.none,
                                   ),
                                   style: const TextStyle(fontSize: 15),
+                                  validator: (v) {
+                                    if (v == null || v.trim().isEmpty) {
+                                      return "Please Enter Name";
+                                    }
+                                    return null;
+                                  },
                                 ),
                               ],
                             ),
@@ -496,16 +526,26 @@ class _NewOrderState extends State<NewOrder> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
-                                  "DOB",
-                                  style: TextStyle(
-                                    // fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                  ),
+                                Row(
+                                  children: [
+                                    const Text(
+                                      "Date of Birth",
+                                      style: TextStyle(fontSize: 14),
+                                    ),
+                                    const Text(
+                                      " *",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.red, // 🔴 red star
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 const SizedBox(height: 4),
-                                TextField(
+                                TextFormField(
                                   controller: dobController,
+                                  autovalidateMode:
+                                      AutovalidateMode.onUserInteraction,
                                   readOnly: true,
                                   enabled: _isEditingNameDob,
                                   onTap: _isEditingNameDob
@@ -516,7 +556,12 @@ class _NewOrderState extends State<NewOrder> {
                                     hintText: "Enter DOB",
                                     border: InputBorder.none,
                                   ),
-                                  style: const TextStyle(fontSize: 15),
+                                  validator: (v) {
+                                    if (v == null || v.trim().isEmpty) {
+                                      return "DOB is required";
+                                    }
+                                    return null;
+                                  },
                                 ),
                               ],
                             ),
@@ -548,7 +593,7 @@ class _NewOrderState extends State<NewOrder> {
                         child: genderProvider.isLoading
                             ? const CircularProgressIndicator()
                             : CustomTextField(
-                                label: "Gender",
+                                label: "Gender *",
                                 fieldType: FieldType.dropdown,
                                 dropdownItems: genderProvider.genderList
                                     .map((e) => e.value ?? '')
@@ -567,6 +612,11 @@ class _NewOrderState extends State<NewOrder> {
                                     () => selectedGenderId = selected.id,
                                   );
                                 },
+                                validator: (v) {
+                                  if (selectedGenderId == null)
+                                    return "Select gender";
+                                  return null;
+                                },
                               ),
                       ),
                       const SizedBox(width: 12),
@@ -574,7 +624,7 @@ class _NewOrderState extends State<NewOrder> {
                         child: priorityProvider.isLoading
                             ? const CircularProgressIndicator()
                             : CustomTextField(
-                                label: "Priority",
+                                label: "Priority *",
                                 fieldType: FieldType.dropdown,
                                 dropdownItems: priorityProvider.priorities
                                     .map((e) => e.priorityName)
@@ -647,6 +697,7 @@ class _NewOrderState extends State<NewOrder> {
                     label: "Medical Record Number *",
                     hint: "Enter MRN",
                     controller: medicalRecordController,
+
                     validator: (v) =>
                         v == null || v.isEmpty ? "Enter MRN" : null,
                   ),
@@ -655,7 +706,7 @@ class _NewOrderState extends State<NewOrder> {
                   cardioProvider.isLoading
                       ? const CircularProgressIndicator()
                       : CustomTextField(
-                          label: "Cardiologist ",
+                          label: "Cardiologist *",
                           fieldType: FieldType.dropdown,
                           dropdownItems: cardioProvider.cardiologists
                               .map((e) => e.fullName)

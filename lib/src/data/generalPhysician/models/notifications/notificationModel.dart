@@ -6,6 +6,7 @@ class NotificationModel {
   final String status;
   final String? createdAt;
   final String? updatedAt;
+  final int? orderDetailsId;
 
   NotificationModel({
     required this.approvalNotificationsDetailsId,
@@ -13,6 +14,7 @@ class NotificationModel {
     required this.status,
     required this.createdAt,
     this.updatedAt,
+    this.orderDetailsId,
   });
 
   factory NotificationModel.fromJson(Map<String, dynamic> json) {
@@ -23,6 +25,7 @@ class NotificationModel {
       status: json['status'] ?? '',
       createdAt: _formatApiDate(json['createdAt'] ?? ''),
       updatedAt: json['updatedAt'],
+      orderDetailsId: json['orderDetailsId'],
     );
   }
 
@@ -33,6 +36,7 @@ class NotificationModel {
       'status': status,
       'createdAt': createdAt,
       'updatedAt': updatedAt,
+      'orderDetailsId': orderDetailsId,
     };
   }
 

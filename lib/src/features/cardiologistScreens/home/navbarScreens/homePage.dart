@@ -144,9 +144,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     final orderProvider = context.watch<MyOrderProvider>();
     final notificationProvider = context.watch<NotificationProvider>();
     final notifications = notificationProvider.notifications;
-    final bool hasUnread = notifications.any(
-      (n) => n.status.toUpperCase() == "UNREAD",
-    );
+    // final bool hasUnread = notifications.any(
+    //   (n) => n.status.toUpperCase() == "UNREAD",
+    // );
+
+    final unreadCount = context.watch<NotificationProvider>().unreadCount;
 
     final cardioStatusProvider = context.watch<StatusCountCardioProvider>();
     final cardioStatusData = cardioStatusProvider.cardioStatusData;
@@ -250,18 +252,43 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                       }
                     },
                     borderRadius: BorderRadius.circular(50),
-                    child: Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFEef7f5),
-                        shape: BoxShape.circle,
-                      ),
-                      child: SvgPicture.asset(
-                        hasUnread
-                            ? 'assets/images/homePage/notification.svg'
-                            : 'assets/images/homePage/notification1.svg',
-                        fit: BoxFit.contain,
-                      ),
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: const BoxDecoration(
+                            color: Color(0xFFEef7f5),
+                            shape: BoxShape.circle,
+                          ),
+                          child: SvgPicture.asset(
+                            'assets/images/homePage/notification1.svg',
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+
+                        //  Badge
+                        if (unreadCount > 0)
+                          Positioned(
+                            right: 5,
+                            top: 0,
+                            child: Container(
+                              padding: const EdgeInsets.all(5),
+                              decoration: const BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Text(
+                                unreadCount > 9 ? "9+" : unreadCount.toString(),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                 ],

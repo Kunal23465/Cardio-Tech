@@ -7,6 +7,8 @@ class NotificationProvider extends ChangeNotifier {
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
+  int _unreadCount = 0;
+  int get unreadCount => _unreadCount;
 
   List<NotificationModel> _notifications = [];
   List<NotificationModel> get notifications => _notifications;
@@ -16,10 +18,14 @@ class NotificationProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      _notifications = await _service.getNotificationDetails(userId: userId);
+      final result = await _service.getNotificationDetails(userId: userId);
+
+      _unreadCount = result["unreadCount"];
+      _notifications = result["notifications"];
     } catch (e) {
-      _notifications = [];
       print("Error fetching notifications in provider: $e");
+      _unreadCount = 0;
+      _notifications = [];
     } finally {
       _isLoading = false;
       notifyListeners();

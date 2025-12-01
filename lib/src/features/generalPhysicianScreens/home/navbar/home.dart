@@ -101,6 +101,7 @@ class _HomePageState extends State<HomePage> {
     );
     final statusProvider = context.watch<StatusCountGpProvider>();
     final statusData = statusProvider.statusData;
+    final unreadCount = context.watch<NotificationProvider>().unreadCount;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -202,6 +203,54 @@ class _HomePageState extends State<HomePage> {
                           }
                         },
                         borderRadius: BorderRadius.circular(50),
+                        child: Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: const BoxDecoration(
+                                color: Color(0xFFEef7f5),
+                                shape: BoxShape.circle,
+                              ),
+                              child: SvgPicture.asset(
+                                'assets/images/homePage/notification1.svg',
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+
+                            //  Badge
+                            if (unreadCount > 0)
+                              Positioned(
+                                right: 5,
+                                top: 0,
+                                child: Container(
+                                  padding: const EdgeInsets.all(5),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.red,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Text(
+                                    unreadCount > 9
+                                        ? "9+"
+                                        : unreadCount.toString(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(width: 12),
+                      InkWell(
+                        onTap: () {
+                          Navigator.pushNamed(context, AppRoutes.genSetting);
+                        },
+                        borderRadius: BorderRadius.circular(50),
                         child: Container(
                           padding: const EdgeInsets.all(12),
                           decoration: const BoxDecoration(
@@ -209,9 +258,7 @@ class _HomePageState extends State<HomePage> {
                             shape: BoxShape.circle,
                           ),
                           child: SvgPicture.asset(
-                            hasUnread
-                                ? 'assets/images/homePage/notification.svg'
-                                : 'assets/images/homePage/notification1.svg',
+                            'assets/images/navbar/new_setting.svg',
                             fit: BoxFit.contain,
                           ),
                         ),
@@ -226,7 +273,7 @@ class _HomePageState extends State<HomePage> {
                       FlutterCarousel(
                         items: banners.map((banner) {
                           return ClipRRect(
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(30),
                             child: Container(
                               margin: const EdgeInsets.symmetric(horizontal: 4),
                               child: Image.asset(

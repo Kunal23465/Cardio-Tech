@@ -3,6 +3,7 @@ import 'package:cardio_tech/src/features/cardiologistScreens/home/navbarScreens/
 import 'package:cardio_tech/src/features/cardiologistScreens/home/navbarScreens/homePage.dart';
 import 'package:cardio_tech/src/features/cardiologistScreens/home/navbarScreens/myOrder.dart';
 import 'package:cardio_tech/src/features/cardiologistScreens/home/navbarScreens/setting.dart';
+import 'package:cardio_tech/src/provider/cardioLogistsProvider/allOrders/CardioAllOrderProvider.dart';
 import 'package:cardio_tech/src/provider/cardioLogistsProvider/finalizedProvider/finalizedProvider.dart';
 import 'package:cardio_tech/src/provider/cardioLogistsProvider/home/StatusCountCardioProvider.dart';
 import 'package:cardio_tech/src/provider/cardioLogistsProvider/myOrderProvider.dart';
@@ -21,11 +22,10 @@ class Cardiologistnavbar extends StatefulWidget {
 class _CardiologistnavbarState extends State<Cardiologistnavbar> {
   final GlobalKey<MyOrderState> myOrderKey = GlobalKey<MyOrderState>();
 
-  int _currentIndex = 2; // default tab
+  int _currentIndex = 2;
 
   static const double navBarHeight = 70;
 
-  // --- PRELOADED SVG ICONS (NO BLINK) ---
   Widget homeActiveIcon = const SizedBox();
   Widget homeInactiveIcon = const SizedBox();
 
@@ -70,6 +70,9 @@ class _CardiologistnavbarState extends State<Cardiologistnavbar> {
     }
     if (index == 0) {
       myOrderKey.currentState?.refreshPage();
+    }
+    if (index == 1) {
+      context.read<CardioAllOrderProvider>().getallCardioOrders();
     }
     if (index == 2) {
       context.read<MyOrderProvider>().fetchAllOrders();

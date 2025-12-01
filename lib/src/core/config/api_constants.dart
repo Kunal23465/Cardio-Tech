@@ -1,6 +1,6 @@
 class ApiConstants {
-  static const String baseUrl = "https://scardiopre.srdt.co.in";
-  // static const String baseUrl = "http://10.8.20.71:9025";
+  // static const String baseUrl = "https://scardiopre.srdt.co.in";
+  static const String baseUrl = "http://10.8.20.71:9025";
 
   // Auth Endpoints
   static const String login = "$baseUrl/auth/login";

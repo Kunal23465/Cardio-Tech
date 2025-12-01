@@ -102,6 +102,15 @@ class _NotificationScreeenState extends State<NotificationScreeen> {
                           ],
                         ),
                         const SizedBox(height: 8),
+
+                        Text(
+                          "Order ID: ${notif.orderDetailsId}",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey.shade800,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
                         Text(
                           "Status: ${notif.status}",
                           style: TextStyle(

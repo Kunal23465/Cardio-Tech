@@ -43,7 +43,8 @@ class _AllPatientState extends State<AllPatient> {
         backgroundColor: Colors.white,
         elevation: 0,
         title: Text(
-          "All Patients",
+          // "All Patients",
+          "Track Orders",
           style: TextStyle(
             color: AppColors.primary,
             fontWeight: FontWeight.bold,
