@@ -613,8 +613,9 @@ class _NewOrderState extends State<NewOrder> {
                                   );
                                 },
                                 validator: (v) {
-                                  if (selectedGenderId == null)
+                                  if (selectedGenderId == null) {
                                     return "Select gender";
+                                  }
                                   return null;
                                 },
                               ),

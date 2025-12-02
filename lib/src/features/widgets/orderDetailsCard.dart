@@ -104,7 +104,8 @@ class OrderDetailsCard extends StatelessWidget {
             height: 30,
             width: 100,
             // text: 'Finalized View',
-            text: 'Order Close',
+            // text: 'Order Close',
+            text: ' Close',
 
             onPressed: onFinalizedView,
           );

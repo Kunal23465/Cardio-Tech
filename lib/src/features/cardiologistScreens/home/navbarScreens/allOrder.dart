@@ -1,10 +1,7 @@
-import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/gradient_button.dart';
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/theme.dart';
 import 'package:cardio_tech/src/features/widgets/CardioAllOrderCard.dart';
-import 'package:cardio_tech/src/features/widgets/orderDetailsCard.dart';
 import 'package:cardio_tech/src/provider/cardioLogistsProvider/allOrders/CardioAllOrderProvider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 class AllOrder extends StatefulWidget {
@@ -107,7 +104,7 @@ class _AllOrderState extends State<AllOrder> {
 
                 if (!provider.isLoading && provider.cardioAllOrders.isEmpty)
                   const Expanded(
-                    child: Center(child: Text("No finalized orders found")),
+                    child: Center(child: Text("No  orders found")),
                   ),
 
                 if (!provider.isLoading && provider.cardioAllOrders.isNotEmpty)

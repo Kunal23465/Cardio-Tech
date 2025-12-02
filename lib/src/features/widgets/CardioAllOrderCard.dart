@@ -13,7 +13,8 @@ class CardioAllOrderCard extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget buildStatusButton() {
       String buttonText = orderModel.orderStatus == "FINALIZED_VIEW"
-          ? "Order Close"
+          // ? "Order Close"
+          ? " Close"
           : orderModel.orderStatus;
 
       return GradientButton(
@@ -55,23 +56,32 @@ class CardioAllOrderCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    /// NAME | AGE | GENDER
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Flexible(
-                          child: Text(
-                            orderModel.patientName,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
+                        Expanded(
+                          child: Row(
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  orderModel.patientName,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 6),
+                              Text("| ${orderModel.age}yr"),
+                              SizedBox(width: 6),
+                              Text("| ${orderModel.genderValue}"),
+                            ],
                           ),
                         ),
-                        SizedBox(width: 6),
-                        Text("| ${orderModel.age}yr"),
-                        SizedBox(width: 6),
-                        Text("| ${orderModel.genderValue}"),
+
+                        if (orderModel.priorityName == 'High Priority')
+                          const Icon(Icons.circle, color: Colors.red, size: 10),
                       ],
                     ),
 

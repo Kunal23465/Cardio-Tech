@@ -523,6 +523,7 @@ class _OrderdetailsState extends State<Orderdetails> {
                     ),
                   ],
                 ),
+              SizedBox(height: 30),
             ],
           ),
         ),

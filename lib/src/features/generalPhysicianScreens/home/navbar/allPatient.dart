@@ -369,7 +369,8 @@ class GradientBorderCard extends StatelessWidget {
                       height: 30,
                       width: 110,
                       text: order.orderStatus == "FINALIZED_VIEW"
-                          ? "Order Closed"
+                          // ? "Order Closed"
+                          ? " Closed"
                           : (order.orderStatus == "SUBMITTED" ||
                                 order.orderStatus == "FINALIZED" ||
                                 order.orderStatus == "IN_REVIEW")

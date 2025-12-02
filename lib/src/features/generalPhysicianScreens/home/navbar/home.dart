@@ -173,7 +173,8 @@ class _HomePageState extends State<HomePage> {
                                   const SizedBox(height: 4),
 
                                   Text(
-                                    "${user?.clinicName ?? ''}, ${user?.userAddress ?? ''}",
+                                    '${(user?.clinicName?.trim().isNotEmpty == true ? user!.clinicName!.trim() : "No Clinic")}, '
+                                    '${(user?.userAddress?.trim().isNotEmpty == true ? user!.userAddress!.trim() : "No Address")}',
                                     style: TextStyle(
                                       fontSize: 14,
                                       color: Colors.grey.shade700,
