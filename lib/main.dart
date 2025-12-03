@@ -1,3 +1,4 @@
+import 'package:cardio_tech/src/routes/navigation_service.dart';
 import 'package:cardio_tech/src/utils/storage_helper.dart';
 import 'package:cardio_tech/src/core/network/dio_client.dart';
 import 'package:cardio_tech/src/features/cardiologistScreens/home/widgets/CardiologistNavbar.dart';
@@ -25,7 +26,7 @@ Future<void> main() async {
     ]);
 
     // Flutter downloader (NOT supported on web)  false
-    await FlutterDownloader.initialize(debug: true, ignoreSsl: true);
+    await FlutterDownloader.initialize(debug: false, ignoreSsl: true);
 
     // Notification permission (NOT supported on web)
     final notificationStatus = await Permission.notification.request();
@@ -74,6 +75,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: appProviders,
       child: MaterialApp(
+        navigatorKey: appNavigatorKey,
         debugShowCheckedModeBanner: false,
         title: 'Cardio Tech',
         theme: appTheme(),

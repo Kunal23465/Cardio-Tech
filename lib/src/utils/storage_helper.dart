@@ -59,7 +59,7 @@ class StorageHelper {
     return prefs.getBool(keyIsLoggedIn) ?? false;
   }
 
-  /// ✅ Logout and clear data
+  ///  Logout and clear data
   static Future<void> clearData() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();

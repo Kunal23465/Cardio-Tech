@@ -8,6 +8,7 @@ class ApiConstants {
   static const String forgotPassword = "$baseUrl/auth/forgot-password";
   static const String verifyOtp = "$baseUrl/auth/verify-otp";
   static const String resetPassword = "$baseUrl/auth/reset-password";
+  static const String refreshToken = "$baseUrl/auth/refresh-token";
 
   //General Phy
   static const String saveOrUpdateOrder = "$baseUrl/cardio/orders/saveOrUpdate";

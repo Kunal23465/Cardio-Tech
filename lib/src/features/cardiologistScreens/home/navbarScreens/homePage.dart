@@ -223,8 +223,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
                               Text(
                                 // "${user?.clinicName ?? 'No Clinic'}, ${user?.userAddress ?? 'No Address'}",
-                                '${(user?.clinicName?.trim().isNotEmpty == true ? user!.clinicName!.trim() : "No Clinic")}, '
-                                '${(user?.userAddress?.trim().isNotEmpty == true ? user!.userAddress!.trim() : "No Address")}',
+                                '${(user?.clinicName.trim().isNotEmpty == true ? user!.clinicName.trim() : "No Clinic")}, '
+                                '${(user?.userAddress.trim().isNotEmpty == true ? user!.userAddress.trim() : "No Address")}',
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: Colors.grey.shade700,

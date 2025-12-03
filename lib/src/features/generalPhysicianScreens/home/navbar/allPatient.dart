@@ -84,7 +84,7 @@ class _AllPatientState extends State<AllPatient> {
                     );
                   },
                   decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.symmetric(vertical: 14),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 10),
                     prefixIcon: const Icon(
                       Icons.search,
                       color: Colors.grey,

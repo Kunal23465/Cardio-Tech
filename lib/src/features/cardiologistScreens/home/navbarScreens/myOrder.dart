@@ -145,7 +145,7 @@ class MyOrderState extends State<MyOrder> {
                     }
                   },
                   decoration: const InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(vertical: 14),
+                    contentPadding: EdgeInsets.symmetric(vertical: 10),
                     prefixIcon: Icon(
                       Icons.search,
                       color: Colors.grey,

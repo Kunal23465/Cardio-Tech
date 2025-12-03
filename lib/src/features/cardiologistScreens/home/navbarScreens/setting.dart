@@ -206,8 +206,8 @@ class _SettingState extends State<Setting> {
               ),
               subtitle: Text(
                 // "${user?.cardioValue ?? 'No Staff Type'}, ${user?.userAddress ?? 'No Address'}",
-                '${(user?.cardioValue?.trim().isNotEmpty == true ? user!.cardioValue!.trim() : "No Staff Type")}, '
-                '${(user?.userAddress?.trim().isNotEmpty == true ? user!.userAddress!.trim() : "No Address")}',
+                '${(user?.cardioValue.trim().isNotEmpty == true ? user!.cardioValue.trim() : "No Staff Type")}, '
+                '${(user?.userAddress.trim().isNotEmpty == true ? user!.userAddress.trim() : "No Address")}',
                 style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
                 overflow: TextOverflow.ellipsis,
               ),
