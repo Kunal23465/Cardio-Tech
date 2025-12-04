@@ -1,15 +1,20 @@
-import 'package:cardio_tech/src/routes/navigation_service.dart';
-import 'package:cardio_tech/src/utils/storage_helper.dart';
-import 'package:cardio_tech/src/core/network/dio_client.dart';
-import 'package:cardio_tech/src/features/cardiologistScreens/home/widgets/CardiologistNavbar.dart';
-import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/navbar.dart';
-import 'package:cardio_tech/src/provider/main_providers/providers_setup.dart';
+import 'package:cardio_tech/src/core/config/api_constants.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+
+import 'package:cardio_tech/src/utils/storage_helper.dart';
+import 'package:cardio_tech/src/core/network/dio_client.dart';
+import 'package:cardio_tech/src/provider/main_providers/providers_setup.dart';
+import 'package:cardio_tech/src/routes/navigation_service.dart';
+
 import 'src/features/auth/screens/loginScreens/login_screen.dart';
+import 'src/features/generalPhysicianScreens/home/widgets/navbar.dart';
+import 'src/features/cardiologistScreens/home/widgets/CardiologistNavbar.dart';
 import 'src/features/generalPhysicianScreens/home/widgets/theme.dart';
 import 'src/routes/AllRoutes.dart';
 import 'package:flutter/foundation.dart';
@@ -17,34 +22,69 @@ import 'package:flutter/foundation.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // ---- ONLY ON MOBILE ----
+  // ---- System setup --------
   if (!kIsWeb) {
-    // Portrait mode (not supported on web)
     await SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
 
-    // Flutter downloader (NOT supported on web)  false
     await FlutterDownloader.initialize(debug: true, ignoreSsl: true);
-
-    // Notification permission (NOT supported on web)
-    final notificationStatus = await Permission.notification.request();
-    if (notificationStatus.isGranted) {
-      print(" Notification permission granted");
-    } else {
-      print(" Notification permission denied");
-    }
+    await Permission.notification.request();
   }
 
-  // ---- COMMON CODE (WEB + MOBILE) ----
+  // ----- Load saved login state ------
   final accessToken = await StorageHelper.getAccessToken();
+  final refreshToken = await StorageHelper.getRefreshToken();
   final isLoggedIn = await StorageHelper.isLoggedIn();
   final staffType = await StorageHelper.getStaffType();
 
+  // ----- Check token validity ---------
   if (accessToken != null && accessToken.isNotEmpty) {
-    DioClient().setAuthToken(accessToken);
-    print(" Token restored: $accessToken");
+    bool valid = !JwtDecoder.isExpired(accessToken);
+
+    if (valid) {
+      // Access token still valid
+      DioClient().setAuthToken(accessToken);
+    } else {
+      // Try refresh token manually at startup
+      if (refreshToken != null && refreshToken.isNotEmpty) {
+        print("Startup: Access token expired → refreshing...");
+
+        final dio = DioClient().dio;
+
+        try {
+          final response = await dio.post(
+            ApiConstants.refreshToken,
+            data: {"refreshToken": refreshToken},
+            options: Options(headers: {"Authorization": null}),
+          );
+
+          if (response.statusCode == 200 &&
+              response.data["status"] == "SUCCESS") {
+            final newToken = response.data["data"]["accessToken"];
+            final newRefresh = response.data["data"]["refreshToken"];
+
+            await StorageHelper.saveLoginData(
+              userId: await StorageHelper.getUserId() ?? 0,
+              pocId: await StorageHelper.getPocId() ?? 0,
+              accessToken: newToken,
+              refreshToken: newRefresh,
+              staffType: staffType ?? "",
+            );
+
+            DioClient().setAuthToken(newToken);
+            print("Startup refresh success!");
+          } else {
+            await StorageHelper.clearData();
+          }
+        } catch (e) {
+          await StorageHelper.clearData();
+        }
+      } else {
+        await StorageHelper.clearData();
+      }
+    }
   }
 
   runApp(MyApp(isLoggedIn: isLoggedIn, staffType: staffType));
@@ -58,20 +98,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget initialScreen;
-
-    if (isLoggedIn) {
-      if (staffType == "Cardiologist") {
-        initialScreen = const Cardiologistnavbar();
-      } else if (staffType == "General Physician") {
-        initialScreen = const Navbar();
-      } else {
-        initialScreen = const LoginScreen();
-      }
-    } else {
-      initialScreen = const LoginScreen();
-    }
-
     return MultiProvider(
       providers: appProviders,
       child: MaterialApp(
@@ -79,9 +105,18 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Cardio Tech',
         theme: appTheme(),
-        home: initialScreen,
+        home: _getHomeScreen(),
         onGenerateRoute: AppRoutes.onGenerateRoute,
       ),
     );
+  }
+
+  Widget _getHomeScreen() {
+    if (!isLoggedIn) return const LoginScreen();
+
+    if (staffType == "Cardiologist") return const Cardiologistnavbar();
+    if (staffType == "General Physician") return const Navbar();
+
+    return const LoginScreen();
   }
 }

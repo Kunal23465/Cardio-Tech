@@ -1,18 +1,17 @@
-import 'package:cardio_tech/src/core/config/api_constants.dart';
-import 'package:cardio_tech/src/core/network/dio_client.dart';
 import 'package:cardio_tech/src/utils/showSessionExpiredDialog.dart';
 import 'package:cardio_tech/src/utils/storage_helper.dart';
+import 'package:cardio_tech/src/routes/navigation_service.dart';
+import 'package:cardio_tech/src/core/network/dio_client.dart';
+import 'package:cardio_tech/src/core/config/api_constants.dart';
 import 'package:dio/dio.dart';
 
 class ApiInterceptor extends Interceptor {
   bool _isRefreshing = false;
-  final List<Function()> _retryQueue = [];
+  List<Function()> _retryQueue = [];
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    print(" REQUEST: ${options.method} ${options.uri}");
-    print("Headers: ${options.headers}");
-    print("Data: ${options.data}");
+    print("REQUEST: ${options.method} ${options.uri}");
     handler.next(options);
   }
 
@@ -24,84 +23,93 @@ class ApiInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
-    print(" ERROR [${err.response?.statusCode}] ${err.message}");
-
     final status = err.response?.statusCode;
-    final message =
-        err.response?.data?["message"]?.toString().toLowerCase() ?? "";
-    final isRefreshCall = err.requestOptions.path.contains(
-      "/auth/refresh-token",
-    );
+    final reqPath = err.requestOptions.path;
 
-    // Ignore session/logout logic for login request
-    if (err.requestOptions.path.endsWith("/auth/login")) {
-      print(" Login failed → Invalid credentials");
-      return handler.next(err);
-    }
+    print("ERROR [$status]: ${err.response?.data}");
 
-    //   If REFRESH API itself returns 401 → user MUST logout immediately
+    final isRefreshCall = reqPath.contains("/auth/refresh-token");
 
+    // ✅ Case 1: Refresh token invalid → logout
     if (isRefreshCall && status == 401) {
-      print(" Refresh-token failed → Invalid or expired refresh token");
-      return _forceLogout(handler, err);
+      await StorageHelper.clearData();
+      DioClient().clearAuthToken();
+
+      // Show friendly popup
+      showSessionExpiredDialog();
+
+      handler.next(err);
+      return;
     }
 
-    //  2. Detect expired access token using server response
-    // Backend sends:
-    //   "message": "Given jwt token is expired !!"
-    //   OR any 401 unauthorized
-    final tokenExpired =
-        status == 401 ||
-        message.contains("jwt token is expired") ||
-        message.contains("invalid token") ||
-        message.contains("unauthorized") ||
-        message.contains("invalid refresh token");
-
-    if (tokenExpired) {
-      final requestOptions = err.requestOptions;
+    // ------------------------------------
+    // ✅ Case 2: Normal API returned 401 → Try refreshing
+    // ------------------------------------
+    if (status == 401 || status == 403) {
       final dio = DioClient().dio;
+      final requestOptions = err.requestOptions;
 
-      // Start refresh only once
+      // Queue failed request for retry
+      _retryQueue.add(() async {
+        final newToken = DioClient().getAuthToken();
+        requestOptions.headers["Authorization"] = "Bearer $newToken";
+
+        final response = await dio.request(
+          requestOptions.path,
+          data: requestOptions.data,
+          queryParameters: requestOptions.queryParameters,
+          options: Options(
+            method: requestOptions.method,
+            headers: requestOptions.headers,
+          ),
+        );
+
+        handler.resolve(response);
+      });
+
+      // Refresh only once
       if (!_isRefreshing) {
         _isRefreshing = true;
 
         final newToken = await _refreshToken();
+
         _isRefreshing = false;
 
+        // ❌ Do NOT logout if refresh failed due to server/network
+        // ❌ Only error out request, keep user logged in
         if (newToken == null) {
-          print(" Could not refresh token → force logout");
-          return _forceLogout(handler, err);
+          _retryQueue.clear();
+          handler.next(err); // Not logout
+          return;
         }
 
-        // Retry all queued requests
-        for (var retry in _retryQueue) retry();
+        // Process retry queue
+        for (var retry in _retryQueue) {
+          await retry();
+        }
         _retryQueue.clear();
       }
 
-      // Queue current request
-      _retryQueue.add(() async {
-        final response = await _retryRequest(requestOptions, dio);
-        handler.resolve(response);
-      });
-
-      return; // Important
+      return;
     }
 
     handler.next(err);
   }
 
-  // REFRESH TOKEN API
+  /// Refresh Token API
   Future<String?> _refreshToken() async {
     final refresh = await StorageHelper.getRefreshToken();
     if (refresh == null || refresh.isEmpty) return null;
 
     try {
+      print("Refreshing token...");
+
       final dio = DioClient().dio;
 
       final response = await dio.post(
         ApiConstants.refreshToken,
         data: {"refreshToken": refresh},
-        options: Options(headers: {"Authorization": null}), // important
+        options: Options(headers: {"Authorization": null}),
       );
 
       if (response.statusCode == 200 && response.data["status"] == "SUCCESS") {
@@ -117,39 +125,37 @@ class ApiInterceptor extends Interceptor {
         );
 
         DioClient().setAuthToken(newAccess);
+        print("Token refreshed successfully!");
 
-        print(" Token refreshed successfully!");
         return newAccess;
       }
 
       return null;
     } catch (e) {
-      print(" Refresh token failed: $e");
+      print("Refresh token failed due to error: $e");
       return null;
     }
   }
 
-  // RETRY ORIGINAL REQUEST
-  Future<Response> _retryRequest(RequestOptions request, Dio dio) async {
-    final newToken = DioClient().getAuthToken();
-    request.headers["Authorization"] = "Bearer $newToken";
-
-    return dio.request(
-      request.path,
-      data: request.data,
-      queryParameters: request.queryParameters,
-      options: Options(method: request.method, headers: request.headers),
-    );
-  }
-
-  // FORCE LOGOUT
-  void _forceLogout(ErrorInterceptorHandler handler, DioException err) async {
-    print(" User session expired → Logging out");
+  /// Force logout
+  void _forceLogout(ErrorInterceptorHandler handler) async {
+    print("Session expired → Logging out");
 
     await StorageHelper.clearData();
     DioClient().clearAuthToken();
 
-    showSessionExpiredDialog();
-    handler.next(err);
+    if (appNavigatorKey.currentState != null) {
+      appNavigatorKey.currentState!.pushNamedAndRemoveUntil(
+        "/login",
+        (route) => false,
+      );
+    }
+
+    handler.next(
+      DioException(
+        requestOptions: RequestOptions(path: "/logout"),
+        error: "Session expired",
+      ),
+    );
   }
 }

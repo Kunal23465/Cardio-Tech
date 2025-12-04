@@ -6,7 +6,7 @@ class DioClient {
   factory DioClient() => _instance;
 
   late Dio dio;
-  String? _authToken; // <-- store token
+  String? _authToken;
 
   DioClient._internal() {
     dio = Dio(
@@ -14,24 +14,22 @@ class DioClient {
         connectTimeout: const Duration(seconds: 15),
         receiveTimeout: const Duration(seconds: 15),
         headers: {"Content-Type": "application/json"},
-        validateStatus: (status) {
-          return status != null && status < 500;
-        },
       ),
     );
+
     dio.interceptors.add(ApiInterceptor());
   }
 
   void setAuthToken(String token) {
     _authToken = token;
     dio.options.headers["Authorization"] = "Bearer $token";
-    print(" Auth token set globally: $token");
+    print("Auth token set globally: $token");
   }
 
   void clearAuthToken() {
     _authToken = null;
     dio.options.headers.remove("Authorization");
-    print(" Auth token cleared globally");
+    print("Auth token cleared globally");
   }
 
   String? getAuthToken() => _authToken;
