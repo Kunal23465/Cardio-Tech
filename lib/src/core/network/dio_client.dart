@@ -14,6 +14,10 @@ class DioClient {
         connectTimeout: const Duration(seconds: 15),
         receiveTimeout: const Duration(seconds: 15),
         headers: {"Content-Type": "application/json"},
+
+        validateStatus: (status) {
+          return status != null && status < 500;
+        },
       ),
     );
 
