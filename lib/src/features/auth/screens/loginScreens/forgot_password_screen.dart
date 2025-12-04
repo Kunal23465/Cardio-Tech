@@ -37,9 +37,18 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     try {
       final Response response = await _authService.forgotPassword(input);
 
-      final message = response.data is String
-          ? response.data
-          : response.data['message'] ?? "OTP sent successfully";
+      final statusCode = response.data["statusCode"];
+      final status = response.data["status"];
+      final message = response.data["message"] ?? "";
+
+      if (statusCode != 200 || status == "FAILED") {
+        SnackBarHelper.show(
+          context,
+          message: message,
+          type: SnackBarType.error,
+        );
+        return;
+      }
 
       SnackBarHelper.show(
         context,

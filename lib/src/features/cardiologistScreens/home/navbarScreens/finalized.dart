@@ -3,6 +3,7 @@ import 'package:cardio_tech/src/features/widgets/orderDetailsCard.dart';
 import 'package:cardio_tech/src/provider/cardioLogistsProvider/finalizedProvider/finalizedProvider.dart';
 import 'package:cardio_tech/src/routes/AllRoutes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 class Finalized extends StatefulWidget {
@@ -104,8 +105,22 @@ class _FinalizedState extends State<Finalized> {
                   ),
 
                 if (!provider.isLoading && provider.finalizedOrders.isEmpty)
-                  const Expanded(
-                    child: Center(child: Text("No finalized orders found")),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset('assets/icon/no_data.svg'),
+                        SizedBox(height: 20),
+                        Text(
+                          "No finalized orders found",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
 
                 if (!provider.isLoading && provider.finalizedOrders.isNotEmpty)

@@ -372,18 +372,28 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 child: orderProvider.isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : orderProvider.orders.isEmpty
-                    ? const Center(child: Text("No orders found"))
+                    // ? const Center(child: Text("No orders found"))
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SvgPicture.asset('assets/icon/no_data.svg'),
+                            const SizedBox(height: 20),
+                            const Text(
+                              "No orders found",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
                     : ListView.builder(
                         physics: const BouncingScrollPhysics(),
-                        // padding: EdgeInsets.only(
-                        //   bottom:
-                        //       kBottomNavigationBarHeight +
-                        //       MediaQuery.of(context).padding.bottom +
-                        //       40,
-                        //   top: 0,
-                        //   left: 0,
-                        //   right: 0,
-                        // ),
+
                         itemCount: orderProvider.orders.length,
                         itemBuilder: (context, index) {
                           final order = orderProvider.orders[index];

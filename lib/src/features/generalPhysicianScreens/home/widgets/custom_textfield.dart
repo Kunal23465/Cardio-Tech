@@ -96,11 +96,18 @@ class _CustomTextFieldState extends State<CustomTextField> {
         break;
       default:
         if (widget.isPassword) {
-          suffixIcon = IconButton(
-            icon: Icon(
-              widget.obscureText ? Icons.visibility_off : Icons.visibility,
+          suffixIcon = GestureDetector(
+            onTap: widget.togglePassword,
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 250),
+              transitionBuilder: (child, animation) =>
+                  ScaleTransition(scale: animation, child: child),
+              child: Icon(
+                widget.obscureText ? Icons.visibility_off : Icons.visibility,
+                key: ValueKey(widget.obscureText),
+                color: Colors.grey.shade600,
+              ),
             ),
-            onPressed: widget.togglePassword,
           );
         }
     }

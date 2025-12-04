@@ -36,9 +36,18 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     try {
       final response = await _authService.verifyOtp(widget.emailOrMobile, otp);
 
-      final message = response.data is String
-          ? response.data
-          : response.data['message'] ?? "OTP Verified";
+      final statusCode = response.data["statusCode"];
+      final status = response.data["status"];
+      final message = response.data["message"] ?? "OTP Verified";
+
+      if (statusCode != 200 || status == "FAILED") {
+        SnackBarHelper.show(
+          context,
+          message: message,
+          type: SnackBarType.error,
+        );
+        return;
+      }
 
       SnackBarHelper.show(
         context,

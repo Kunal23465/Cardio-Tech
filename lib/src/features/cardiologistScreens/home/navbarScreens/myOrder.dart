@@ -10,6 +10,7 @@ import 'package:cardio_tech/src/provider/generalPhysicianProvider/new_order/orde
 import 'package:cardio_tech/src/routes/AllRoutes.dart';
 import 'package:cardio_tech/src/utils/snackbar_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 class MyOrder extends StatefulWidget {
@@ -238,7 +239,24 @@ class MyOrderState extends State<MyOrder> {
               child: orderProvider.isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : orderProvider.orders.isEmpty
-                  ? const Center(child: Text("No orders found"))
+                  // ? const Center(child: Text("No orders found"))
+                  ? Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SvgPicture.asset('assets/icon/no_data.svg'),
+                          SizedBox(height: 20),
+                          Text(
+                            "No orders found",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
                   : ListView.builder(
                       itemCount: orderProvider.orders.length,
                       itemBuilder: (context, index) {

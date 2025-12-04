@@ -45,11 +45,15 @@ class SnackBarHelper {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           margin: const EdgeInsets.symmetric(horizontal: 20),
           decoration: BoxDecoration(
-            color: backgroundColor,
-            borderRadius: BorderRadius.circular(12),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(30),
+            border: Border.all(
+              color: backgroundColor, // Green/Red/Orange/Blue border
+              width: 1.5,
+            ),
             boxShadow: [
               BoxShadow(
-                color: backgroundColor.withOpacity(0.3),
+                color: backgroundColor.withOpacity(0.15),
                 blurRadius: 10,
                 offset: const Offset(0, 3),
               ),
@@ -58,14 +62,18 @@ class SnackBarHelper {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, color: Colors.white, size: 22),
+              Icon(
+                icon,
+                color: backgroundColor, // Icon color = type color
+                size: 22,
+              ),
               const SizedBox(width: 10),
               Flexible(
                 child: Text(
                   message,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: Colors.black, // Text color black
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
                   ),

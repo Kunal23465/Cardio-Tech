@@ -33,6 +33,12 @@ class ApiInterceptor extends Interceptor {
       "/auth/refresh-token",
     );
 
+    // Ignore session/logout logic for login request
+    if (err.requestOptions.path.endsWith("/auth/login")) {
+      print(" Login failed → Invalid credentials");
+      return handler.next(err);
+    }
+
     //   If REFRESH API itself returns 401 → user MUST logout immediately
 
     if (isRefreshCall && status == 401) {

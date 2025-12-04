@@ -26,7 +26,7 @@ Future<void> main() async {
     ]);
 
     // Flutter downloader (NOT supported on web)  false
-    await FlutterDownloader.initialize(debug: false, ignoreSsl: true);
+    await FlutterDownloader.initialize(debug: true, ignoreSsl: true);
 
     // Notification permission (NOT supported on web)
     final notificationStatus = await Permission.notification.request();

@@ -2,6 +2,7 @@ import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/th
 import 'package:cardio_tech/src/features/widgets/CardioAllOrderCard.dart';
 import 'package:cardio_tech/src/provider/cardioLogistsProvider/allOrders/CardioAllOrderProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 class AllOrder extends StatefulWidget {
@@ -103,8 +104,22 @@ class _AllOrderState extends State<AllOrder> {
                   ),
 
                 if (!provider.isLoading && provider.cardioAllOrders.isEmpty)
-                  const Expanded(
-                    child: Center(child: Text("No  orders found")),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset('assets/icon/no_data.svg'),
+                        SizedBox(height: 20),
+                        Text(
+                          "No orders found",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
 
                 if (!provider.isLoading && provider.cardioAllOrders.isNotEmpty)
