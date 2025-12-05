@@ -8,6 +8,7 @@ import 'package:cardio_tech/src/provider/cardioLogistsProvider/getAllStatusProvi
 import 'package:cardio_tech/src/provider/cardioLogistsProvider/home/StatusCountCardioProvider.dart';
 import 'package:cardio_tech/src/provider/cardioLogistsProvider/myOrderProvider.dart';
 import 'package:cardio_tech/src/provider/cardioLogistsProvider/orderStatusProvider.dart';
+import 'package:cardio_tech/src/provider/common/clinicDetailsProvider/clinicDetailsProvider.dart';
 import 'package:cardio_tech/src/provider/generalPhysicianProvider/allPatient/downloadEkgReportProvider.dart';
 import 'package:cardio_tech/src/provider/generalPhysicianProvider/allPatient/getOrderByIdProvider.dart';
 import 'package:cardio_tech/src/provider/generalPhysicianProvider/allPatient/orderFilterProvider.dart';
@@ -54,4 +55,5 @@ List<SingleChildWidget> appProviders = [
   ChangeNotifierProvider(create: (_) => StatusCountGpProvider()),
   ChangeNotifierProvider(create: (_) => StatusCountCardioProvider()),
   ChangeNotifierProvider(create: (_) => CardioAllOrderProvider()),
+  ChangeNotifierProvider(create: (_) => ClinicDetailsProvider()),
 ];

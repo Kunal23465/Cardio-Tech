@@ -160,6 +160,7 @@ class _AboutusState extends State<Aboutus> {
   // Responsive Card
   Widget _highlightCard(String number, String title, String desc) {
     return Container(
+      margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: const Color(0xFFEef7f5),

@@ -200,6 +200,7 @@ class _PrivacypolicyState extends State<Privacypolicy> {
   Widget _highlightCard(String title, String desc) {
     return Container(
       padding: const EdgeInsets.all(18),
+      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: const Color(0xFFEef7f5),
         borderRadius: BorderRadius.circular(16),

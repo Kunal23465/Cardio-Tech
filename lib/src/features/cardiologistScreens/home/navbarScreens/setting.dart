@@ -241,6 +241,13 @@ class _SettingState extends State<Setting> {
                     },
                   ),
                   buildSettingTile(
+                    svgPath: "assets/images/setting/clinicDetails.svg",
+                    title: "Clinic Details",
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoutes.clinicDetails);
+                    },
+                  ),
+                  buildSettingTile(
                     svgPath: "assets/images/setting/about.svg",
                     title: "About us",
                     onTap: () {

@@ -58,4 +58,6 @@ class ApiConstants {
 
   static const String uploadProfile = "$baseUrl/home/upload-profile-pic";
   static const String changePassword = "$baseUrl/auth/change-password";
+  static const String clinicDetails =
+      "$baseUrl/cardio/clinic/getClinicDetailsByUserId";
 }

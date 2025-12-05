@@ -1,6 +1,9 @@
 import 'package:cardio_tech/src/features/generalPhysicianScreens/home/widgets/theme.dart';
+import 'package:cardio_tech/src/provider/common/clinicDetailsProvider/clinicDetailsProvider.dart';
+import 'package:cardio_tech/src/utils/storage_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 class ClinicDetails extends StatefulWidget {
   const ClinicDetails({super.key});
@@ -11,7 +14,26 @@ class ClinicDetails extends StatefulWidget {
 
 class _ClinicDetailsState extends State<ClinicDetails> {
   @override
+  void initState() {
+    super.initState();
+    _loadClinicDetails();
+  }
+
+  Future<void> _loadClinicDetails() async {
+    final userId = await StorageHelper.getUserId();
+    if (userId != null && mounted) {
+      Provider.of<ClinicDetailsProvider>(
+        context,
+        listen: false,
+      ).fetchClinicDetails(userId);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<ClinicDetailsProvider>(context);
+    final clinic = provider.clinicDetails;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -30,91 +52,91 @@ class _ClinicDetailsState extends State<ClinicDetails> {
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(height: 1, color: AppColors.primary),
+          child: Container(
+            height: 1,
+            color: AppColors.primary.withOpacity(0.3),
+          ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 30),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+
+      body: provider.isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              padding: const EdgeInsets.only(bottom: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    "About Clinic",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  const SizedBox(height: 30),
+
+                  // About Clinic
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "About Clinic",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+
+                        Text(
+                          clinic?.aboutClinic ?? "No Data",
+                          style: const TextStyle(
+                            // fontSize: 14,
+                            // color: Colors.black54,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
 
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 20),
 
-                  Text(
-                    "No Data",
-                    style: const TextStyle(fontSize: 14, color: Colors.black54),
+                  // Clinic Items
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Column(
+                      children: [
+                        _clinicDetailsCard(
+                          icon: "assets/images/setting/myProfile/hospital.svg",
+                          text: clinic?.clinicName ?? "No Clinic",
+                        ),
+                        _clinicDetailsCard(
+                          icon: "assets/images/setting/myProfile/lic.svg",
+                          text: clinic?.licenseNo ?? "No License No",
+                        ),
+                        _clinicDetailsCard(
+                          icon: "assets/images/setting/myProfile/msg.svg",
+                          text: clinic?.email ?? "No Email",
+                        ),
+                        _clinicDetailsCard(
+                          icon: "assets/images/setting/myProfile/call.svg",
+                          text: clinic?.phone ?? "No Phone",
+                        ),
+                        _clinicDetailsCard(
+                          icon: "assets/images/setting/myProfile/location.svg",
+                          text: clinic?.address ?? "No Address",
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                children: [
-                  _clinicDetailsCard(
-                    icon: SvgPicture.asset(
-                      // 'assets/images/setting/myProfile/msg.svg',
-                      'assets/images/setting/myProfile/hospital.svg',
-                    ),
-                    text: "No Data",
-                  ),
-
-                  _clinicDetailsCard(
-                    icon: SvgPicture.asset(
-                      // 'assets/images/setting/myProfile/call.svg',
-                      'assets/images/setting/myProfile/license.svg',
-                    ),
-                    text: "No Data",
-                  ),
-
-                  _clinicDetailsCard(
-                    icon: SvgPicture.asset(
-                      'assets/images/setting/myProfile/msg.svg',
-                    ),
-                    text: "No Data",
-                  ),
-
-                  _clinicDetailsCard(
-                    icon: SvgPicture.asset(
-                      'assets/images/setting/myProfile/call.svg',
-                    ),
-                    text: "No Data",
-                  ),
-                  _clinicDetailsCard(
-                    icon: SvgPicture.asset(
-                      'assets/images/setting/myProfile/location.svg',
-                    ),
-                    text: "No Data",
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
-  Widget _clinicDetailsCard({required SvgPicture icon, required String text}) {
+  Widget _clinicDetailsCard({required String icon, required String text}) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 14),
-
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(color: Colors.grey.shade200),
       ),
-
       child: ListTile(
         leading: Container(
           width: 40,
@@ -123,9 +145,8 @@ class _ClinicDetailsState extends State<ClinicDetails> {
             color: Color(0xFFEef7f5),
             shape: BoxShape.circle,
           ),
-          child: Center(child: icon),
+          child: Center(child: SvgPicture.asset(icon, fit: BoxFit.scaleDown)),
         ),
-
         title: Text(text),
       ),
     );
